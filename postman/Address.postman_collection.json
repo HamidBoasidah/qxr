@@ -1,0 +1,268 @@
+{
+  "info": {
+    "_postman_id": "25aea9e2-814a-4c6a-bc3d-712f6cc285e3",
+    "name": "Address",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "44871984",
+    "_collection_link": "https://go.postman.co/collection/44871984-25aea9e2-814a-4c6a-bc3d-712f6cc285e3?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "All Address",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "7ZZZRT1YJBXZyZeBQ8PSQLnlo0pUc9y3KZj9DzEbf4a195d0",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}addresses",
+          "host": [
+            "{{baseUrl}}addresses"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Single Address",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "g890PxbWQSm8AKq8PhWzJAzSRFEg9cVmmrI4uJrv4e986e6f",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}addresses/31",
+          "host": [
+            "{{baseUrl}}addresses"
+          ],
+          "path": [
+            "31"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create Address (store)",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "g890PxbWQSm8AKq8PhWzJAzSRFEg9cVmmrI4uJrv4e986e6f",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text",
+            "disabled": true
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"label\": \"المنزل\",\n  \"address\": \"شارع المثال 365\",\n  \"street\": \"شارع الاختبار\",\n  \"building_number\": \"12\",\n  \"floor_number\": \"3\",\n  \"apartment_number\": \"301\",\n  \"governorate_id\": 2,\n  \"district_id\": 2,\n  \"area_id\": 3,\n  \"is_default\": true,\n  \"is_active\": true,\n  \"lat\": -27.754407,\n  \"lang\": -62.986681\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}addresses",
+          "host": [
+            "{{baseUrl}}addresses"
+          ]
+        },
+        "description": "Create a new address for the authenticated user. The server sets the `user_id` automatically. Replace the path values and body values as needed."
+      },
+      "response": []
+    },
+    {
+      "name": "Update Address (update)",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "8ZCHapmOHiZXIaqJ2MLFIIhsymvCP9wCi51AKadq0ad49d1e",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text",
+            "disabled": true
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"label\": \"الجديدة النظيفة\",\n  \"address\" : \"الواحة المستمرة\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}addresses/31",
+          "host": [
+            "{{baseUrl}}addresses"
+          ],
+          "path": [
+            "31"
+          ]
+        },
+        "description": "Create a new address for the authenticated user. The server sets the `user_id` automatically. Replace the path values and body values as needed."
+      },
+      "response": []
+    },
+    {
+      "name": "Delete Address (API)",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "8ZCHapmOHiZXIaqJ2MLFIIhsymvCP9wCi51AKadq0ad49d1e",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": ""
+        },
+        "url": {
+          "raw": "{{baseUrl}}addresses/2",
+          "host": [
+            "{{baseUrl}}addresses"
+          ],
+          "path": [
+            "2"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Set Default Address (API)",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "8ZCHapmOHiZXIaqJ2MLFIIhsymvCP9wCi51AKadq0ad49d1e",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": ""
+        },
+        "url": {
+          "raw": "{{baseUrl}}addresses/1/set-default",
+          "host": [
+            "{{baseUrl}}addresses"
+          ],
+          "path": [
+            "1",
+            "set-default"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

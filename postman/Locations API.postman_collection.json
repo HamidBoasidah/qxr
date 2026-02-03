@@ -1,0 +1,142 @@
+{
+  "info": {
+    "_postman_id": "8a69bb7b-fb3f-4614-b952-7d8b85183551",
+    "name": "Locations API",
+    "description": "Collection to test governorates, districts, and areas endpoints.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "44871984",
+    "_collection_link": "https://go.postman.co/collection/44871984-8a69bb7b-fb3f-4614-b952-7d8b85183551?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Get Governorates",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "  pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Response is JSON array', function () {",
+              "  var json = pm.response.json();",
+              "  pm.expect(Array.isArray(json.data || json)).to.be.true;",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/locations/governorates",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "locations",
+            "governorates"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Districts by Governorate",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200 or 404 if not found', function () {",
+              "  pm.expect([200,404]).to.include(pm.response.code);",
+              "});",
+              "pm.test('If 200, body contains array', function () {",
+              "  if (pm.response.code === 200) {",
+              "    var json = pm.response.json();",
+              "    pm.expect(Array.isArray(json.data || json)).to.be.true;",
+              "  }",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/locations/governorates/{{governorate_id}}/districts",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "locations",
+            "governorates",
+            "{{governorate_id}}",
+            "districts"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Areas by District",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200 or 404 if not found', function () {",
+              "  pm.expect([200,404]).to.include(pm.response.code);",
+              "});",
+              "pm.test('If 200, body contains array', function () {",
+              "  if (pm.response.code === 200) {",
+              "    var json = pm.response.json();",
+              "    pm.expect(Array.isArray(json.data || json)).to.be.true;",
+              "  }",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/locations/districts/{{district_id}}/areas",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "locations",
+            "districts",
+            "{{district_id}}",
+            "areas"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000"
+    },
+    {
+      "key": "governorate_id",
+      "value": "1"
+    },
+    {
+      "key": "district_id",
+      "value": "1"
+    }
+  ]
+}

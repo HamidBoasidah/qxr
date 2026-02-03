@@ -1,0 +1,175 @@
+{
+  "info": {
+    "_postman_id": "32169d1e-0a00-481c-abb0-7904e05db4d4",
+    "name": "Authentication",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "44871984",
+    "_collection_link": "https://go.postman.co/collection/44871984-32169d1e-0a00-481c-abb0-7904e05db4d4?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"phone_number\": \"529796804\",\n    \"password\": \"password\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}login",
+          "host": [
+            "{{baseUrl}}login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Logout",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "SAETAClUTblxDUCE0ZN6tu7h3C0y4Q6sRy10Nmke1704f7c2",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}logout",
+          "host": [
+            "{{baseUrl}}logout"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Register new user (Fixed)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "type": "text",
+              "key": "first_name",
+              "value": "سالم"
+            },
+            {
+              "type": "text",
+              "key": "last_name",
+              "value": "سعيد"
+            },
+            {
+              "type": "text",
+              "key": "email",
+              "value": "saledm@gmail.com"
+            },
+            {
+              "type": "text",
+              "key": "password",
+              "value": "password"
+            },
+            {
+              "type": "text",
+              "key": "password_confirmation",
+              "value": "password"
+            },
+            {
+              "type": "text",
+              "key": "user_type",
+              "value": "consultant"
+            },
+            {
+              "type": "text",
+              "key": "phone_number",
+              "value": "0512345672"
+            },
+            {
+              "type": "text",
+              "key": "gender",
+              "value": "male"
+            },
+            {
+              "type": "text",
+              "key": "category_type",
+              "value": "1"
+            },
+            {
+              "type": "text",
+              "key": "years_of_experience",
+              "value": "5"
+            },
+            {
+              "key": "certificate",
+              "type": "file",
+              "uuid": "20a49113-bf16-4fe1-b0a3-7a7a2d691ea2",
+              "src": "postman-cloud:///1f0e326f-9cad-4f50-9359-9968714c9680"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}register",
+          "host": [
+            "{{baseUrl}}register"
+          ]
+        },
+        "description": "Generated from cURL: curl -X POST '{{baseUrl}}register' -H 'Accept: application/json' -F 'first_name=سالم' -F 'last_name=سعيد' -F 'email=salem@gmail.com' -F 'password=password' -F 'password_confirmation=password' -F 'user_type=consultant' -F 'phone_number=0512345678' -F 'gender=male' -F 'category_type=1' -F 'years_of_experience=5'"
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,499 @@
+{
+	"info": {
+		"_postman_id": "chat-system-collection",
+		"name": "Chat System API",
+		"description": "نظام المحادثات المفتوح - Open Chat System\n\nيتضمن:\n- إنشاء محادثات بين المستخدمين\n- جلب قائمة المحادثات\n- إرسال الرسائل\n- جلب الرسائل\n- تحديث حالة القراءة",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000/api",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "conversation_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "other_user_id",
+			"value": "2",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "1. Authentication",
+			"item": [
+				{
+					"name": "1.1 Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.data && jsonData.data.token) {",
+									"    pm.collectionVariables.set('token', jsonData.data.token);",
+									"    console.log('Token saved successfully');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"user@example.com\",\n    \"password\": \"password\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/login",
+							"host": ["{{base_url}}"],
+							"path": ["login"]
+						},
+						"description": "تسجيل الدخول للحصول على Token"
+					},
+					"response": []
+				},
+				{
+					"name": "1.2 Get Current User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/me",
+							"host": ["{{base_url}}"],
+							"path": ["me"]
+						},
+						"description": "جلب بيانات المستخدم الحالي"
+					},
+					"response": []
+				}
+			],
+			"description": "طلبات المصادقة"
+		},
+		{
+			"name": "2. Conversations",
+			"item": [
+				{
+					"name": "2.1 Create Conversation",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.data && jsonData.data.id) {",
+									"    pm.collectionVariables.set('conversation_id', jsonData.data.id);",
+									"    console.log('Conversation ID saved: ' + jsonData.data.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user_id\": {{other_user_id}}\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/conversations",
+							"host": ["{{base_url}}"],
+							"path": ["conversations"]
+						},
+						"description": "إنشاء محادثة جديدة مع مستخدم آخر\n\nإذا كانت المحادثة موجودة مسبقاً، سيتم إرجاعها"
+					},
+					"response": []
+				},
+				{
+					"name": "2.2 Get All Conversations",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/conversations?per_page=20",
+							"host": ["{{base_url}}"],
+							"path": ["conversations"],
+							"query": [
+								{
+									"key": "per_page",
+									"value": "20",
+									"description": "عدد المحادثات في الصفحة"
+								},
+								{
+									"key": "search",
+									"value": "",
+									"description": "البحث في أسماء المشاركين",
+									"disabled": true
+								}
+							]
+						},
+						"description": "جلب قائمة المحادثات مع عدد الرسائل غير المقروءة"
+					},
+					"response": []
+				},
+				{
+					"name": "2.3 Get Conversations with Search",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/conversations?search=أحمد&per_page=10",
+							"host": ["{{base_url}}"],
+							"path": ["conversations"],
+							"query": [
+								{
+									"key": "search",
+									"value": "أحمد",
+									"description": "البحث في أسماء المشاركين"
+								},
+								{
+									"key": "per_page",
+									"value": "10"
+								}
+							]
+						},
+						"description": "البحث في المحادثات حسب اسم المشارك"
+					},
+					"response": []
+				},
+				{
+					"name": "2.4 Mark Conversation as Read",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"message_id\": null\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/conversations/{{conversation_id}}/read",
+							"host": ["{{base_url}}"],
+							"path": ["conversations", "{{conversation_id}}", "read"]
+						},
+						"description": "تحديث حالة القراءة للمحادثة\n\nيمكن تحديد message_id لتحديد آخر رسالة مقروءة، أو تركه فارغاً لتحديد آخر رسالة"
+					},
+					"response": []
+				}
+			],
+			"description": "إدارة المحادثات"
+		},
+		{
+			"name": "3. Messages",
+			"item": [
+				{
+					"name": "3.1 Send Text Message",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"body\": \"مرحباً! كيف حالك؟\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/conversations/{{conversation_id}}/messages",
+							"host": ["{{base_url}}"],
+							"path": ["conversations", "{{conversation_id}}", "messages"]
+						},
+						"description": "إرسال رسالة نصية"
+					},
+					"response": []
+				},
+				{
+					"name": "3.2 Send Message with Attachment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "body",
+									"value": "شاهد هذه الصورة",
+									"type": "text"
+								},
+								{
+									"key": "files[]",
+									"type": "file",
+									"src": [],
+									"description": "اختر ملف للإرسال"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/conversations/{{conversation_id}}/messages",
+							"host": ["{{base_url}}"],
+							"path": ["conversations", "{{conversation_id}}", "messages"]
+						},
+						"description": "إرسال رسالة مع مرفقات"
+					},
+					"response": []
+				},
+				{
+					"name": "3.3 Get Messages",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/conversations/{{conversation_id}}/messages?per_page=50",
+							"host": ["{{base_url}}"],
+							"path": ["conversations", "{{conversation_id}}", "messages"],
+							"query": [
+								{
+									"key": "per_page",
+									"value": "50",
+									"description": "عدد الرسائل في الصفحة"
+								},
+								{
+									"key": "cursor",
+									"value": "",
+									"description": "مؤشر الصفحة التالية",
+									"disabled": true
+								}
+							]
+						},
+						"description": "جلب رسائل المحادثة مع تحديث حالة القراءة تلقائياً"
+					},
+					"response": []
+				},
+				{
+					"name": "3.4 Get Messages with Pagination",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/conversations/{{conversation_id}}/messages?per_page=10&cursor={{next_cursor}}",
+							"host": ["{{base_url}}"],
+							"path": ["conversations", "{{conversation_id}}", "messages"],
+							"query": [
+								{
+									"key": "per_page",
+									"value": "10"
+								},
+								{
+									"key": "cursor",
+									"value": "{{next_cursor}}",
+									"description": "استخدم قيمة next_cursor من الاستجابة السابقة"
+								}
+							]
+						},
+						"description": "جلب الصفحة التالية من الرسائل باستخدام cursor"
+					},
+					"response": []
+				}
+			],
+			"description": "إدارة الرسائل"
+		},
+		{
+			"name": "4. Error Scenarios",
+			"item": [
+				{
+					"name": "4.1 Create Conversation with Self (Error)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user_id\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/conversations",
+							"host": ["{{base_url}}"],
+							"path": ["conversations"]
+						},
+						"description": "محاولة إنشاء محادثة مع النفس - يجب أن يفشل\n\nالخطأ المتوقع: لا يمكنك بدء محادثة مع نفسك"
+					},
+					"response": []
+				},
+				{
+					"name": "4.2 Send Message to Non-Participant Conversation (Error)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"body\": \"هذه الرسالة يجب أن تفشل\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/conversations/999999/messages",
+							"host": ["{{base_url}}"],
+							"path": ["conversations", "999999", "messages"]
+						},
+						"description": "محاولة إرسال رسالة لمحادثة غير موجودة أو لست مشاركاً فيها\n\nالخطأ المتوقع: أنت لست مشاركاً في هذه المحادثة"
+					},
+					"response": []
+				},
+				{
+					"name": "4.3 Access Without Token (Error)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/conversations",
+							"host": ["{{base_url}}"],
+							"path": ["conversations"]
+						},
+						"description": "محاولة الوصول بدون Token\n\nالخطأ المتوقع: Unauthenticated"
+					},
+					"response": []
+				}
+			],
+			"description": "سيناريوهات الأخطاء للاختبار"
+		}
+	]
+}

@@ -1,0 +1,47 @@
+<?php
+
+namespace Database\Factories;
+
+use App\Models\Conversation;
+use App\Models\ConversationParticipant;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ConversationParticipant>
+ */
+class ConversationParticipantFactory extends Factory
+{
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = ConversationParticipant::class;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'conversation_id' => Conversation::factory(),
+            'user_id' => User::factory(),
+            'last_read_message_id' => null,
+            'last_read_at' => null,
+        ];
+    }
+
+    /**
+     * Indicate that the participant has read messages up to a specific message.
+     */
+    public function withReadMarker(int $messageId): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'last_read_message_id' => $messageId,
+            'last_read_at' => now(),
+        ]);
+    }
+}

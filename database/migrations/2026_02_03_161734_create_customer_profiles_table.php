@@ -28,12 +28,6 @@ return new class extends Migration
                 ->constrained('categories')
                 ->restrictOnDelete();
 
-            // العنوان الرئيسي (اختياري)
-            $table->foreignId('main_address_id')
-                ->nullable()
-                ->constrained('addresses')
-                ->nullOnDelete();
-
             // حالة البروفايل
             $table->boolean('is_active')->default(true);
 

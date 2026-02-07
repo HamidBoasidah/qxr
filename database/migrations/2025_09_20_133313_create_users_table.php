@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('avatar')->nullable();
             $table->string('phone_number')->nullable();
             $table->string('whatsapp_number')->nullable();
-            $table->string('address')->nullable();
             $table->string('password');
             $table->enum('user_type', ['customer', 'company'])->default('customer');
             $table->enum('gender', ['male', 'female'])->nullable();

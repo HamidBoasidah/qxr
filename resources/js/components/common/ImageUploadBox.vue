@@ -46,6 +46,7 @@ import { useI18n } from 'vue-i18n'
 
 const props = defineProps({
   modelValue: { type: [File, Object, null], default: null },
+  initialImage: { type: String, default: null },
   inputId: { type: String, default: 'product-image' },
   accept: { type: String, default: 'image/*' },
   label: { type: String, default: 'users.userImage' },
@@ -57,18 +58,25 @@ const { t } = useI18n()
 const inputRef = ref(null)
 const previewUrl = ref(null)
 
-watch(() => props.modelValue, (val) => {
-  if (previewUrl.value) {
-    URL.revokeObjectURL(previewUrl.value)
-    previewUrl.value = null
-  }
-  if (val instanceof File) {
-    previewUrl.value = URL.createObjectURL(val)
-  } else if (typeof val === 'string' && val) {
-    // if backend provided existing url
-    previewUrl.value = val
-  }
-})
+watch(
+  () => props.modelValue,
+  (val) => {
+    if (previewUrl.value) {
+      URL.revokeObjectURL(previewUrl.value)
+      previewUrl.value = null
+    }
+
+    if (val instanceof File) {
+      previewUrl.value = URL.createObjectURL(val)
+    } else if (!val && props.initialImage) {
+      previewUrl.value = props.initialImage
+    } else {
+      previewUrl.value = null
+    }
+  },
+  { immediate: true }
+)
+
 
 function onFileChange(e) {
   const file = e.target.files?.[0] || null

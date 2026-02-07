@@ -245,6 +245,9 @@
                 </span>
               </div>
             </th>
+            <th class="px-4 py-3 text-start border border-gray-100 dark:border-gray-800">
+              <p class="font-medium text-gray-700 text-theme-xs dark:text-gray-400">{{ t('users.userType') }}</p>
+            </th>
             <!-- type column removed -->
             <th class="px-4 py-3 text-start border border-gray-100 dark:border-gray-800">
               <div
@@ -364,7 +367,9 @@
             <td class="px-4 py-3 border border-gray-100 dark:border-gray-800">
               <p class="text-gray-700 text-theme-sm dark:text-gray-400">{{ user.phone_number }}</p>
             </td>
-            <!-- role/type column removed -->
+            <td class="px-4 py-3 border border-gray-100 dark:border-gray-800">
+              <p class="text-gray-700 text-theme-sm dark:text-gray-400">{{ t('users.' + (user.user_type || 'customer')) }}</p>
+            </td>
             <td class="px-4 py-3 border border-gray-100 dark:border-gray-800">
               <span
                 class="inline-flex items-center justify-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium"

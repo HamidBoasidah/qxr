@@ -16,7 +16,6 @@ class CompanyProfile extends Model
         'company_name',
         'category_id',
         'logo_path',
-        'main_address_id',
         'is_active',
     ];
 
@@ -38,9 +37,4 @@ class CompanyProfile extends Model
         return $this->belongsTo(Category::class);
     }
 
-    // العنوان الرئيسي
-    public function mainAddress()
-    {
-        return $this->belongsTo(Address::class, 'main_address_id');
-    }
 }

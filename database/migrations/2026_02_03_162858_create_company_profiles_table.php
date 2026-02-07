@@ -31,11 +31,6 @@ return new class extends Migration
             // شعار الشركة (اختياري)
             $table->string('logo_path')->nullable();
 
-            // العنوان الرئيسي (اختياري)
-            $table->foreignId('main_address_id')
-                ->nullable()
-                ->constrained('addresses')
-                ->nullOnDelete();
 
             // حالة البروفايل
             $table->boolean('is_active')->default(true);

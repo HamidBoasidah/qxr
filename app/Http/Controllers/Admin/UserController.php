@@ -2,36 +2,41 @@
 
 namespace App\Http\Controllers\Admin;
 
-
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Http\Requests\UpdateUserRequest;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
+
 use App\Services\UserService;
 use App\Models\User;
-use App\Models\Role;
+use App\Models\Address;
+use App\Models\Category;
+
 use App\DTOs\UserDTO;
 use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 
 class UserController extends Controller
 {
-
     public function __construct()
     {
         $this->middleware('permission:users.view')->only(['index', 'show']);
         $this->middleware('permission:users.create')->only(['create', 'store']);
-        $this->middleware('permission:users.update')->only(['edit', 'update' , 'activate', 'deactivate']);
+        $this->middleware('permission:users.update')->only(['edit', 'update', 'activate', 'deactivate']);
         $this->middleware('permission:users.delete')->only(['destroy']);
     }
 
     public function index(Request $request, UserService $userService)
     {
-        $perPage = $request->input('per_page', 10);
+        $perPage = (int) $request->input('per_page', 10);
+
         $users = $userService->paginate($perPage);
+
         // تجهيز بيانات كل مستخدم بنفس منطق show
         $users->getCollection()->transform(function ($user) {
             return UserDTO::fromModel($user)->toIndexArray();
         });
+
         return Inertia::render('Admin/User/Index', [
             'users' => $users
         ]);
@@ -39,10 +44,10 @@ class UserController extends Controller
 
     public function create()
     {
-        $roles = Role::all();
+        $categories = Category::whereIn('category_type', ['company', 'customer'])->where('is_active', true)->get();
 
         return Inertia::render('Admin/User/Create', [
-            'roles' => $roles,
+            'categories' => $categories,
         ]);
     }
 
@@ -50,10 +55,14 @@ class UserController extends Controller
     {
         $data = $request->validated();
 
-        // إذا وُجد ملف مرفق نُمرره ضمن البيانات ليتولى المستودع التعامل معه
-        if ($request->hasFile('attachment')) {
-            $data['attachment'] = $request->file('attachment');
+        // ✅ إصلاح: اسم الحقل الصحيح هو avatar وليس attachment
+        if ($request->hasFile('avatar')) {
+            $data['avatar'] = $request->file('avatar');
         }
+
+        // ✅ من الأفضل تعبئتها من السيرفر (لو كنت تستخدمها)
+        $data['created_by'] = Auth::id();
+        $data['updated_by'] = Auth::id();
 
         $userService->create($data);
 
@@ -63,6 +72,7 @@ class UserController extends Controller
     public function show(User $user)
     {
         $userDTO = UserDTO::fromModel($user)->toArray();
+
         return Inertia::render('Admin/User/Show', [
             'user' => $userDTO,
         ]);
@@ -70,26 +80,28 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
-        $roles = Role::all();
-
         $userDTO = UserDTO::fromModel($user)->toArray();
+
+        $categories = Category::whereIn('category_type', ['company', 'customer'])->where('is_active', true)->get();
 
         return Inertia::render('Admin/User/Edit', [
             'user' => $userDTO,
-            'roles' => $roles,
+            'categories' => $categories,
         ]);
     }
 
-    public function update(UpdateUserRequest $request, UserService $userService , User $user)
+    public function update(UpdateUserRequest $request, UserService $userService, User $user)
     {
         $data = $request->validated();
 
-        // إذا وُجد ملف مرفق نُمرره ضمن البيانات ليتولى المستودع التعامل معه
-        if ($request->hasFile('attachment')) {
-            $data['attachment'] = $request->file('attachment');
+        if ($request->hasFile('avatar')) {
+            $data['avatar'] = $request->file('avatar');
         }
 
-        $userService->update($user->id , $data);
+        // ✅ تحديث تلقائي
+        $data['updated_by'] = Auth::id();
+
+        $userService->update($user->id, $data);
 
         return redirect()->route('admin.users.index');
     }
@@ -112,5 +124,4 @@ class UserController extends Controller
         $userService->deactivate($id);
         return back()->with('success', 'User deactivated successfully');
     }
-
 }

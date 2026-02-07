@@ -24,8 +24,6 @@ return new class extends Migration
             // ترتيب عرض الصور (0 = أول صورة)
             $table->unsignedInteger('sort_order')->default(0);
 
-            // حالة الصورة (اختياري)
-            $table->boolean('is_active')->default(true);
 
             $table->timestamps();
 

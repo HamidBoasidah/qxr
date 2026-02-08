@@ -15,7 +15,6 @@ class CategoryFactory extends Factory
             'name' => $this->faker->unique()->word,
             'slug' => $this->faker->unique()->slug,
             'category_type' => $this->faker->randomElement(['company','customer','product']),
-            'is_active' => $this->faker->boolean(),
             'created_by' => null,
             'updated_by' => null,
         ];

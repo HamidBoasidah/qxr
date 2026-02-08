@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
             ProductSeeder::class,
         ]);
 
-        \App\Models\Category::factory()->count(8)->create();
+        \App\Models\Category::factory()->count(58)->create();
         \App\Models\Tag::factory()->count(12)->create();
     }
 }

@@ -30,10 +30,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('products/categories', [App\Http\Controllers\Api\ProductController::class, 'categories']);
     Route::get('products/tags', [App\Http\Controllers\Api\ProductController::class, 'tags']);
 
-    // Products resource
-    Route::apiResource('products', App\Http\Controllers\Api\ProductController::class);
+    // Products resource (عرض فقط)
+    Route::apiResource('products', App\Http\Controllers\Api\ProductController::class)->only(['index', 'show']);
+
+    /* commit
+    // Disabled write/status routes for products
     Route::post('products/{product}/activate', [App\Http\Controllers\Api\ProductController::class, 'activate']);
     Route::post('products/{product}/deactivate', [App\Http\Controllers\Api\ProductController::class, 'deactivate']);
+    */
     
     // Conversations
     Route::get('conversations', [App\Http\Controllers\Api\ConversationController::class, 'index']);

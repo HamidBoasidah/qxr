@@ -7,6 +7,7 @@ use App\Models\ProductImage;
 use App\Repositories\ProductRepository;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\UploadedFile;
 
 class ProductService
 {
@@ -68,9 +69,9 @@ class ProductService
      * إذا كانت null => لا نلمس العلاقة
      * إذا كانت []  => نفرغ العلاقة
      */
-    public function update($id, array $productData, ?array $tagIdsOrNull = null, ?array $imagesPayloadOrNull = null): Product
+    public function update($id, array $productData, ?array $tagIdsOrNull = null, ?array $imagesPayloadOrNull = null, ?array $deleteImageIdsOrNull = null): Product
     {
-        return DB::transaction(function () use ($id, $productData, $tagIdsOrNull, $imagesPayloadOrNull) {
+        return DB::transaction(function () use ($id, $productData, $tagIdsOrNull, $imagesPayloadOrNull, $deleteImageIdsOrNull) {
 
             // ممنوع تعديل الشركة المالكة من العميل
             unset($productData['company_user_id']);
@@ -88,9 +89,9 @@ class ProductService
                 $this->syncTags($product, $tagIdsOrNull);
             }
 
-            // الصور: إذا أرسلها العميل
-            if ($imagesPayloadOrNull !== null) {
-                $this->replaceImages($product, $imagesPayloadOrNull);
+            // الصور: إذا أرسلها العميل أو أرسل IDs للحذف
+            if ($imagesPayloadOrNull !== null || $deleteImageIdsOrNull !== null) {
+                $this->updateImages($product, $imagesPayloadOrNull ?? [], $deleteImageIdsOrNull ?? []);
             }
 
             return $product->refresh();
@@ -132,17 +133,79 @@ class ProductService
             return;
         }
 
-        // تجهيز بيانات الصور
-        $rows = [];
-        foreach ($imagesPayload as $img) {
-            $rows[] = [
-                'path' => $img['path'],
-                'sort_order' => $img['sort_order'] ?? 0,
-            ];
+        $prepared = [];
+
+        foreach (array_values($imagesPayload) as $index => $image) {
+            // UploadedFile directly from the request
+            if ($image instanceof UploadedFile) {
+                $path = $image->store($product->getTable(), 'public');
+
+                $prepared[] = [
+                    'path' => $path,
+                    'sort_order' => $index,
+                ];
+
+                continue;
+            }
+
+            // Already an array with path/sort_order
+            if (is_array($image) && isset($image['path'])) {
+                $prepared[] = [
+                    'path' => $image['path'],
+                    'sort_order' => $image['sort_order'] ?? $index,
+                ];
+            }
         }
 
-        // إنشاء صور جديدة
-        $product->images()->createMany($rows);
+        if ($prepared) {
+            $product->images()->createMany($prepared);
+        }
+    }
+
+    /**
+     * تحديث صور المنتج: احذف الصور المحددة وأضف الجديدة (لا تستبدل كل الصور تلقائيًا)
+     */
+    private function updateImages(Product $product, array $newImages = [], array $deleteIds = []): void
+    {
+        // احذف الصور المحددة فقط
+        if (!empty($deleteIds)) {
+            $product->images()->whereIn('id', $deleteIds)->delete();
+        }
+
+        if (empty($newImages)) {
+            return;
+        }
+
+        $prepared = [];
+
+        // احتساب sort_order بناءً على العدد الحالي بعد الحذف
+        $baseIndex = $product->images()->count();
+
+        foreach (array_values($newImages) as $offset => $image) {
+            $index = $baseIndex + $offset;
+
+            if ($image instanceof UploadedFile) {
+                $path = $image->store($product->getTable(), 'public');
+
+                $prepared[] = [
+                    'path' => $path,
+                    'sort_order' => $index,
+                ];
+
+                continue;
+            }
+
+            if (is_array($image) && isset($image['path'])) {
+                $prepared[] = [
+                    'path' => $image['path'],
+                    'sort_order' => $image['sort_order'] ?? $index,
+                ];
+            }
+        }
+
+        if ($prepared) {
+            $product->images()->createMany($prepared);
+        }
     }
 
     public function activate($id)

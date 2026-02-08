@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             DistrictSeeder::class,
             AreaSeeder::class,
             FillUserAddressesSeeder::class,
+            ProductSeeder::class,
         ]);
 
         \App\Models\Category::factory()->count(8)->create();

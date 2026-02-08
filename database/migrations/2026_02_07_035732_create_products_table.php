@@ -45,6 +45,7 @@ return new class extends Migration
             // الصورة الرئيسية للمنتج (مسار أو اسم الملف داخل التخزين)
             $table->string('main_image')->nullable();
 
+            $table->softDeletes();
             $table->timestamps();
 
             // فهارس للأداء

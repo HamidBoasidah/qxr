@@ -28,7 +28,7 @@ class StoreProductRequest extends FormRequest
             'base_price'   => ['nullable', 'numeric', 'min:0'],
 
             'is_active'    => ['sometimes', 'boolean'],
-            'main_image'   => ['nullable', 'string', 'max:255'],
+            'main_image'   => ['nullable', 'image', 'max:2048'],
 
             // tags (pivot product_tag)
             'tag_ids'      => ['nullable', 'array'],
@@ -36,8 +36,7 @@ class StoreProductRequest extends FormRequest
 
             // product_images (مسارات)
             'images'                 => ['nullable', 'array'],
-            'images.*.path'          => ['required_with:images', 'string', 'max:255'],
-            'images.*.sort_order'    => ['nullable', 'integer', 'min:0'],
+            'images.*'               => ['file', 'image', 'max:2048'],
         ];
     }
 
@@ -54,7 +53,6 @@ class StoreProductRequest extends FormRequest
             'tag_ids.*.exists'     => 'أحد الوسوم غير موجود.',
 
             'images.array'         => 'الصور يجب أن تكون مصفوفة.',
-            'images.*.path.required_with' => 'مسار الصورة مطلوب.',
         ];
     }
 
@@ -89,6 +87,6 @@ class StoreProductRequest extends FormRequest
 
     public function imagesPayload(): array
     {
-        return $this->input('images', []) ?? [];
+        return $this->file('images', []) ?? [];
     }
 }

@@ -10,6 +10,7 @@ import SuccessIcon from "./SuccessIcon.vue";
 import GlobalIcon from "./GlobalIcon.vue";
 import AddressIcon from "./AddressIcon.vue";
 import TagIcon from "./TagIcon.vue";
+import ProductIcon from "./ProductIcon.vue";
 
 export {
   GridIcon,
@@ -24,5 +25,6 @@ export {
   GlobalIcon,
   AddressIcon,
   TagIcon,
+  ProductIcon
 };
  

@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\GovernorateController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\TagController;
+use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\PermissionController;
@@ -147,6 +148,16 @@ Route::middleware('auth:admin')
 
         Route::patch('tags/{id}/deactivate', [TagController::class, 'deactivate'])
             ->name('tags.deactivate');
+
+        // Products
+        Route::resource('products', ProductController::class)
+            ->names('products');
+
+        Route::patch('products/{id}/activate', [ProductController::class, 'activate'])
+            ->name('products.activate');
+
+        Route::patch('products/{id}/deactivate', [ProductController::class, 'deactivate'])
+            ->name('products.deactivate');
 
         // Users
         Route::resource('users', UserController::class)

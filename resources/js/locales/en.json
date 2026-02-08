@@ -58,7 +58,6 @@
     "pro": "PRO",
     "loading": "Loading...",
     "name": "Name",
-    "email": "Email",
     "phoneNumber": "Phone Number",
     "whatsappNumber": "WhatsApp Number",
     "status": "Status",
@@ -85,6 +84,7 @@
     "email": "Email",
     "phone": "Phone",
     "position": "Position",
+        "products": "Products",
     "editProfile": "Edit profile",
     "accountSettings": "Account settings",
     "support": "Support",
@@ -227,6 +227,7 @@
   "adduser": {
     "productsDescription": "Products Description",
     "userName": "User Name",
+    "sku": "SKU",
     "userNamePlaceholder": "Enter user name",
     "category": "Category",
     "selectCategory": "Select Category",
@@ -271,6 +272,33 @@
     "publishProduct": "Publish Product"
   }
   ,
+  "product": {
+    "title": "Products",
+    "description": "Products Description",
+    "images": "Product Images",
+    "noImage": "No images",
+    "sku": "SKU",
+    "name": "Product Name",
+    "descriptionText": "Description",
+    "descriptionPlaceholder": "Product description (optional)",
+    "unit": "Unit",
+    "unitPlaceholder": "e.g. piece, kg, pack",
+    "stockQuantity": "Stock Quantity",
+    "availabilityStatus": "Availability Status",
+    "selectAvailability": "Select Availability",
+    "inStock": "In Stock",
+    "outOfStock": "Out of Stock",
+    "clickToUpload": "Click to upload",
+    "orDragDrop": "or drag and drop SVG, PNG, JPG or GIF",
+    "draft": "Draft",
+    "publish": "Publish Product",
+    "createdSuccessfully": "Product created successfully",
+    "creationFailed": "Failed to create product",
+    "updatedSuccessfully": "Product updated successfully",
+    "updateFailed": "Failed to update product",
+    "deletedSuccessfully": "Product deleted successfully",
+    "deleteFailed": "Failed to delete product"
+  },
   "categories": {
     "categoryType": "Category type",
     "types": {

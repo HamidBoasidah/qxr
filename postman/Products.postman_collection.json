@@ -1,0 +1,185 @@
+{
+  "info": {
+    "_postman_id": "f7c4f7d2-bc46-4d8e-9c16-7a0c0f4f5a4f",
+    "name": "Products API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "CRUD + helpers for products, including categories/tags for products and activation toggles. Uses Sanctum bearer token."
+  },
+  "item": [
+    {
+      "name": "List products",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Accept", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/products",
+          "host": ["{{base_url}}"],
+          "path": ["api", "products"],
+          "query": [
+            { "key": "search", "value": "" },
+            { "key": "category_id", "value": "" },
+            { "key": "is_active", "value": "" },
+            { "key": "per_page", "value": "10" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Show product",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Accept", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/products/{{product_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["api", "products", "{{product_id}}"]
+        }
+      }
+    },
+    {
+      "name": "Create product",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Accept", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            { "key": "category_id", "value": "1", "type": "text" },
+            { "key": "name", "value": "Test Product", "type": "text" },
+            { "key": "sku", "value": "SKU-123", "type": "text" },
+            { "key": "description", "value": "Description here", "type": "text" },
+            { "key": "unit_name", "value": "pcs", "type": "text" },
+            { "key": "base_price", "value": "50", "type": "text" },
+            { "key": "is_active", "value": "1", "type": "text" },
+            { "key": "tag_ids[]", "value": "1", "type": "text" },
+            { "key": "tag_ids[]", "value": "2", "type": "text" },
+            { "key": "main_image", "type": "file", "src": "" },
+            { "key": "images[]", "type": "file", "src": "" }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/api/products",
+          "host": ["{{base_url}}"],
+          "path": ["api", "products"]
+        }
+      }
+    },
+    {
+      "name": "Update product",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Accept", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            { "key": "_method", "value": "PUT", "type": "text" },
+            { "key": "name", "value": "Updated name", "type": "text" },
+            { "key": "base_price", "value": "75", "type": "text" },
+            { "key": "is_active", "value": "1", "type": "text" },
+            { "key": "tag_ids[]", "value": "1", "type": "text" },
+            { "key": "delete_image_ids[]", "value": "", "type": "text" },
+            { "key": "images[]", "type": "file", "src": "" }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/api/products/{{product_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["api", "products", "{{product_id}}"]
+        }
+      }
+    },
+    {
+      "name": "Delete product",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          { "key": "Accept", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/products/{{product_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["api", "products", "{{product_id}}"]
+        }
+      }
+    },
+    {
+      "name": "Activate product",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Accept", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/products/{{product_id}}/activate",
+          "host": ["{{base_url}}"],
+          "path": ["api", "products", "{{product_id}}", "activate"]
+        }
+      }
+    },
+    {
+      "name": "Deactivate product",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Accept", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/products/{{product_id}}/deactivate",
+          "host": ["{{base_url}}"],
+          "path": ["api", "products", "{{product_id}}", "deactivate"]
+        }
+      }
+    },
+    {
+      "name": "Product categories (type=product)",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Accept", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/products/categories",
+          "host": ["{{base_url}}"],
+          "path": ["api", "products", "categories"]
+        }
+      }
+    },
+    {
+      "name": "Product tags (type=product)",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Accept", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/products/tags",
+          "host": ["{{base_url}}"],
+          "path": ["api", "products", "tags"]
+        }
+      }
+    }
+  ],
+  "event": [],
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8000" },
+    { "key": "token", "value": "" },
+    { "key": "product_id", "value": "1" }
+  ]
+}

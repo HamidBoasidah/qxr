@@ -130,7 +130,9 @@ class ProductController extends Controller
             $product->id,
             $data,
             $request->tagIdsOrNull(),
-            $request->imagesPayloadOrNull()
+            $request->imagesPayloadOrNull(),
+            // delete ids if provided
+            method_exists($request, 'deleteImageIdsOrNull') ? $request->deleteImageIdsOrNull() : null
         );
 
         return redirect()->route('admin.products.index');

@@ -18,7 +18,7 @@ import { usePage } from '@inertiajs/vue3'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
-const currentPageTitle = computed(() => t('products.addProduct'))
+const currentPageTitle = computed(() => t('product.addProduct'))
 
 // استلام البيانات من Inertia
 const categories = computed(() => usePage().props.categories)

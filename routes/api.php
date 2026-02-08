@@ -12,6 +12,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::put('/update-password', [App\Http\Controllers\Api\AuthController::class, 'updatePassword']);
 
+    // Location endpoints: المحافظات - المديريات - المناطق
+    Route::get('locations/governorates', [App\Http\Controllers\Api\LocationController::class, 'governorates']);
+    Route::get('locations/governorates/{id}/districts', [App\Http\Controllers\Api\LocationController::class, 'districts']);
+    Route::get('locations/districts/{id}/areas', [App\Http\Controllers\Api\LocationController::class, 'areas']);
+
     Route::apiResource('addresses', App\Http\Controllers\Api\AddressController::class);
     Route::post('addresses/{address}/activate', [App\Http\Controllers\Api\AddressController::class, 'activate']);
     Route::post('addresses/{address}/deactivate', [App\Http\Controllers\Api\AddressController::class, 'deactivate']);
@@ -24,6 +29,15 @@ Route::middleware('auth:sanctum')->group(function () {
     // Tags
     Route::get('/tags', [App\Http\Controllers\Api\TagController::class, 'index']);
     Route::get('/tags/type/{type}', [App\Http\Controllers\Api\TagController::class, 'byType']);
+
+    // Products helper endpoints (must come before resource to avoid route parameter collision)
+    Route::get('products/categories', [App\Http\Controllers\Api\ProductController::class, 'categories']);
+    Route::get('products/tags', [App\Http\Controllers\Api\ProductController::class, 'tags']);
+
+    // Products resource
+    Route::apiResource('products', App\Http\Controllers\Api\ProductController::class);
+    Route::post('products/{product}/activate', [App\Http\Controllers\Api\ProductController::class, 'activate']);
+    Route::post('products/{product}/deactivate', [App\Http\Controllers\Api\ProductController::class, 'deactivate']);
     
     // Conversations
     Route::get('conversations', [App\Http\Controllers\Api\ConversationController::class, 'index']);

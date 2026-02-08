@@ -28,7 +28,7 @@ class UpdateProductRequest extends FormRequest
             'base_price'   => ['sometimes', 'numeric', 'min:0'],
 
             'is_active'    => ['sometimes', 'boolean'],
-            'main_image'   => ['sometimes', 'nullable', 'string', 'max:255'],
+            'main_image'   => ['sometimes', 'nullable', 'image', 'max:2048'],
 
             // tags (pivot product_tag)
             'tag_ids'      => ['sometimes', 'array'],
@@ -36,8 +36,9 @@ class UpdateProductRequest extends FormRequest
 
             // product_images (مسارات)
             'images'                 => ['sometimes', 'array'],
-            'images.*.path'          => ['required_with:images', 'string', 'max:255'],
-            'images.*.sort_order'    => ['nullable', 'integer', 'min:0'],
+            'images.*'               => ['file', 'image', 'max:2048'],
+            'delete_image_ids'       => ['sometimes', 'array'],
+            'delete_image_ids.*'     => ['integer', 'distinct', 'exists:product_images,id'],
         ];
     }
 
@@ -50,7 +51,6 @@ class UpdateProductRequest extends FormRequest
             'tag_ids.*.exists'   => 'أحد الوسوم غير موجود.',
 
             'images.array'       => 'الصور يجب أن تكون مصفوفة.',
-            'images.*.path.required_with' => 'مسار الصورة مطلوب.',
         ];
     }
 
@@ -92,6 +92,14 @@ class UpdateProductRequest extends FormRequest
      */
     public function imagesPayloadOrNull(): ?array
     {
-        return $this->has('images') ? ($this->input('images') ?? []) : null;
+        return $this->has('images') ? ($this->file('images') ?? []) : null;
+    }
+
+    /**
+     * الصور المراد حذفها (إن تم إرسالها)
+     */
+    public function deleteImageIdsOrNull(): ?array
+    {
+        return $this->has('delete_image_ids') ? ($this->input('delete_image_ids') ?? []) : null;
     }
 }

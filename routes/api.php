@@ -22,10 +22,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('addresses/{address}/deactivate', [App\Http\Controllers\Api\AddressController::class, 'deactivate']);
     Route::post('addresses/{address}/set-default', [App\Http\Controllers\Api\AddressController::class, 'setDefault']);
 
-    // Categories
-    Route::get('/categories', [App\Http\Controllers\Api\CategoryController::class, 'index']);
-    Route::get('/categories/type/{type}', [App\Http\Controllers\Api\CategoryController::class, 'byType']);
-    
     // Tags
     Route::get('/tags', [App\Http\Controllers\Api\TagController::class, 'index']);
     Route::get('/tags/type/{type}', [App\Http\Controllers\Api\TagController::class, 'byType']);
@@ -49,7 +45,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('conversations/{conversation}/messages', [App\Http\Controllers\Api\MessageController::class, 'store']);
 });
 
-
+// Categories
+Route::get('/categories', [App\Http\Controllers\Api\CategoryController::class, 'index']);
+Route::get('/categories/type/{type}', [App\Http\Controllers\Api\CategoryController::class, 'byType']);
+    
 
 Route::post('/login', [App\Http\Controllers\Api\AuthController::class, 'login']);
 Route::post('/logout', [App\Http\Controllers\Api\AuthController::class, 'logout'])->middleware('auth:sanctum');

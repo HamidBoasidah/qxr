@@ -286,7 +286,7 @@ function removeImage() {
 }
 
 function saveProfileImage() {
-  imageForm.post(route('admin.profile.update.post'), {
+  imageForm.post(route('company.profile.update.post'), {
     onSuccess: () => {
       isProfileImageModal.value = false
       success(t('users.userUpdatedSuccessfully'))

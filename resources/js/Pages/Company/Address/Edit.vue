@@ -1,26 +1,27 @@
 <template>
-  <AdminLayout>
+  <CompanyLayout>
     <PageBreadcrumb :pageTitle="currentPageTitle" />
-
-    <CreateAddress
+    <EditAddress
+      :address="address"
       :governorates="governorates"
       :districts="districts"
       :areas="areas"
     />
-  </AdminLayout>
+  </CompanyLayout>
 </template>
 
 <script setup>
-import AdminLayout from '@/Components/layout/AdminLayout.vue'
-import PageBreadcrumb from '@/Components/common/PageBreadcrumb.vue'
-import CreateAddress from '@/Components/admin/address/CreateAddress.vue'
+import CompanyLayout from '@/components/layout/CompanyLayout.vue'
+import PageBreadcrumb from '@/components/common/PageBreadcrumb.vue'
+import EditAddress from '@/components/company/address/EditAddress.vue'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { usePage } from '@inertiajs/vue3'
 
 const { t } = useI18n()
-const currentPageTitle = computed(() => t('addresses.addAddress'))
+const currentPageTitle = computed(() => t('addresses.editAddress'))
 
+const address = computed(() => usePage().props.address)
 const governorates = computed(() => usePage().props.governorates)
 const districts = computed(() => usePage().props.districts)
 const areas = computed(() => usePage().props.areas)

@@ -82,12 +82,9 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request, ProductService $service)
     {
-        /* commit
         try {
-            $user = Auth::user();
-            if (!$user || $user->user_type !== 'company') {
-                $this->throwForbiddenException('يجب أن تكون شركة لإنشاء منتج');
-            }
+            // authorize via policy (checks user_type === 'company')
+            $this->authorize('create', Product::class);
 
             $product = $service->create(
                 $request->validatedPayload(),
@@ -102,10 +99,6 @@ class ProductController extends Controller
         } catch (AppValidationException $e) {
             return $e->render($request);
         }
-        */
-
-        // تم تعطيل إنشاء المنتجات مؤقتًا
-        $this->throwForbiddenException('تم تعطيل عملية الحفظ');
     }
 
     /**
@@ -130,13 +123,11 @@ class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, ProductService $service, ProductRepository $products, $id)
     {
-        /* commit
+    
         try {
             $product = $products->findOrFail($id, $this->baseWith());
-            $user = Auth::user();
-            if (!$user || $user->user_type !== 'company' || (int) $product->company_user_id !== (int) $user->id) {
-                $this->throwForbiddenException('غير مصرح لك بتعديل هذا المنتج');
-            }
+            // authorize via policy (ownership + company type)
+            $this->authorize('update', $product);
 
             $product = $service->update(
                 $product->id,
@@ -155,9 +146,8 @@ class ProductController extends Controller
         } catch (ModelNotFoundException) {
             $this->throwNotFoundException('المنتج المطلوب غير موجود');
         }
-        */
+        
 
-        // تم تعطيل تعديل المنتجات مؤقتًا
         $this->throwForbiddenException('تم تعطيل عملية التعديل');
     }
 
@@ -166,22 +156,19 @@ class ProductController extends Controller
      */
     public function destroy(ProductService $service, ProductRepository $products, $id)
     {
-        /* commit
+        
         try {
             $product = $products->findOrFail($id);
-            $user = Auth::user();
-            if (!$user || $user->user_type !== 'company' || (int) $product->company_user_id !== (int) $user->id) {
-                $this->throwForbiddenException('غير مصرح لك بحذف هذا المنتج');
-            }
+            // authorize via policy
+            $this->authorize('delete', $product);
 
             $service->delete($product->id);
             return $this->deletedResponse('تم حذف المنتج بنجاح');
         } catch (ModelNotFoundException) {
             $this->throwNotFoundException('المنتج المطلوب غير موجود');
         }
-        */
+        
 
-        // تم تعطيل حذف المنتجات مؤقتًا
         $this->throwForbiddenException('تم تعطيل عملية الحذف');
     }
 
@@ -190,13 +177,11 @@ class ProductController extends Controller
      */
     public function activate(ProductService $service, ProductRepository $products, $id)
     {
-        /* commit
+        
         try {
             $product = $products->findOrFail($id, $this->baseWith());
-            $user = Auth::user();
-            if (!$user || $user->user_type !== 'company' || (int) $product->company_user_id !== (int) $user->id) {
-                $this->throwForbiddenException('غير مصرح لك بتفعيل هذا المنتج');
-            }
+            // authorize via policy
+            $this->authorize('activate', $product);
 
             $product = $service->activate($product->id)->load($this->baseWith());
             return $this->activatedResponse(
@@ -206,7 +191,7 @@ class ProductController extends Controller
         } catch (ModelNotFoundException) {
             $this->throwNotFoundException('المنتج المطلوب غير موجود');
         }
-        */
+        
 
         // تم تعطيل تفعيل المنتجات مؤقتًا
         $this->throwForbiddenException('تم تعطيل عملية التفعيل');
@@ -217,13 +202,11 @@ class ProductController extends Controller
      */
     public function deactivate(ProductService $service, ProductRepository $products, $id)
     {
-        /* commit
+        
         try {
             $product = $products->findOrFail($id, $this->baseWith());
-            $user = Auth::user();
-            if (!$user || $user->user_type !== 'company' || (int) $product->company_user_id !== (int) $user->id) {
-                $this->throwForbiddenException('غير مصرح لك بتعطيل هذا المنتج');
-            }
+            // authorize via policy
+            $this->authorize('deactivate', $product);
 
             $product = $service->deactivate($product->id)->load($this->baseWith());
             return $this->deactivatedResponse(
@@ -233,7 +216,7 @@ class ProductController extends Controller
         } catch (ModelNotFoundException) {
             $this->throwNotFoundException('المنتج المطلوب غير موجود');
         }
-        */
+        
 
         // تم تعطيل إلغاء تفعيل المنتجات مؤقتًا
         $this->throwForbiddenException('تم تعطيل عملية إلغاء التفعيل');

@@ -456,7 +456,8 @@ function confirmDelete() {
 function toggleProductStatus(product) {
   const wasActive = product.is_active
   product.is_active = !wasActive
-  const url = route('admin.products.toggle', { id: product.id })
+  const routeName = product.is_active ? 'admin.products.activate' : 'admin.products.deactivate'
+  const url = route(routeName, { id: product.id })
   router.patch(url, {}, {
     preserveState: true,
     preserveScroll: true,

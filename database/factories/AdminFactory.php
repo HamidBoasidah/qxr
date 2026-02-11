@@ -15,14 +15,17 @@ class AdminFactory extends Factory
 
     public function definition(): array
     {
+        $arabic = \Faker\Factory::create('ar_SA');
+
         return [
-            'first_name' => fake()->firstName(),
-            'last_name' => fake()->lastName(),
-            'email' => fake()->unique()->safeEmail(),
+            // explicitly generate Arabic first/last names
+            'first_name' => $arabic->firstName(),
+            'last_name' => $arabic->lastName(),
+            'email' => $arabic->unique()->safeEmail(),
             'avatar' => null,
             'phone_number' => fake()->numerify('5########'),
             'whatsapp_number' => fake()->numerify('7########'),
-            'address' => fake()->address(),
+            'address' => $arabic->address(),
             'password' => static::$password ??= Hash::make('password'),
             'facebook' => 'https://facebook.com/' . fake()->userName(),
             'x_url' => 'https://x.com/' . fake()->userName(),

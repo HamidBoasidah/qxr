@@ -3,7 +3,13 @@
 namespace App\Providers;
 
 use App\Models\Product;
+use App\Models\Conversation;
+use App\Models\Offer;
+use App\Models\Address;
 use App\Policies\ProductPolicy;
+use App\Policies\ConversationPolicy;
+use App\Policies\OfferPolicy;
+use App\Policies\AddressPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -15,6 +21,9 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         Product::class => ProductPolicy::class,
+        Conversation::class => ConversationPolicy::class,
+        Offer::class => OfferPolicy::class,
+        Address::class => AddressPolicy::class,
     ];
 
     /**

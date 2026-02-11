@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
             ProductSeeder::class,
         ]);
 
-        \App\Models\Category::factory()->count(58)->create();
-        \App\Models\Tag::factory()->count(12)->create();
+        // seed categories and tags with Arabic data (do not rely on factories)
+        $this->call([CategorySeeder::class, TagSeeder::class]);
     }
 }

@@ -23,10 +23,13 @@ class UserFactory extends Factory
 
     public function definition(): array
     {
+        $arabic = \Faker\Factory::create('ar_SA');
+
         return [
-            'first_name' => fake()->firstName(),
-            'last_name' => fake()->lastName(),
-            'email' => fake()->unique()->safeEmail(),
+            // Explicitly use an Arabic Faker generator for first/last names
+            'first_name' => $arabic->firstName(),
+            'last_name' => $arabic->lastName(),
+            'email' => $arabic->unique()->safeEmail(),
             'avatar' => null,
             'phone_number' => fake()->numerify('5########'),
             'whatsapp_number' => fake()->numerify('7########'),

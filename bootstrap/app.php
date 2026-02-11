@@ -10,7 +10,8 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: [
             __DIR__ . '/../routes/web.php',
-            __DIR__ . '/../routes/admin.php'
+            __DIR__ . '/../routes/admin.php',
+            __DIR__ . '/../routes/company.php'
         ],
         api: __DIR__.'/../routes/api.php',
         commands: __DIR__.'/../routes/console.php',
@@ -28,6 +29,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
             'guest' =>  \App\Http\Middleware\RedirectIfAuthenticated::class,
             'auth' =>  	\App\Http\Middleware\Authenticate::class,
+            'company' => \App\Http\Middleware\EnsureUserIsCompany::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

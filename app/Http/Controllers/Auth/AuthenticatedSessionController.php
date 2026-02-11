@@ -33,7 +33,20 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        $user = Auth::guard('web')->user();
+        
+        // Check user type and redirect accordingly
+        if ($user->user_type === 'company') {
+            return redirect()->intended(route('company.dashboard', absolute: false));
+        }
+        
+        // If not a company user, logout and redirect back with error
+        Auth::guard('web')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        
+        return redirect()->route('login')
+            ->withErrors(['email' => 'This account is not a company account.']);
     }
 
     /**

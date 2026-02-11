@@ -16,6 +16,7 @@ class MessageFactory extends Factory
         return [
             'conversation_id' => Conversation::factory(),
             'sender_id' => User::factory(),
+            // Arabic sentence for message body
             'body' => $this->faker->sentence(),
             'type' => $this->faker->randomElement(['text', 'attachment']),
         ];

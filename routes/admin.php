@@ -109,18 +109,11 @@ Route::middleware('auth:admin')
         Route::patch('areas/{id}/deactivate', [AreaController::class, 'deactivate'])
             ->name('areas.deactivate');
 
-        // Addresses
+        // Addresses (admin: read-only)
         Route::resource('addresses', AddressController::class)
+            ->only(['index', 'show'])
             ->names('addresses');
-
-        Route::patch('addresses/{id}/activate', [AddressController::class, 'activate'])
-            ->name('addresses.activate');
-
-        Route::patch('addresses/{id}/deactivate', [AddressController::class, 'deactivate'])
-            ->name('addresses.deactivate');
-
-        Route::patch('addresses/{id}/set-default', [AddressController::class, 'setDefault'])
-            ->name('addresses.setDefault');
+            
 
         // Categories
         Route::resource('categories', CategoryController::class)

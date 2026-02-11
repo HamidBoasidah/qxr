@@ -10,13 +10,18 @@ class AreaFactory extends Factory
 
     public function definition()
     {
+        $district = \App\Models\District::inRandomOrder()->first();
+        $districtId = $district?->id ?: \App\Models\District::factory()->create()->id;
+
+        $arabicArea = 'حي ' . ($this->faker->unique()->word ?? $this->faker->unique()->streetName);
+
         return [
-            'name_ar' => $this->faker->citySuffix . ' عربي',
-            'name_en' => $this->faker->city,
+            'name_ar' => $arabicArea,
+            'name_en' => $this->faker->unique()->word,
             'is_active' => true,
-            'district_id' => \App\Models\District::inRandomOrder()->first()?->id ?? 1,
-            'created_by' => 1,
-            'updated_by' => 1,
+            'district_id' => $districtId,
+            'created_by' => \App\Models\User::inRandomOrder()->first()?->id,
+            'updated_by' => \App\Models\User::inRandomOrder()->first()?->id,
         ];
     }
 }

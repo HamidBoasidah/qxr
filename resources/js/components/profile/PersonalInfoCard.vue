@@ -9,6 +9,16 @@
 
           <div class="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7 2xl:gap-x-32">
             <div>
+              <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">{{ t('profile.labels.companyName') }}</p>
+              <p class="text-sm font-medium text-gray-800 dark:text-white/90">{{ user?.company_profile?.company_name || '-' }}</p>
+            </div>
+
+            <div>
+              <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">{{ t('profile.labels.category') }}</p>
+              <p class="text-sm font-medium text-gray-800 dark:text-white/90">{{ user?.company_profile?.category?.name || '-' }}</p>
+            </div>
+
+            <div>
               <p class="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">{{ t('profile.labels.firstName') }}</p>
               <p class="text-sm font-medium text-gray-800 dark:text-white/90">{{ user?.first_name || '-' }}</p>
             </div>
@@ -96,6 +106,45 @@
           <form class="flex flex-col">
             <div class="custom-scrollbar h-[458px] overflow-y-auto p-2">
               <div>
+                <h5 class="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
+                  {{ t('profile.companyInformation') }}
+                </h5>
+
+                <div class="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
+                  <div class="col-span-2 lg:col-span-1">
+                    <label
+                      class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
+                    >
+                      {{ t('profile.labels.companyName') }}
+                    </label>
+                    <input
+                      type="text"
+                      v-model="form.company_name"
+                      class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent bg-none px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                      :placeholder="t('profile.labels.companyName')"
+                      :class="{ 'border-red-500 focus:border-red-500': form.errors.company_name }"
+                    />
+                    <p v-if="form.errors.company_name" class="mt-1 text-sm text-red-600">{{ form.errors.company_name }}</p>
+                  </div>
+
+                  <div class="col-span-2 lg:col-span-1">
+                    <label
+                      class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
+                    >
+                      {{ t('profile.labels.category') }}
+                    </label>
+                    <input
+                      type="text"
+                      v-model="form.category_id"
+                      class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent bg-none px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                      :placeholder="t('profile.labels.category')"
+                      :class="{ 'border-red-500 focus:border-red-500': form.errors.category_id }"
+                    />
+                    <p v-if="form.errors.category_id" class="mt-1 text-sm text-red-600">{{ form.errors.category_id }}</p>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-7">
                 <h5 class="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
                   {{ t('profile.socialLinks') }}
                 </h5>
@@ -295,6 +344,8 @@ const isProfileInfoModal = ref(false)
 
 // استخدام useForm بدلاً من reactive للحصول على إدارة الأخطاء
 const form = useForm({
+  company_name: props.user?.company_profile?.company_name || '',
+  category_id: props.user?.company_profile?.category_id || '',
   first_name: props.user?.first_name || '',
   last_name: props.user?.last_name || '',
   email: props.user?.email || '',
@@ -307,7 +358,7 @@ const form = useForm({
 })
 
 const saveProfile = () => {
-  form.patch(route('admin.profile.update'), {
+  form.patch(route('company.profile.update'), {
     onSuccess: () => {
       // إغلاق النافذة فقط عند النجاح
       isProfileInfoModal.value = false

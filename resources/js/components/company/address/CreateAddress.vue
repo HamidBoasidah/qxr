@@ -1,5 +1,5 @@
 <template>
-  <form class="space-y-6" @submit.prevent="update">
+  <form class="space-y-6" @submit.prevent="create">
     <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
       <div class="border-b border-gray-200 px-6 py-4 dark:border-gray-800">
         <h2 class="text-lg font-medium text-gray-800 dark:text-white">
@@ -39,7 +39,7 @@
             <p v-if="form.errors.address" class="mt-1 text-sm text-error-500">{{ form.errors.address }}</p>
           </div>
 
-          <div >
+          <div>
             <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
               {{ t('districts.selectGovernorate') }}
             </label>
@@ -122,9 +122,6 @@
 
 
 
-          <!-- Removed street/building/floor/apartment fields -->
-
-          
 
         </div>
       </div>
@@ -135,57 +132,59 @@
         <h2 class="text-lg font-medium text-gray-800 dark:text-white">{{ t('common.status') }}</h2>
       </div>
       <div class="p-4 sm:p-6">
-        <div class="flex items-center gap-6">
-          <label for="toggle-active" class="flex cursor-pointer select-none items-center gap-3 text-sm font-medium text-gray-700 dark:text-gray-400">
-            <div class="relative">
-              <input type="checkbox" id="toggle-active" class="sr-only" v-model="form.is_active" />
-              <div class="block h-6 w-11 rounded-full" :class="form.is_active ? 'bg-brand-500 dark:bg-brand-500' : 'bg-gray-200 dark:bg-white/10'"></div>
-              <div :class="form.is_active ? 'translate-x-full' : 'translate-x-0'" class="absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow-theme-sm duration-300 ease-linear"></div>
-            </div>
-            <span
-              class="inline-flex items-center justify-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium"
-              :class="{
-                'bg-green-50 text-green-600 dark:bg-green-500/15 dark:text-green-500': form.is_active,
-                'bg-error-50 text-error-600 dark:bg-error-500/15 dark:text-error-500': !form.is_active,
-              }"
-            >
-              {{ form.is_active ? t('common.active') : t('common.inactive') }}
-            </span>
-          </label>
-
-          <label for="is_default" class="flex gap-2 cursor-pointer select-none items-center text-sm font-medium text-gray-700 dark:text-gray-400">
-            <div class="relative">
-              <input type="checkbox" id="is_default" v-model="form.is_default" class="sr-only" />
-              <div
-                :class="form.is_default ? 'border-brand-500 bg-brand-500' : 'bg-transparent border-gray-300 dark:border-gray-700'"
-                class="flex h-5 w-5 items-center justify-center rounded-md border-[1.25px] hover:border-brand-500 dark:hover:border-brand-500"
-              >
-                <span :class="form.is_default ? '' : 'opacity-0'">
-                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M11.6666 3.5L5.24992 9.91667L2.33325 7" stroke="white" stroke-width="1.94437" stroke-linecap="round" stroke-linejoin="round" />
-                  </svg>
-                </span>
+          <div class="flex items-center gap-6">
+            <label for="toggle-active" class="flex cursor-pointer select-none items-center gap-3 text-sm font-medium text-gray-700 dark:text-gray-400">
+              <div class="relative">
+                <input type="checkbox" id="toggle-active" class="sr-only" v-model="form.is_active" />
+                <div class="block h-6 w-11 rounded-full" :class="form.is_active ? 'bg-brand-500 dark:bg-brand-500' : 'bg-gray-200 dark:bg-white/10'"></div>
+                <div :class="form.is_active ? 'translate-x-full' : 'translate-x-0'" class="absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow-theme-sm duration-300 ease-linear"></div>
               </div>
-            </div>
-            {{ t('addresses.setAsDefault') }}
-          </label>
-        </div>
+              <span
+                class="inline-flex items-center justify-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium"
+                :class="{
+                  'bg-green-50 text-green-600 dark:bg-green-500/15 dark:text-green-500': form.is_active,
+                  'bg-error-50 text-error-600 dark:bg-error-500/15 dark:text-error-500': !form.is_active,
+                }"
+              >
+                {{ form.is_active ? t('common.active') : t('common.inactive') }}
+              </span>
+            </label>
+
+            <label for="is_default" class="flex gap-2 cursor-pointer select-none items-center text-sm font-medium text-gray-700 dark:text-gray-400">
+              <div class="relative">
+                <input type="checkbox" id="is_default" v-model="form.is_default" class="sr-only" />
+                <div
+                  :class="form.is_default ? 'border-brand-500 bg-brand-500' : 'bg-transparent border-gray-300 dark:border-gray-700'"
+                  class="flex h-5 w-5 items-center justify-center rounded-md border-[1.25px] hover:border-brand-500 dark:hover:border-brand-500"
+                >
+                  <span :class="form.is_default ? '' : 'opacity-0'">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M11.6666 3.5L5.24992 9.91667L2.33325 7" stroke="white" stroke-width="1.94437" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </span>
+                </div>
+              </div>
+              {{ t('addresses.setAsDefault') }}
+            </label>
+          </div>
       </div>
     </div>
 
     <div class="flex flex-col gap-3 sm:flex-row sm:justify-end">
       <Link
-        :href="route('admin.addresses.index')"
+        :href="route('company.addresses.index')"
         class="shadow-theme-xs inline-flex items-center justify-center gap-2 rounded-lg bg-white px-4 py-3 text-sm font-medium text-gray-700 ring-1 ring-gray-300 transition hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-white/[0.03]"
       >
         {{ t('buttons.backToList') }}
       </Link>
 
       <button
-        @click="update"
+        type="submit"
         class="bg-brand-500 shadow-theme-xs hover:bg-brand-600 inline-flex items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-medium text-white transition"
+        :class="{ 'cursor-not-allowed opacity-70': form.processing }"
+        :disabled="form.processing"
       >
-         {{ t('buttons.update') }}
+        {{ form.processing ? t('common.loading') : t('buttons.create') }}
       </button>
     </div>
   </form>
@@ -201,25 +200,22 @@ const { t, locale } = useI18n()
 const { success, error } = useNotifications()
 
 const props = defineProps({
-  address: { type: Object, required: true },
   governorates: { type: Array, required: true },
   districts: { type: Array, required: false, default: () => [] },
   areas: { type: Array, required: false, default: () => [] },
 })
 
+// expose reactive refs for template and script
 const { governorates, districts, areas } = toRefs(props)
 
 const form = useForm({
-  _method: 'PUT',
-  label: props.address.label ?? '',
-  address: props.address.address ?? '',
-  governorate_id: props.address.governorate_id ?? '',
-  district_id: props.address.district_id ?? '',
-  area_id: props.address.area_id ?? '',
-  street: props.address.street ?? '',
-  // removed building/floor/apartment fields
-  is_active: !!props.address.is_active,
-  is_default: !!props.address.is_default,
+  label: '',
+  address: '',
+  governorate_id: '',
+  district_id: '',
+  area_id: '',
+  is_active: true,
+  is_default: false,
 })
 
 const availableDistricts = computed(() => {
@@ -247,13 +243,13 @@ watch(
   }
 )
 
-function update() {
-  form.post(route('admin.addresses.update', props.address.id), {
+function create() {
+  form.post(route('company.addresses.store'), {
     onSuccess: () => {
-      success(t('addresses.addressUpdatedSuccessfully'))
+      success(t('addresses.addressCreatedSuccessfully'))
     },
     onError: () => {
-      error(t('addresses.addressUpdateFailed'))
+      error(t('addresses.addressCreationFailed'))
     },
     preserveScroll: true,
   })

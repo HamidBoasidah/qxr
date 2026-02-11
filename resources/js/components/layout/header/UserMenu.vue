@@ -105,7 +105,12 @@ const closeDropdown = () => {
 const signOut = () => {
   showGlobalLoading()
   closeDropdown()
-  router.post(route('admin.logout'))
+  
+  // Determine logout route based on current URL
+  const currentPath = window.location.pathname
+  const logoutRoute = currentPath.startsWith('/company') ? 'company.logout' : 'admin.logout'
+  
+  router.post(route(logoutRoute))
 }
 
 const handleClickOutside = (event) => {

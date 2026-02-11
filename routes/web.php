@@ -18,7 +18,6 @@ Route::post('/locale', LocaleController::class)->name('locale.set')->middleware(
 // --- BREEZE MERGED CONTENT START ---
 // Note: Duplicate imports and routes commented out to prevent conflicts.
 
-use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 // use Illuminate\Support\Facades\Route; // Already imported
 // use Inertia\Inertia; // Already imported
@@ -40,11 +39,7 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 */
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
+// Profile routes removed - handled by company routes
 
 require __DIR__.'/auth.php';
 

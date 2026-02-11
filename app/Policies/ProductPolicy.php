@@ -2,53 +2,52 @@
 
 namespace App\Policies;
 
-use App\Models\Product;
 use App\Models\User;
+use App\Models\Product;
 
 class ProductPolicy
 {
     /**
-     * يجب أن يكون المستخدم شركة حتى ينشئ منتجًا.
-     */
-    public function create(?User $user): bool
-    {
-        return $user?->user_type === 'company';
-    }
-
-    /**
-     * التعديل مسموح فقط لصاحب المنتج (الشركة التي أنشأته).
+     * Determine if the user can update the product.
      */
     public function update(User $user, Product $product): bool
     {
-        return $this->ownsProduct($user, $product);
+        return $user->id === $product->company_user_id 
+            && $user->user_type === 'company';
     }
-
+    
     /**
-     * الحذف مسموح فقط لصاحب المنتج.
+     * Determine if the user can delete the product.
      */
     public function delete(User $user, Product $product): bool
     {
-        return $this->ownsProduct($user, $product);
+        return $user->id === $product->company_user_id 
+            && $user->user_type === 'company';
     }
 
     /**
-     * التفعيل مسموح لصاحب المنتج.
+     * Determine if the user can create products.
+     */
+    public function create(User $user): bool
+    {
+        return $user && $user->user_type === 'company';
+    }
+
+    /**
+     * Determine if the user can activate the product.
      */
     public function activate(User $user, Product $product): bool
     {
-        return $this->ownsProduct($user, $product);
+        return $user->id === $product->company_user_id
+            && $user->user_type === 'company';
     }
 
     /**
-     * التعطيل مسموح لصاحب المنتج.
+     * Determine if the user can deactivate the product.
      */
     public function deactivate(User $user, Product $product): bool
     {
-        return $this->ownsProduct($user, $product);
-    }
-
-    protected function ownsProduct(User $user, Product $product): bool
-    {
-        return $user->user_type === 'company' && (int) $product->company_user_id === (int) $user->id;
+        return $user->id === $product->company_user_id
+            && $user->user_type === 'company';
     }
 }

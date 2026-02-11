@@ -38,7 +38,8 @@
     "deleteAreaConfirmation": "هل أنت متأكد أنك تريد حذف هذه المنطقة؟",
     "deleteRoleConfirmation": "هل أنت متأكد أنك تريد حذف هذا الدور؟",
     "deleteTagConfirmation": "هل أنت متأكد أنك تريد حذف هذا الوسم؟",
-    "deleteCategoryConfirmation": "هل أنت متأكد أنك تريد حذف هذا القسم",
+    "deleteCategoryConfirmation": "هل أنت متأكد أنك تريد حذف هذا القسم؟",
+    "deleteAddressConfirmation": "هل أنت متأكد أنك تريد حذف هذا العنوان؟",
     "deleteProductConfirmation": "هل أنت متأكد أنك تريد حذف هذا المنتج؟",
     "notAuthorized": "غير مصرح لك"
   },

@@ -21,7 +21,7 @@ class AddressFactory extends Factory
 
         return [
             'user_id' => User::factory(),
-            'label' => $this->faker->randomElement(['home', 'work', 'other']),
+            'label' => $this->faker->randomElement(['المنزل', 'العمل', 'أخرى']),
             'address' => $this->faker->address,
             'governorate_id' => $gov?->id,
             'district_id' => $district?->id,

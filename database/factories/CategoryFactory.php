@@ -11,8 +11,10 @@ class CategoryFactory extends Factory
 
     public function definition()
     {
+        $name = $this->faker->unique()->word;
         return [
-            'name' => $this->faker->unique()->word,
+            // name will be generated in Arabic because faker_locale is set to Arabic
+            'name' => $name,
             'slug' => $this->faker->unique()->slug,
             'category_type' => $this->faker->randomElement(['company','customer','product']),
             'created_by' => null,

@@ -35,6 +35,11 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $user = $request->user();
+        
+        // Check if user exists and has Spatie methods (admins only)
+        $hasSpatie = $user && method_exists($user, 'getAllPermissions');
+        
         return [
             ...parent::share($request),
 
@@ -42,12 +47,12 @@ class HandleInertiaRequests extends Middleware
             'dir'    => fn () => app()->getLocale() === 'ar' ? 'rtl' : 'ltr',
 
             'auth' => [
-                'user' => fn () => $request->user()?->only(['id', 'name', 'email' , 'avatar' , 'locale']),
-                'permissions' => fn () => $request->user()
-                    ? $request->user()->getAllPermissions()->pluck('name')->all()
+                'user' => fn () => $user?->only(['id', 'name', 'email' , 'avatar' , 'locale']),
+                'permissions' => fn () => $hasSpatie
+                    ? $user->getAllPermissions()->pluck('name')->all()
                     : [],
-                'roles' => fn () => $request->user()
-                    ? $request->user()->getRoleNames()->all()
+                'roles' => fn () => $hasSpatie
+                    ? $user->getRoleNames()->all()
                     : [],
             ],
         ];

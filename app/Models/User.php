@@ -88,6 +88,25 @@ class User extends Authenticatable
         return $this->hasOne(CompanyProfile::class, 'user_id');
     }
 
+    // Products (for company users)
+    public function products(): HasMany
+    {
+        return $this->hasMany(Product::class, 'company_user_id');
+    }
+
+    // Offers (for company users)
+    public function offers(): HasMany
+    {
+        return $this->hasMany(Offer::class, 'company_user_id');
+    }
+
+    // Conversations (as participant)
+    public function conversations()
+    {
+        return $this->belongsToMany(Conversation::class, 'conversation_participants')
+            ->withTimestamps();
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Accessors / Helpers

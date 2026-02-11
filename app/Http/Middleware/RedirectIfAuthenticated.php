@@ -5,7 +5,6 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
 use Symfony\Component\HttpFoundation\Response;
 
 class RedirectIfAuthenticated
@@ -38,22 +37,28 @@ class RedirectIfAuthenticated
     /**
      * Get the path the user should be redirected to when they are authenticated.
      */
-    protected function redirectTo(Request $request , String $guard = 'web'): ?string
+    protected function redirectTo(Request $request, ?string $guard = 'web'): ?string
     {
         return static::$redirectToCallback
             ? call_user_func(static::$redirectToCallback, $request)
-            : $this->defaultRedirectUri($guard);
+            : $this->defaultRedirectUri($guard ?? 'web');
     }
 
     /**
      * Get the default URI the user should be redirected to when they are authenticated.
      */
-    protected function defaultRedirectUri($guard): string
+    protected function defaultRedirectUri(?string $guard): string
     {
-        if($guard == 'admin'){
+        if ($guard === 'admin') {
             return route('admin.dashboard');
         }
-        if($guard == 'web'){
+        
+        // For web guard or null, check user type
+        if ($guard === 'web' || $guard === null) {
+            $user = Auth::guard('web')->user();
+            if ($user && $user->user_type === 'company') {
+                return route('company.dashboard');
+            }
             return route('dashboard');
         }
 

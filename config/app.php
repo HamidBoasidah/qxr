@@ -82,7 +82,9 @@ return [
 
     'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
 
-    'faker_locale' => env('APP_FAKER_LOCALE', 'en_US'),
+    // Default Faker locale for generating fake data. Set to Arabic (Saudi) by default
+    // so factories produce Arabic text. You can override with APP_FAKER_LOCALE in .env
+    'faker_locale' => env('APP_FAKER_LOCALE', 'ar_SA'),
 
     /*
     |--------------------------------------------------------------------------

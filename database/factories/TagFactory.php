@@ -11,7 +11,7 @@ class TagFactory extends Factory
 
     public function definition()
     {
-        $name = $this->faker->unique()->word;
+        $name = $this->faker->unique()->word; // generated in Arabic locale
         return [
             'name' => $name,
             'slug' => \Illuminate\Support\Str::slug($name),

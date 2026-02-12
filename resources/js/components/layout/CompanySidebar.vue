@@ -215,6 +215,7 @@ import {
   AddressIcon,
   TagIcon,
   ProductIcon,
+  ChatIcon,
 } from "../../icons"
 import { useSidebar } from "@/composables/useSidebar"
 
@@ -245,6 +246,11 @@ const menuGroups = computed(() => [
         path: route('company.profile'),
       },
       {
+        icon: ChatIcon,
+        name: t('menu.chat'),
+        path: route('company.chat.conversations.index'),
+      },
+      {
         icon: ProductIcon,
         name: t('menu.products'),
         path: route('company.products.index'),
@@ -258,7 +264,13 @@ const menuGroups = computed(() => [
   },
 ])
 
-const isActive = (path) => page.url === path;
+const isActive = (path) => {
+  // For chat routes, check if current URL starts with /company/chat
+  if (path === route('company.chat.conversations.index')) {
+    return page.url.startsWith('/company/chat');
+  }
+  return page.url === path;
+};
 
 const toggleSubmenu = (groupIndex, itemIndex) => {
   const key = `${groupIndex}-${itemIndex}`;

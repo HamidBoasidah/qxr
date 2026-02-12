@@ -55,7 +55,7 @@ class MessageRepository extends BaseRepository
 
     /**
      * Get paginated messages with cursor pagination
-     * Orders by created_at descending (newest first)
+     * Orders by created_at ascending (oldest first) for chat display
      * Eager loads sender and attachments to avoid N+1 queries
      *
      * @param int $conversationId
@@ -68,8 +68,8 @@ class MessageRepository extends BaseRepository
         return $this->model->newQuery()
             ->where('conversation_id', $conversationId)
             ->with($this->defaultWith)
-            ->orderBy('created_at', 'desc')
-            ->orderBy('id', 'desc') // Secondary sort for consistency
+            ->orderBy('created_at', 'asc')
+            ->orderBy('id', 'asc') // Secondary sort for consistency
             ->cursorPaginate($perPage, ['*'], 'cursor', $cursor);
     }
 }

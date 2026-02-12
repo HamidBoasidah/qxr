@@ -104,8 +104,11 @@ class ChatService
             // Store attachments if present
             if (!empty($uploadedFiles)) {
                 $this->attachments->storeAttachments($message->id, $uploadedFiles);
-                // Reload message with attachments
+                // Reload message with attachments and sender
                 $message = $message->fresh(['sender', 'attachments']);
+            } else {
+                // Reload message with sender
+                $message = $message->fresh(['sender']);
             }
 
             return MessageDTO::fromModel($message);

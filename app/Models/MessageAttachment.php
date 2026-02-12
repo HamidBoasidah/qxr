@@ -48,7 +48,8 @@ class MessageAttachment extends Model
      */
     public function getDownloadUrl(): string
     {
-        return route('api.attachments.download', ['attachment' => $this->id]);
+        // Return the public storage URL
+        return Storage::disk($this->disk)->url($this->path);
     }
 
     /**

@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 use App\Services\ProductService;
 use App\Models\Product;
+use App\Models\User;
 use App\Models\Category;
 use App\Models\Tag;
 
@@ -29,7 +30,11 @@ class ProductController extends Controller
         $perPage = (int) $request->input('per_page', 10);
 
         // Filter products by authenticated company user
+        /** @var User|null $user */
         $user = Auth::guard('web')->user();
+        if (!$user) {
+            abort(403);
+        }
         $products = $user->products()
             ->with(['category', 'tags', 'images'])
             ->paginate($perPage);

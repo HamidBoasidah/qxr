@@ -28,51 +28,11 @@ class AddressController extends Controller
         ]);
     }
 
-    public function create()
-    {
-        abort(404);
-    }
-
-    public function store(Request $request, AddressService $addressService)
-    {
-        abort(404);
-    }
-
     public function show(Address $address)
     {
         $dto = AddressDTO::fromModel($address)->toArray();
         return Inertia::render('Admin/Address/Show', [
             'address' => $dto,
         ]);
-    }
-
-    public function edit(Address $address)
-    {
-        abort(404);
-    }
-
-    public function update(Request $request, AddressService $addressService, Address $address)
-    {
-        abort(404);
-    }
-
-    public function destroy(AddressService $addressService, Address $address)
-    {
-        abort(404);
-    }
-
-    public function activate(AddressService $addressService, $id)
-    {
-        abort(404);
-    }
-
-    public function deactivate(AddressService $addressService, $id)
-    {
-        abort(404);
-    }
-
-    public function setDefault(AddressService $addressService, $id)
-    {
-        abort(404);
     }
 }

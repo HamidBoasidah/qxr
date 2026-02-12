@@ -6,6 +6,7 @@
     "dashboard_short": "لوحة التحكم",
       "products": "المنتجات",
     "profile": "الملف الشخصي",
+    "chat": "المحادثات",
     "users": "المستخدمون",
     "admins": "المشرفون",
     "categories": "الاقسام",
@@ -46,6 +47,17 @@
   "charts": {
     "lineChart": "مخطط خطي",
     "barChart": "مخطط شريطي"
+  },
+  "time": {
+    "justNow": "الآن",
+    "minutesAgo": "منذ {count} دقيقة | منذ {count} دقائق",
+    "hoursAgo": "منذ {count} ساعة | منذ {count} ساعات",
+    "daysAgo": "منذ {count} يوم | منذ {count} أيام"
+  },
+  "pagination": {
+    "previous": "السابق",
+    "next": "التالي",
+    "pageOf": "صفحة {current} من {total}"
   },
   "common": {
     "switchToRTL": "تحويل إلى الاتجاه من اليمين لليسار",
@@ -498,6 +510,20 @@
       "signUp": "إنشاء حساب",
       "tagline": "كود براينس لانكتب كودا، نحن نبني حلولاً."
     }
+  },
+
+  "chat": {
+    "searchConversations": "ابحث في المحادثات...",
+    "noConversationsFound": "لم يتم العثور على محادثات.",
+    "noConversations": "لا توجد محادثات.",
+    "noMessages": "لا توجد رسائل.",
+    "selectConversation": "اختر محادثة لبدء الدردشة",
+    "unknownUser": "مستخدم غير معروف",
+    "typeMessage": "اكتب رسالة...",
+    "maxFilesExceeded": "تجاوز عدد الملفات المسموح به.",
+    "fileTooLarge": "حجم الملف كبير جدًا.",
+    "sendError": "فشل إرسال الرسالة. حاول مرة أخرى.",
+    "attachment": "مرفق"
   },
 
   "addresses": {

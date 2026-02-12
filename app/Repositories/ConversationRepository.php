@@ -102,7 +102,7 @@ class ConversationRepository extends BaseRepository
             ->with([
                 'participants',
                 'messages' => function ($query) {
-                    $query->latest()->limit(1);
+                    $query->with('sender')->latest()->limit(1);
                 }
             ])
             ->orderBy('conversations.updated_at', 'desc');

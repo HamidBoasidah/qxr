@@ -37,6 +37,12 @@ class ConversationListDTO extends BaseDTO
         // Get the other participant (not the current user)
         $otherParticipant = $conversation->participants->firstWhere('id', '!=', $currentUserId);
 
+        // Build full name from first_name and last_name
+        $fullName = null;
+        if ($otherParticipant) {
+            $fullName = trim(($otherParticipant->first_name ?? '') . ' ' . ($otherParticipant->last_name ?? ''));
+        }
+
         // Get last message
         $lastMessage = null;
         if ($conversation->relationLoaded('messages') && $conversation->messages->isNotEmpty()) {
@@ -55,7 +61,7 @@ class ConversationListDTO extends BaseDTO
             id: $conversation->id,
             other_participant: [
                 'id' => $otherParticipant?->id,
-                'full_name' => $otherParticipant ? trim($otherParticipant->first_name . ' ' . $otherParticipant->last_name) : null,
+                'full_name' => $fullName,
                 'avatar' => $otherParticipant?->avatar,
             ],
             last_message: $lastMessage,

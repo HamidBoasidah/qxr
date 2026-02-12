@@ -8,8 +8,7 @@ class MessageDTO extends BaseDTO
 {
     public int $id;
     public int $conversation_id;
-    public int $sender_id;
-    public string $sender_name;
+    public array $sender;
     public ?string $body;
     public string $type;
     public array $attachments;
@@ -18,8 +17,7 @@ class MessageDTO extends BaseDTO
     public function __construct(
         int $id,
         int $conversation_id,
-        int $sender_id,
-        string $sender_name,
+        array $sender,
         ?string $body,
         string $type,
         array $attachments,
@@ -27,8 +25,7 @@ class MessageDTO extends BaseDTO
     ) {
         $this->id = $id;
         $this->conversation_id = $conversation_id;
-        $this->sender_id = $sender_id;
-        $this->sender_name = $sender_name;
+        $this->sender = $sender;
         $this->body = $body;
         $this->type = $type;
         $this->attachments = $attachments;
@@ -45,11 +42,21 @@ class MessageDTO extends BaseDTO
             return AttachmentDTO::fromModel($attachment);
         })->values()->all();
 
+        // Get sender information
+        $sender = $message->sender;
+        $senderName = '';
+        if ($sender) {
+            $senderName = trim(($sender->first_name ?? '') . ' ' . ($sender->last_name ?? ''));
+        }
+
         return new self(
             id: $message->id,
             conversation_id: $message->conversation_id,
-            sender_id: $message->sender_id,
-            sender_name: $message->sender->name ?? '',
+            sender: [
+                'id' => $message->sender_id,
+                'name' => $senderName,
+                'avatar' => $sender?->avatar,
+            ],
             body: $message->body,
             type: $message->type,
             attachments: $attachments,
@@ -65,8 +72,7 @@ class MessageDTO extends BaseDTO
         return [
             'id' => $this->id,
             'conversation_id' => $this->conversation_id,
-            'sender_id' => $this->sender_id,
-            'sender_name' => $this->sender_name,
+            'sender' => $this->sender,
             'body' => $this->body,
             'type' => $this->type,
             'attachments' => array_map(fn($att) => $att->toArray(), $this->attachments),

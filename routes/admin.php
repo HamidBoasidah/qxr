@@ -144,13 +144,9 @@ Route::middleware('auth:admin')
 
         // Products
         Route::resource('products', ProductController::class)
+            ->only(['index', 'show'])    
             ->names('products');
 
-        Route::patch('products/{id}/activate', [ProductController::class, 'activate'])
-            ->name('products.activate');
-
-        Route::patch('products/{id}/deactivate', [ProductController::class, 'deactivate'])
-            ->name('products.deactivate');
 
         // Users
         Route::resource('users', UserController::class)

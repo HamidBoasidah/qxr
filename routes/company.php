@@ -7,6 +7,8 @@ use App\Http\Controllers\Company\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\Company\Auth\PasswordController;
 use App\Http\Controllers\Company\Auth\VerifyEmailController;
 use App\Http\Controllers\Company\AddressController;
+use App\Http\Controllers\Company\ConversationController;
+use App\Http\Controllers\Company\MessageController;
 use App\Http\Controllers\Company\UserController;
 use App\Http\Controllers\Company\ProductController;
 use App\Http\Controllers\Company\Auth\ProfileController;
@@ -72,6 +74,30 @@ Route::middleware(['auth:web', 'company'])
 
         Route::patch('users/{id}/deactivate', [UserController::class, 'deactivate'])
             ->name('users.deactivate');
+
+        // Chat
+        Route::prefix('chat')->as('chat.')->group(function () {
+            // Page views (Inertia)
+            Route::get('/conversations', [ConversationController::class, 'index'])
+                ->name('conversations.index');
+            
+            Route::get('/conversations/{conversation}', [ConversationController::class, 'show'])
+                ->name('conversations.show');
+            
+            // Actions (JSON)
+            Route::post('/conversations', [ConversationController::class, 'store'])
+                ->name('conversations.store');
+            
+            Route::post('/conversations/{conversation}/messages', [MessageController::class, 'store'])
+                ->name('messages.store');
+            
+            // Optional features
+            Route::post('/conversations/{conversation}/read', [MessageController::class, 'markAsRead'])
+                ->name('conversations.read');
+            
+            Route::post('/messages/upload', [MessageController::class, 'upload'])
+                ->name('messages.upload');
+        });
 
 
         Route::get('verify-email', EmailVerificationPromptController::class)

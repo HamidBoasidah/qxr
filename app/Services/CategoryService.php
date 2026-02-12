@@ -164,6 +164,7 @@ class CategoryService
     {
         return Category::where('is_active', true)
             ->select(['id', 'name', 'slug', 'is_active', 'icon_path', 'category_type'])
+            ->withCount('products')
             ->get();
     }
 
@@ -175,6 +176,7 @@ class CategoryService
         return Category::where('is_active', true)
             ->where('category_type', $type)
             ->select(['id', 'name', 'slug', 'is_active', 'icon_path', 'category_type'])
+            ->withCount('products')
             ->get();
     }
 

@@ -29,6 +29,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Products helper endpoints (must come before resource to avoid route parameter collision)
     Route::get('products/categories', [App\Http\Controllers\Api\ProductController::class, 'categories']);
     Route::get('products/tags', [App\Http\Controllers\Api\ProductController::class, 'tags']);
+    Route::get('products/mine', [App\Http\Controllers\Api\ProductController::class, 'mine']);
 
     // Products resource (عرض فقط)
     Route::apiResource('products', App\Http\Controllers\Api\ProductController::class);

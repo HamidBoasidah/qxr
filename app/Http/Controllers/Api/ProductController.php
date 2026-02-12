@@ -17,9 +17,9 @@ use App\Repositories\ProductRepository;
 use App\Services\ProductService;
 use App\Services\TagService;
 use App\Models\Product;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
@@ -78,6 +78,28 @@ class ProductController extends Controller
     }
 
     /**
+     * جلب منتجات المستخدم المسجل (المرتبطة بشركة المستخدم)
+     */
+    public function mine(Request $request, ProductRepository $products)
+    {
+        $perPage = (int) $request->get('per_page', 10);
+
+        $userId = $request->user()->id;
+
+        $query = $products->query($this->baseWith())
+            ->whereHas('company', function ($q) use ($userId) {
+                // company() relation points to users table (User model), filter by users.id
+                $q->where('id', $userId);
+            });
+
+        $paginated = $query->latest()->paginate($perPage);
+
+        $paginated->getCollection()->transform(fn ($product) => ProductDTO::fromModel($product)->toIndexArray());
+
+        return $this->collectionResponse($paginated, 'تم جلب منتجات المستخدم بنجاح');
+    }
+
+    /**
      * إنشاء منتج جديد
      */
     public function store(StoreProductRequest $request, ProductService $service)
@@ -123,9 +145,9 @@ class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, ProductService $service, ProductRepository $products, $id)
     {
-    
         try {
             $product = $products->findOrFail($id, $this->baseWith());
+            
             // authorize via policy (ownership + company type)
             $this->authorize('update', $product);
 
@@ -145,10 +167,9 @@ class ProductController extends Controller
             return $e->render($request);
         } catch (ModelNotFoundException) {
             $this->throwNotFoundException('المنتج المطلوب غير موجود');
+        } catch (AuthorizationException) {
+            $this->throwNotFoundException('المنتج المطلوب غير موجود');
         }
-        
-
-        $this->throwForbiddenException('تم تعطيل عملية التعديل');
     }
 
     /**
@@ -156,9 +177,9 @@ class ProductController extends Controller
      */
     public function destroy(ProductService $service, ProductRepository $products, $id)
     {
-        
         try {
             $product = $products->findOrFail($id);
+            
             // authorize via policy
             $this->authorize('delete', $product);
 
@@ -166,10 +187,9 @@ class ProductController extends Controller
             return $this->deletedResponse('تم حذف المنتج بنجاح');
         } catch (ModelNotFoundException) {
             $this->throwNotFoundException('المنتج المطلوب غير موجود');
+        } catch (AuthorizationException) {
+            $this->throwNotFoundException('المنتج المطلوب غير موجود');
         }
-        
-
-        $this->throwForbiddenException('تم تعطيل عملية الحذف');
     }
 
     /**
@@ -177,9 +197,9 @@ class ProductController extends Controller
      */
     public function activate(ProductService $service, ProductRepository $products, $id)
     {
-        
         try {
             $product = $products->findOrFail($id, $this->baseWith());
+            
             // authorize via policy
             $this->authorize('activate', $product);
 
@@ -190,11 +210,9 @@ class ProductController extends Controller
             );
         } catch (ModelNotFoundException) {
             $this->throwNotFoundException('المنتج المطلوب غير موجود');
+        } catch (AuthorizationException) {
+            $this->throwNotFoundException('المنتج المطلوب غير موجود');
         }
-        
-
-        // تم تعطيل تفعيل المنتجات مؤقتًا
-        $this->throwForbiddenException('تم تعطيل عملية التفعيل');
     }
 
     /**
@@ -202,9 +220,9 @@ class ProductController extends Controller
      */
     public function deactivate(ProductService $service, ProductRepository $products, $id)
     {
-        
         try {
             $product = $products->findOrFail($id, $this->baseWith());
+            
             // authorize via policy
             $this->authorize('deactivate', $product);
 
@@ -215,11 +233,9 @@ class ProductController extends Controller
             );
         } catch (ModelNotFoundException) {
             $this->throwNotFoundException('المنتج المطلوب غير موجود');
+        } catch (AuthorizationException) {
+            $this->throwNotFoundException('المنتج المطلوب غير موجود');
         }
-        
-
-        // تم تعطيل إلغاء تفعيل المنتجات مؤقتًا
-        $this->throwForbiddenException('تم تعطيل عملية إلغاء التفعيل');
     }
 
     /**

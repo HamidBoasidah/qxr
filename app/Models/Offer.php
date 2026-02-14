@@ -22,8 +22,8 @@ class Offer extends Model
     ];
 
     protected $casts = [
-        'start_at' => 'datetime',
-        'end_at'   => 'datetime',
+        'start_at' => 'date',
+        'end_at'   => 'date',
     ];
 
     /*

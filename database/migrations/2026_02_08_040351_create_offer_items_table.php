@@ -41,7 +41,6 @@ return new class extends Migration
             $table->unsignedInteger('bonus_qty')->nullable();
 
             $table->timestamps();
-            $table->softDeletes();
 
             $table->index(['offer_id', 'product_id']);
         });

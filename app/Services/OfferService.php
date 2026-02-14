@@ -55,7 +55,9 @@ class OfferService
             unset($offerData['company_user_id']);
 
             /** @var Offer $offer */
-            $offer = $this->offers->findPlain($id);
+            $offer = Offer::query()
+                ->lockForUpdate()
+                ->findOrFail($id);
 
             $offer = $this->offers->updateModel($offer, $offerData);
 
@@ -84,7 +86,8 @@ class OfferService
 
     private function replaceItems(Offer $offer, array $itemsPayload): void
     {
-        $offer->items()->delete();
+        // استخدام forceDelete لأن soft delete غير مناسب هنا
+        $offer->items()->forceDelete();
 
         if (empty($itemsPayload)) {
             return;
@@ -95,7 +98,8 @@ class OfferService
 
     private function replaceTargets(Offer $offer, array $targetsPayload): void
     {
-        $offer->targets()->delete();
+        // استخدام forceDelete لأن soft delete غير مناسب هنا
+        $offer->targets()->forceDelete();
 
         if (empty($targetsPayload)) {
             return;

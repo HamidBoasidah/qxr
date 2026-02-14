@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             AreaSeeder::class,
             FillUserAddressesSeeder::class,
             ProductSeeder::class,
+            OfferSeeder::class,
         ]);
 
         // seed categories and tags with Arabic data (do not rely on factories)

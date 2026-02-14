@@ -75,10 +75,11 @@ class OfferDTO
         // ✅ company (لو محمّلة)
         $company = null;
         if ($offer->relationLoaded('company') && $offer->company) {
+            $fullName = trim(($offer->company->first_name ?? '') . ' ' . ($offer->company->last_name ?? ''));
             $company = [
                 'id' => $offer->company->id,
-                'name' => trim(($offer->company->first_name ?? '') . ' ' . ($offer->company->last_name ?? '')),
-                'company_name' => $offer->company?->companyProfile?->company_name,
+                'name' => $fullName ?: 'N/A',
+                'company_name' => $offer->company?->companyProfile?->company_name ?? null,
             ];
         }
 

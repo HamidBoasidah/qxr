@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\OfferController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\PermissionController;
@@ -147,6 +148,10 @@ Route::middleware('auth:admin')
             ->only(['index', 'show'])    
             ->names('products');
 
+        // Offers
+        Route::resource('offers', OfferController::class)
+            ->only(['index', 'show'])  
+            ->names('offers');
 
         // Users
         Route::resource('users', UserController::class)

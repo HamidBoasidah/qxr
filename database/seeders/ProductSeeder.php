@@ -28,22 +28,24 @@ class ProductSeeder extends Seeder
             }
         }
 
-        // Ensure at least one company user exists; create a basic company user if needed
-        $companyId = User::where('user_type', 'company')->inRandomOrder()->value('id');
-        if (! $companyId) {
-            $company = User::create([
-                'first_name' => 'شركة',
-                'last_name' => 'تجريبية',
-                'email' => 'company@example.test',
-                'phone_number' => '500000000',
-                'whatsapp_number' => '700000000',
-                'password' => Hash::make('password'),
-                'user_type' => 'company',
-                'gender' => 'male',
-                'is_active' => true,
-                'locale' => 'ar',
-            ]);
-            $companyId = $company->id;
+        // Ensure there are some company users; create a few if none exist
+        $companyIds = User::where('user_type', 'company')->pluck('id')->toArray();
+        if (empty($companyIds)) {
+            for ($c = 1; $c <= 3; $c++) {
+                $company = User::create([
+                    'first_name' => 'شركة' . $c,
+                    'last_name' => 'تجريبية',
+                    'email' => "company{$c}@example.test",
+                    'phone_number' => '50000000' . $c,
+                    'whatsapp_number' => '70000000' . $c,
+                    'password' => Hash::make('password'),
+                    'user_type' => 'company',
+                    'gender' => 'male',
+                    'is_active' => true,
+                    'locale' => 'ar',
+                ]);
+                $companyIds[] = $company->id;
+            }
         }
 
         $units = ['حبة', 'صندوق', 'عبوة', 'زجاجة', 'كرتون'];
@@ -51,6 +53,9 @@ class ProductSeeder extends Seeder
 
         for ($i = 1; $i <= 50; $i++) {
             $name = 'منتج تجريبي ' . $i;
+            // assign to a random company
+            $companyId = $companyIds[array_rand($companyIds)];
+
             Product::create([
                 'company_user_id' => $companyId,
                 'category_id' => $categoryIds[array_rand($categoryIds)],

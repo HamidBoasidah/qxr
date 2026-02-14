@@ -9,31 +9,32 @@ use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 use App\DTOs\OfferDTO;
+use App\Models\Offer;
 
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Tag;
 use App\Models\User;
-use App\Models\Offer;
 
-use App\Http\Requests\Company\StoreOfferRequest;
-use App\Http\Requests\Company\UpdateOfferRequest;
+use App\Http\Requests\StoreOfferRequest;
+use App\Http\Requests\UpdateOfferRequest;
 
 class OfferController extends Controller
 {
+    
     public function __construct()
     {
-        // Remove permission middleware for company users
-        // Companies don't use Spatie permissions
+        // Ensure company routes require an authenticated web user (no permissions system)
+        $this->middleware('auth:web');
     }
 
     public function index(Request $request, OfferService $offerService)
     {
+        $this->authorize('viewAny', Offer::class);
+
         $perPage = (int) $request->input('per_page', 10);
 
-        // Filter offers by authenticated company user
-        $user = Auth::guard('web')->user();
-        $offers = $offerService->paginateForIndex($perPage, $user->id);
+        $offers = $offerService->paginateForIndex($perPage, Auth::id());
 
         $offers->getCollection()->transform(function ($offer) {
             return OfferDTO::fromModel($offer)->toIndexArray();
@@ -46,9 +47,10 @@ class OfferController extends Controller
 
     public function create()
     {
-        $companyId = Auth::guard('web')->id();
+        $this->authorize('create', Offer::class);
 
-        // قوائم اختيار للواجهة
+        $companyId = Auth::id();
+
         $products = Product::where('company_user_id', $companyId)
             ->where('is_active', true)
             ->get(['id', 'name', 'sku', 'base_price']);
@@ -75,8 +77,10 @@ class OfferController extends Controller
 
     public function store(StoreOfferRequest $request, OfferService $offerService)
     {
+        $this->authorize('create', Offer::class);
+
         $data = $request->validatedPayload();
-        $data['company_user_id'] = Auth::guard('web')->id();
+        $data['company_user_id'] = Auth::id();
 
         $offerService->create(
             $data,
@@ -89,23 +93,23 @@ class OfferController extends Controller
 
     public function show(int $id, OfferService $offerService)
     {
-        // ✅ تحميل كامل من الريبوزيتوري
+        // نحمّل العرض "show" من السيرفس (يشمل العلاقات)
         $offer = $offerService->findForShow($id);
+
+        $this->authorize('view', $offer);
 
         return Inertia::render('Company/Offer/Show', [
             'offer' => OfferDTO::fromModel($offer)->toArray(),
         ]);
     }
 
-    public function edit(Offer $offer, OfferService $offerService)
+    public function edit(int $id, OfferService $offerService)
     {
-        // Authorize: check if user owns this offer
+        $offer = $offerService->findForShow($id);
+
         $this->authorize('update', $offer);
 
-        $companyId = Auth::guard('web')->id();
-
-        // تحميل كامل من الريبوزيتوري
-        $offer = $offerService->findForShow($offer->id);
+        $companyId = Auth::id();
 
         $products = Product::where('company_user_id', $companyId)
             ->where('is_active', true)
@@ -132,15 +136,16 @@ class OfferController extends Controller
         ]);
     }
 
-    public function update(UpdateOfferRequest $request, Offer $offer, OfferService $offerService)
+    public function update(UpdateOfferRequest $request, int $id, OfferService $offerService)
     {
-        // Authorize: check if user owns this offer
+        // نجيب العرض plain للتحقق من الملكية قبل أي تحديث
+        $offer = $offerService->findForShow($id); // (ممكن لاحقًا نعمل findPlainForAuth لتخفيفه)
         $this->authorize('update', $offer);
 
         $data = $request->validatedPayload();
 
         $offerService->update(
-            $offer->id,
+            $id,
             $data,
             $request->itemsPayloadOrNull(),
             $request->targetsPayloadOrNull()
@@ -149,12 +154,12 @@ class OfferController extends Controller
         return redirect()->route('company.offers.index');
     }
 
-    public function destroy(Offer $offer, OfferService $offerService)
+    public function destroy(int $id, OfferService $offerService)
     {
-        // Authorize: check if user owns this offer
+        $offer = $offerService->findForShow($id);
         $this->authorize('delete', $offer);
 
-        $offerService->delete($offer->id);
+        $offerService->delete($id);
 
         return redirect()->route('company.offers.index');
     }

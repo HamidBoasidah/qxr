@@ -1,0 +1,862 @@
+{
+	"info": {
+		"_postman_id": "offers-api-collection",
+		"name": "Offers API",
+		"description": "Complete API collection for Offers management - includes public endpoints and company endpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.data && jsonData.data.token) {",
+									"        pm.environment.set(\"auth_token\", jsonData.data.token);",
+									"        pm.environment.set(\"user_id\", jsonData.data.user.id);",
+									"        console.log(\"Token saved: \" + jsonData.data.token);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"company@example.com\",\n    \"password\": \"password\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"login"
+							]
+						},
+						"description": "Login to get authentication token. The token will be automatically saved to environment variable."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Current User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/me",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"me"
+							]
+						},
+						"description": "Get current authenticated user information"
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/logout",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"logout"
+							]
+						},
+						"description": "Logout from current device"
+					},
+					"response": []
+				}
+			],
+			"description": "Authentication endpoints for login/logout"
+		},
+		{
+			"name": "Public Offers (Auth Required)",
+			"item": [
+				{
+					"name": "Get Public Offers List",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/offers/public?per_page=10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"offers",
+								"public"
+							],
+							"query": [
+								{
+									"key": "per_page",
+									"value": "10",
+									"description": "Number of items per page"
+								}
+							]
+						},
+						"description": "Get list of active public offers (authentication required). Only shows offers with scope=public, status=active, and within valid date range."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Public Offer Details",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/offers/public/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"offers",
+								"public",
+								"1"
+							]
+						},
+						"description": "Get detailed information about a specific public offer (authentication required)"
+					},
+					"response": []
+				}
+			],
+			"description": "Public offers endpoints (authentication required)"
+		},
+		{
+			"name": "Company Offers (Auth Required)",
+			"item": [
+				{
+					"name": "Get Company Offers List",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/offers?per_page=10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"offers"
+							],
+							"query": [
+								{
+									"key": "per_page",
+									"value": "10",
+									"description": "Number of items per page"
+								},
+								{
+									"key": "search",
+									"value": "",
+									"description": "Search in title and description",
+									"disabled": true
+								},
+								{
+									"key": "scope",
+									"value": "",
+									"description": "Filter by scope (public/private)",
+									"disabled": true
+								},
+								{
+									"key": "status",
+									"value": "",
+									"description": "Filter by status (draft/active/paused/expired)",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Get list of offers belonging to authenticated company. Supports filtering and search."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Company Offer Details",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/offers/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"offers",
+								"1"
+							]
+						},
+						"description": "Get detailed information about a specific offer owned by the company"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Offer - Public with Discount Percent",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.data && jsonData.data.id) {",
+									"        pm.environment.set(\"last_offer_id\", jsonData.data.id);",
+									"        console.log(\"Offer ID saved: \" + jsonData.data.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"عرض الصيف الكبير\",\n    \"description\": \"خصومات تصل إلى 50% على جميع المنتجات\",\n    \"scope\": \"public\",\n    \"status\": \"draft\",\n    \"start_at\": \"2026-02-01\",\n    \"end_at\": \"2026-03-31\",\n    \"items\": [\n        {\n            \"product_id\": 1,\n            \"min_qty\": 5,\n            \"reward_type\": \"discount_percent\",\n            \"discount_percent\": 20.00\n        }\n    ],\n    \"targets\": []\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/offers",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"offers"
+							]
+						},
+						"description": "Create a new public offer with percentage discount. The offer ID will be saved to environment variable."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Offer - Public with Fixed Discount",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"عرض الخصم الثابت\",\n    \"description\": \"خصم 50 ريال على الطلبات الكبيرة\",\n    \"scope\": \"public\",\n    \"status\": \"active\",\n    \"start_at\": \"2026-02-14\",\n    \"end_at\": \"2026-04-30\",\n    \"items\": [\n        {\n            \"product_id\": 1,\n            \"min_qty\": 10,\n            \"reward_type\": \"discount_fixed\",\n            \"discount_fixed\": 50.00\n        }\n    ],\n    \"targets\": []\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/offers",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"offers"
+							]
+						},
+						"description": "Create a new public offer with fixed amount discount"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Offer - Public with Bonus Quantity",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"اشتري 10 واحصل على 2 مجاناً\",\n    \"description\": \"عرض خاص على المنتجات المختارة\",\n    \"scope\": \"public\",\n    \"status\": \"active\",\n    \"start_at\": \"2026-02-14\",\n    \"end_at\": \"2026-05-31\",\n    \"items\": [\n        {\n            \"product_id\": 1,\n            \"min_qty\": 10,\n            \"reward_type\": \"bonus_qty\",\n            \"bonus_qty\": 2,\n            \"bonus_product_id\": 2\n        }\n    ],\n    \"targets\": []\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/offers",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"offers"
+							]
+						},
+						"description": "Create a new public offer with bonus quantity (buy X get Y free)"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Offer - Private with Targets",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"عرض خاص للعملاء المميزين\",\n    \"description\": \"خصم حصري لفئة محددة من العملاء\",\n    \"scope\": \"private\",\n    \"status\": \"active\",\n    \"start_at\": \"2026-02-14\",\n    \"end_at\": \"2026-06-30\",\n    \"items\": [\n        {\n            \"product_id\": 1,\n            \"min_qty\": 3,\n            \"reward_type\": \"discount_percent\",\n            \"discount_percent\": 30.00\n        }\n    ],\n    \"targets\": [\n        {\n            \"target_type\": \"customer_category\",\n            \"target_id\": 1\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/offers",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"offers"
+							]
+						},
+						"description": "Create a new private offer with specific targets (customer category, tag, or individual customers)"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Offer - Multiple Items",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"عرض شامل على منتجات متعددة\",\n    \"description\": \"خصومات متنوعة على مجموعة من المنتجات\",\n    \"scope\": \"public\",\n    \"status\": \"active\",\n    \"start_at\": \"2026-02-14\",\n    \"end_at\": \"2026-12-31\",\n    \"items\": [\n        {\n            \"product_id\": 1,\n            \"min_qty\": 5,\n            \"reward_type\": \"discount_percent\",\n            \"discount_percent\": 15.00\n        },\n        {\n            \"product_id\": 2,\n            \"min_qty\": 10,\n            \"reward_type\": \"discount_fixed\",\n            \"discount_fixed\": 30.00\n        },\n        {\n            \"product_id\": 3,\n            \"min_qty\": 8,\n            \"reward_type\": \"bonus_qty\",\n            \"bonus_qty\": 1,\n            \"bonus_product_id\": 4\n        }\n    ],\n    \"targets\": []\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/offers",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"offers"
+							]
+						},
+						"description": "Create an offer with multiple items and different reward types"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Offer - Change Status",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"active\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/offers/{{last_offer_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"offers",
+								"{{last_offer_id}}"
+							]
+						},
+						"description": "Update offer status (partial update - only status field)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Offer - Change Title and Description",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"عرض الصيف المحدث\",\n    \"description\": \"تم تحديث تفاصيل العرض\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/offers/{{last_offer_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"offers",
+								"{{last_offer_id}}"
+							]
+						},
+						"description": "Update offer title and description"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Offer - Replace Items",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"items\": [\n        {\n            \"product_id\": 1,\n            \"min_qty\": 3,\n            \"reward_type\": \"discount_fixed\",\n            \"discount_fixed\": 25.00\n        },\n        {\n            \"product_id\": 2,\n            \"min_qty\": 5,\n            \"reward_type\": \"discount_percent\",\n            \"discount_percent\": 10.00\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/offers/{{last_offer_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"offers",
+								"{{last_offer_id}}"
+							]
+						},
+						"description": "Replace all offer items with new ones"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Offer - Convert to Private",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"scope\": \"private\",\n    \"targets\": [\n        {\n            \"target_type\": \"customer_tag\",\n            \"target_id\": 1\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/offers/{{last_offer_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"offers",
+								"{{last_offer_id}}"
+							]
+						},
+						"description": "Convert public offer to private and add targets"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Offer - Full Update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"عرض محدث بالكامل\",\n    \"description\": \"تم تحديث جميع التفاصيل\",\n    \"scope\": \"public\",\n    \"status\": \"active\",\n    \"start_at\": \"2026-03-01\",\n    \"end_at\": \"2026-04-30\",\n    \"items\": [\n        {\n            \"product_id\": 1,\n            \"min_qty\": 7,\n            \"reward_type\": \"discount_percent\",\n            \"discount_percent\": 25.00\n        }\n    ],\n    \"targets\": []\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/offers/{{last_offer_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"offers",
+								"{{last_offer_id}}"
+							]
+						},
+						"description": "Full update of all offer fields"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Offer",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/offers/{{last_offer_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"offers",
+								"{{last_offer_id}}"
+							]
+						},
+						"description": "Delete an offer (soft delete)"
+					},
+					"response": []
+				}
+			],
+			"description": "Company endpoints requiring authentication"
+		},
+		{
+			"name": "Helper Endpoints",
+			"item": [
+				{
+					"name": "Get Products List",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/products?per_page=50",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"products"
+							],
+							"query": [
+								{
+									"key": "per_page",
+									"value": "50"
+								}
+							]
+						},
+						"description": "Get list of products to use their IDs in offers"
+					},
+					"response": []
+				},
+				{
+					"name": "Get My Products",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/products/mine?per_page=50",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"products",
+								"mine"
+							],
+							"query": [
+								{
+									"key": "per_page",
+									"value": "50"
+								}
+							]
+						},
+						"description": "Get products belonging to authenticated company"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Customer Categories",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/categories/type/customer",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"categories",
+								"type",
+								"customer"
+							]
+						},
+						"description": "Get customer categories to use in private offer targets"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Customer Tags",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/tags/type/customer",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"tags",
+								"type",
+								"customer"
+							]
+						},
+						"description": "Get customer tags to use in private offer targets"
+					},
+					"response": []
+				}
+			],
+			"description": "Helper endpoints to get data needed for creating offers"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		},
+		{
+			"key": "auth_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "last_offer_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "user_id",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

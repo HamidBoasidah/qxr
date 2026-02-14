@@ -41,6 +41,7 @@ return [
     'addresses'    => ['view', 'create', 'update', 'delete'],
     'tags'         => ['view', 'create', 'update', 'delete'],
     'products'     => ['view', 'create', 'update', 'delete', 'activate', 'deactivate'],
+    'offers'       => ['view', 'create', 'update', 'delete', 'activate', 'deactivate'],
     // backend management resources
     'users'        => ['view', 'create', 'update', 'delete'],
     'admins'       => ['view', 'create', 'update', 'delete'],
@@ -64,6 +65,7 @@ return [
     'categories'   => ['en' => 'Categories',    'ar' => 'الاقسام'],
     'tags'         => ['en' => 'Tags',          'ar' => 'الوسوم'],
     'products'     => ['en' => 'Products',      'ar' => 'المنتجات'],
+    'offers'       => ['en' => 'Offers',        'ar' => 'العروض'],
     'addresses'    => ['en' => 'Addresses',  'ar' => 'العناوين'],
     'users'        => ['en' => 'Users',         'ar' => 'المستخدمون'],
     'admins'       => ['en' => 'Admins',        'ar' => 'المشرفون'],

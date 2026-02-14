@@ -28,13 +28,15 @@ return new class extends Migration
             $table->string('title');
             $table->text('description')->nullable();
 
-            $table->timestamp('start_at')->nullable();
-            $table->timestamp('end_at')->nullable();
+            // store dates (no time) for start and end
+            $table->date('start_at')->nullable();
+            $table->date('end_at')->nullable();
 
             $table->timestamps();
             $table->softDeletes();
 
             $table->index(['company_user_id', 'status']);
+            $table->index(['status', 'start_at', 'end_at'], 'offers_active_now_index');
         });
     }
 

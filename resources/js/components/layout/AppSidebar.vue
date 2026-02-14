@@ -216,6 +216,7 @@ import {
   AddressIcon,
   TagIcon,
   ProductIcon,
+  OfferIcon,
 } from "../../icons"
 import { useSidebar } from "@/composables/useSidebar"
 import { usePermissions } from "@/composables/usePermissions"
@@ -319,6 +320,12 @@ const menuGroups = computed(() =>
           name: t('menu.products'),
           path: route('admin.products.index'),
           permission: 'products.view',
+        },
+        {
+          icon: OfferIcon,
+          name: t('menu.offers'),
+          path: route('admin.offers.index'),
+          permission: 'offers.view',
         },
         {
           icon: UserCircleIcon,

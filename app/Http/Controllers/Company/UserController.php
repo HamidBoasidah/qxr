@@ -29,7 +29,20 @@ class UserController extends Controller
     public function index(Request $request, UserService $userService)
     {
         $perPage = (int) $request->input('per_page', 10);
+        $search = $request->input('search');
 
+        // If it's an AJAX/JSON request, return JSON
+        if ($request->wantsJson() || $request->ajax()) {
+            $users = $userService->search($search, $perPage);
+            
+            $users->getCollection()->transform(function ($user) {
+                return UserDTO::fromModel($user)->toIndexArray();
+            });
+            
+            return response()->json($users);
+        }
+
+        // Otherwise, return Inertia page
         $users = $userService->paginate($perPage);
 
         // تجهيز بيانات كل مستخدم بنفس منطق show

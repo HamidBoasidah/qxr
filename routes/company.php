@@ -7,6 +7,7 @@ use App\Http\Controllers\Company\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\Company\Auth\PasswordController;
 use App\Http\Controllers\Company\Auth\VerifyEmailController;
 use App\Http\Controllers\Company\AddressController;
+use App\Http\Controllers\Company\ChatUserController;
 use App\Http\Controllers\Company\ConversationController;
 use App\Http\Controllers\Company\MessageController;
 use App\Http\Controllers\Company\UserController;
@@ -77,6 +78,10 @@ Route::middleware(['auth:web', 'company'])
 
         // Chat
         Route::prefix('chat')->as('chat.')->group(function () {
+            // Get users for chat (no permission required - all authenticated users can see other users for chat)
+            Route::get('/users', [ChatUserController::class, 'index'])
+                ->name('users.index');
+            
             // Page views (Inertia)
             Route::get('/conversations', [ConversationController::class, 'index'])
                 ->name('conversations.index');

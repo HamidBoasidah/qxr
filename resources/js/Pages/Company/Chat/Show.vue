@@ -19,6 +19,25 @@
               <h3 class="font-semibold text-gray-800 text-theme-xl dark:text-white/90 sm:text-2xl">
                 {{ t('menu.chat') }}
               </h3>
+              <button
+                @click="openNewConversationModal"
+                class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-white transition-colors rounded-lg bg-brand-500 hover:bg-brand-600"
+              >
+                <svg
+                  class="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 4v16m8-8H4"
+                  />
+                </svg>
+                <span class="hidden sm:inline">{{ t('chat.newConversation') }}</span>
+              </button>
             </div>
             
             <!-- Search Input -->
@@ -423,6 +442,13 @@
         </div>
       </div>
     </div>
+
+    <!-- New Conversation Modal -->
+    <NewConversationModal
+      :isOpen="isNewConversationModalOpen"
+      :authUserId="auth.user.id"
+      @close="closeNewConversationModal"
+    />
   </CompanyLayout>
 </template>
 
@@ -433,6 +459,7 @@ import { useI18n } from 'vue-i18n'
 import axios from 'axios'
 import CompanyLayout from '@/components/layout/CompanyLayout.vue'
 import PageBreadcrumb from '@/components/common/PageBreadcrumb.vue'
+import NewConversationModal from '@/components/company/chat/NewConversationModal.vue'
 import { UserCircleIcon } from '@/icons'
 
 const { t } = useI18n()
@@ -489,6 +516,7 @@ const prevCursor = ref(props.messages.meta.prev_cursor)
 const messagesContainer = ref(null)
 const fileInput = ref(null)
 const hasScrolledToBottom = ref(false)
+const isNewConversationModalOpen = ref(false)
 
 // Computed
 const currentPageTitle = computed(() => getParticipantName())
@@ -764,6 +792,14 @@ const handleSearch = () => {
       { preserveState: true, preserveScroll: true }
     )
   }, 500)
+}
+
+const openNewConversationModal = () => {
+  isNewConversationModalOpen.value = true
+}
+
+const closeNewConversationModal = () => {
+  isNewConversationModalOpen.value = false
 }
 
 // Lifecycle hooks

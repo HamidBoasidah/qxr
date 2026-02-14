@@ -523,7 +523,13 @@
     "maxFilesExceeded": "تجاوز عدد الملفات المسموح به.",
     "fileTooLarge": "حجم الملف كبير جدًا.",
     "sendError": "فشل إرسال الرسالة. حاول مرة أخرى.",
-    "attachment": "مرفق"
+    "attachment": "مرفق",
+    "newConversation": "محادثة جديدة",
+    "searchUsers": "ابحث عن مستخدم",
+    "searchUsersPlaceholder": "ابحث بالاسم أو البريد الإلكتروني...",
+    "noUsersFound": "لم يتم العثور على مستخدمين.",
+    "noUsers": "لا يوجد مستخدمون.",
+    "errorCreatingConversation": "حدث خطأ أثناء إنشاء المحادثة"
   },
 
   "addresses": {

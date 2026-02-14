@@ -32,6 +32,15 @@ class UserService
         return $this->users->paginate($perPage, $with);
     }
 
+    public function search(?string $search = null, int $perPage = 15, array $with = null)
+    {
+        if (empty($search)) {
+            return $this->paginate($perPage, $with);
+        }
+
+        return $this->users->search($search, $perPage, $with);
+    }
+
     public function find($id, array $with = null)
     {
         return $this->users->findOrFail($id, $with);

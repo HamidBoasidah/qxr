@@ -338,8 +338,27 @@
     "requestsPermission": "requests permission to change",
     "project": "Project - {name}",
     "typeProject": "Project"
-  }
-  ,"datatable": {
+  },
+  "chat": {
+    "searchConversations": "Search conversations...",
+    "noConversationsFound": "No conversations found.",
+    "noConversations": "No conversations.",
+    "noMessages": "No messages.",
+    "selectConversation": "Select a conversation to start chatting",
+    "unknownUser": "Unknown user",
+    "typeMessage": "Type a message...",
+    "maxFilesExceeded": "Maximum number of files exceeded.",
+    "fileTooLarge": "File size is too large.",
+    "sendError": "Failed to send message. Try again.",
+    "attachment": "Attachment",
+    "newConversation": "New Conversation",
+    "searchUsers": "Search for a user",
+    "searchUsersPlaceholder": "Search by name or email...",
+    "noUsersFound": "No users found.",
+    "noUsers": "No users available.",
+    "errorCreatingConversation": "An error occurred while creating the conversation"
+  },
+  "datatable": {
     "show": "Show",
     "entries": "entries",
     "searchPlaceholder": "Search...",

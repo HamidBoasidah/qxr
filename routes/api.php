@@ -34,6 +34,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('users/others', [App\Http\Controllers\Api\UserController::class, 'others']);
     // Users (API): companies
     Route::get('users/companies', [App\Http\Controllers\Api\UserController::class, 'companies']);
+    Route::get('users/customers', [App\Http\Controllers\Api\UserController::class, 'customers']);
 
     // Products resource (عرض فقط)
     Route::apiResource('products', App\Http\Controllers\Api\ProductController::class);

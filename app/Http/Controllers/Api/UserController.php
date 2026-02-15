@@ -61,4 +61,32 @@ class UserController extends Controller
             'data' => $paginated,
         ], 200);
     }
+
+    /**
+     * Return users of type 'customer'
+     * Supports pagination via ?per_page
+     */
+    public function customers(Request $request)
+    {
+        $perPage = (int) $request->get('per_page', 20);
+
+        $query = User::where('user_type', 'customer')
+            ->select(['id', 'first_name', 'last_name', 'avatar']);
+
+        $paginated = $query->paginate($perPage);
+
+        $paginated->getCollection()->transform(function ($user) {
+            return [
+                'id' => $user->id,
+                'first_name' => $user->first_name,
+                'last_name' => $user->last_name,
+                'avatar' => $user->avatar,
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'data' => $paginated,
+        ], 200);
+    }
 }

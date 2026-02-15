@@ -56,6 +56,33 @@ class OfferController extends Controller
     }
 
     /**
+     * قائمة العروض العامة مع التفاصيل الكاملة (للمستخدمين المسجلين فقط)
+     * تعرض العروض النشطة والعامة مع items و targets
+     */
+    public function publicIndexDetails(Request $request, OfferRepository $offers)
+    {
+        $perPage = (int) $request->get('per_page', 10);
+
+        $query = $offers->query($this->showWith())
+            ->where('scope', 'public')
+            ->where('status', 'active')
+            ->where(function ($q) {
+                $q->whereNull('start_at')
+                    ->orWhere('start_at', '<=', now());
+            })
+            ->where(function ($q) {
+                $q->whereNull('end_at')
+                    ->orWhere('end_at', '>=', now());
+            });
+
+        $paginated = $query->latest()->paginate($perPage);
+
+        $paginated->getCollection()->transform(fn ($offer) => OfferDTO::fromModel($offer)->toArray());
+
+        return $this->collectionResponse($paginated, 'تم جلب قائمة العروض العامة مع التفاصيل بنجاح');
+    }
+
+    /**
      * عرض تفاصيل عرض عام (للمستخدمين المسجلين فقط)
      */
     public function publicShow(OfferRepository $offers, $id)
@@ -99,6 +126,33 @@ class OfferController extends Controller
         $paginated->getCollection()->transform(fn ($offer) => OfferDTO::fromModel($offer)->toIndexArray());
 
         return $this->collectionResponse($paginated, 'تم جلب قائمة عروض الشركة بنجاح');
+    }
+
+    /**
+     * قائمة عروض الشركة المسجلة مع التفاصيل الكاملة (للشركة فقط)
+     * تعرض العروض مع items و targets
+     */
+    public function indexDetails(Request $request, OfferRepository $offers)
+    {
+        $perPage = (int) $request->get('per_page', 10);
+
+        $userId = $request->user()->id;
+
+        $query = $offers->query($this->showWith())
+            ->where('company_user_id', $userId);
+
+        $query = $this->applyFilters(
+            $query,
+            $request,
+            $this->getSearchableFields(),
+            $this->getForeignKeyFilters()
+        );
+
+        $paginated = $query->latest()->paginate($perPage);
+
+        $paginated->getCollection()->transform(fn ($offer) => OfferDTO::fromModel($offer)->toArray());
+
+        return $this->collectionResponse($paginated, 'تم جلب قائمة عروض الشركة مع التفاصيل بنجاح');
     }
 
     /**

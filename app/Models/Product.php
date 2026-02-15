@@ -57,4 +57,33 @@ class Product extends Model
         return $this->hasMany(ProductImage::class)
             ->orderBy('sort_order');
     }
+
+    // العروض التي تحتوي على هذا المنتج
+    public function offerItems()
+    {
+        return $this->hasMany(OfferItem::class, 'product_id');
+    }
+
+    // العروض النشطة الحالية على هذا المنتج
+    public function activeOffers()
+    {
+        return $this->hasManyThrough(
+            Offer::class,
+            OfferItem::class,
+            'product_id',    // Foreign key on offer_items table
+            'id',            // Foreign key on offers table
+            'id',            // Local key on products table
+            'offer_id'       // Local key on offer_items table
+        )
+        ->where('offers.status', 'active')
+        ->where('offers.scope', 'public')
+        ->where(function ($query) {
+            $query->whereNull('offers.start_at')
+                ->orWhere('offers.start_at', '<=', now());
+        })
+        ->where(function ($query) {
+            $query->whereNull('offers.end_at')
+                ->orWhere('offers.end_at', '>=', now());
+        });
+    }
 }

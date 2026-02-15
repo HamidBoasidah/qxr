@@ -61,7 +61,7 @@ class ProductController extends Controller
     {
         $perPage = (int) $request->get('per_page', 10);
 
-        $query = $products->query($this->baseWith());
+        $query = $products->query($this->mobileWith());
 
         $query = $this->applyFilters(
             $query,
@@ -72,7 +72,7 @@ class ProductController extends Controller
 
         $paginated = $query->latest()->paginate($perPage);
 
-        $paginated->getCollection()->transform(fn ($product) => ProductDTO::fromModel($product)->toIndexArray());
+        $paginated->getCollection()->transform(fn ($product) => ProductDTO::fromModel($product)->toMobileArray());
 
         return $this->collectionResponse($paginated, 'تم جلب قائمة المنتجات بنجاح');
     }
@@ -86,7 +86,7 @@ class ProductController extends Controller
 
         $userId = $request->user()->id;
 
-        $query = $products->query($this->baseWith())
+        $query = $products->query($this->mobileWith())
             ->whereHas('company', function ($q) use ($userId) {
                 // company() relation points to users table (User model), filter by users.id
                 $q->where('id', $userId);
@@ -94,7 +94,7 @@ class ProductController extends Controller
 
         $paginated = $query->latest()->paginate($perPage);
 
-        $paginated->getCollection()->transform(fn ($product) => ProductDTO::fromModel($product)->toIndexArray());
+        $paginated->getCollection()->transform(fn ($product) => ProductDTO::fromModel($product)->toMobileArray());
 
         return $this->collectionResponse($paginated, 'تم جلب منتجات المستخدم بنجاح');
     }
@@ -129,10 +129,10 @@ class ProductController extends Controller
     public function show(ProductRepository $products, $id)
     {
         try {
-            $product = $products->findOrFail($id, $this->baseWith());
+            $product = $products->findOrFail($id, $this->mobileWith());
 
             return $this->resourceResponse(
-                ProductDTO::fromModel($product)->toArray(),
+                ProductDTO::fromModel($product)->toMobileArray(),
                 'تم جلب بيانات المنتج بنجاح'
             );
         } catch (ModelNotFoundException) {
@@ -249,6 +249,23 @@ class ProductController extends Controller
             'company:id',
             'company.companyProfile:id,user_id,company_name',
             'images:id,product_id,path,sort_order',
+        ];
+    }
+
+    /**
+     * العلاقات للموبايل (مع العروض النشطة)
+     */
+    protected function mobileWith(): array
+    {
+        return [
+            'category:id,name',
+            'tags:id,name,slug',
+            'company:id,first_name,last_name',
+            'company.companyProfile:id,user_id,company_name',
+            'images:id,product_id,path,sort_order',
+            'activeOffers:offers.id,title,description,status,scope,start_at,end_at',
+            'activeOffers.items:id,offer_id,product_id,min_qty,reward_type,discount_percent,discount_fixed,bonus_product_id,bonus_qty',
+            'activeOffers.items.bonusProduct:id,name,main_image',
         ];
     }
 

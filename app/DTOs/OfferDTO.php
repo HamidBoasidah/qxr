@@ -83,6 +83,7 @@ class OfferDTO
             ];
         }
 
+        
         // ✅ counts (الأفضل: تأتي من withCount)
         $itemsCount = isset($offer->items_count)
             ? (int) $offer->items_count

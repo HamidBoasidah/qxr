@@ -63,9 +63,7 @@ class OfferController extends Controller
             ->where('is_active', true)
             ->get(['id', 'name', 'slug']);
 
-        $customers = User::where('user_type', 'customer')
-            ->where('is_active', true)
-            ->get(['id', 'first_name', 'last_name']);
+        $customers = $this->getFormattedCustomers();
 
         return Inertia::render('Company/Offer/Create', [
             'products' => $products,
@@ -123,9 +121,7 @@ class OfferController extends Controller
             ->where('is_active', true)
             ->get(['id', 'name', 'slug']);
 
-        $customers = User::where('user_type', 'customer')
-            ->where('is_active', true)
-            ->get(['id', 'first_name', 'last_name']);
+        $customers = $this->getFormattedCustomers();
 
         return Inertia::render('Company/Offer/Edit', [
             'offer' => OfferDTO::fromModel($offer)->toArray(),
@@ -162,5 +158,23 @@ class OfferController extends Controller
         $offerService->delete($id);
 
         return redirect()->route('company.offers.index');
+    }
+
+    /**
+     * Helper method to format customers with full name
+     */
+    private function getFormattedCustomers()
+    {
+        return User::where('user_type', 'customer')
+            ->where('is_active', true)
+            ->get(['id', 'first_name', 'last_name'])
+            ->map(function ($customer) {
+                return [
+                    'id' => $customer->id,
+                    'name' => trim($customer->first_name . ' ' . $customer->last_name) ?: 'N/A',
+                    'first_name' => $customer->first_name,
+                    'last_name' => $customer->last_name,
+                ];
+            });
     }
 }

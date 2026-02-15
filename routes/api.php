@@ -32,6 +32,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('products/mine', [App\Http\Controllers\Api\ProductController::class, 'mine']);
     // Users (API): get all users except current
     Route::get('users/others', [App\Http\Controllers\Api\UserController::class, 'others']);
+    // Users (API): companies
+    Route::get('users/companies', [App\Http\Controllers\Api\UserController::class, 'companies']);
 
     // Products resource (عرض فقط)
     Route::apiResource('products', App\Http\Controllers\Api\ProductController::class);
@@ -40,8 +42,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('products/{product}/deactivate', [App\Http\Controllers\Api\ProductController::class, 'deactivate']);
     
     // Offers - Public endpoints (must come BEFORE apiResource to avoid route conflicts)
+    Route::get('offers/public/details', [App\Http\Controllers\Api\OfferController::class, 'publicIndexDetails']);
     Route::get('offers/public', [App\Http\Controllers\Api\OfferController::class, 'publicIndex']);
     Route::get('offers/public/{id}', [App\Http\Controllers\Api\OfferController::class, 'publicShow']);
+    
+    // Offers - Company endpoints with details
+    Route::get('offers/details', [App\Http\Controllers\Api\OfferController::class, 'indexDetails']);
     
     // Offers - Company endpoints (CRUD)
     Route::apiResource('offers', App\Http\Controllers\Api\OfferController::class);

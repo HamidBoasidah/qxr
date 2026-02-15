@@ -57,7 +57,8 @@ class OfferController extends Controller
 
     /**
      * قائمة العروض العامة مع التفاصيل الكاملة (للمستخدمين المسجلين فقط)
-     * تعرض العروض النشطة والعامة مع items و targets
+     * تعرض العروض النشطة والعامة مع items و targets بشكل مسطح
+     * كل منتج في العرض يظهر كصف منفصل مع تفاصيل العرض
      */
     public function publicIndexDetails(Request $request, OfferRepository $offers)
     {
@@ -77,7 +78,15 @@ class OfferController extends Controller
 
         $paginated = $query->latest()->paginate($perPage);
 
-        $paginated->getCollection()->transform(fn ($offer) => OfferDTO::fromModel($offer)->toArray());
+        // تسطيح البيانات: كل عرض يتحول إلى عدة صفوف (صف لكل منتج)
+        $flattenedData = [];
+        foreach ($paginated->items() as $offer) {
+            $flattenedItems = OfferDTO::fromModel($offer)->toFlattenedArray();
+            $flattenedData = array_merge($flattenedData, $flattenedItems);
+        }
+
+        // استبدال البيانات المسطحة في الـ paginator
+        $paginated->setCollection(collect($flattenedData));
 
         return $this->collectionResponse($paginated, 'تم جلب قائمة العروض العامة مع التفاصيل بنجاح');
     }
@@ -130,7 +139,8 @@ class OfferController extends Controller
 
     /**
      * قائمة عروض الشركة المسجلة مع التفاصيل الكاملة (للشركة فقط)
-     * تعرض العروض مع items و targets
+     * تعرض العروض مع items و targets بشكل مسطح
+     * كل منتج في العرض يظهر كصف منفصل مع تفاصيل العرض
      */
     public function indexDetails(Request $request, OfferRepository $offers)
     {
@@ -150,7 +160,15 @@ class OfferController extends Controller
 
         $paginated = $query->latest()->paginate($perPage);
 
-        $paginated->getCollection()->transform(fn ($offer) => OfferDTO::fromModel($offer)->toArray());
+        // تسطيح البيانات: كل عرض يتحول إلى عدة صفوف (صف لكل منتج)
+        $flattenedData = [];
+        foreach ($paginated->items() as $offer) {
+            $flattenedItems = OfferDTO::fromModel($offer)->toFlattenedArray();
+            $flattenedData = array_merge($flattenedData, $flattenedItems);
+        }
+
+        // استبدال البيانات المسطحة في الـ paginator
+        $paginated->setCollection(collect($flattenedData));
 
         return $this->collectionResponse($paginated, 'تم جلب قائمة عروض الشركة مع التفاصيل بنجاح');
     }

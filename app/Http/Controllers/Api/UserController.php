@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Http\Traits\CanFilter;
 
 class UserController extends Controller
 {
+    use CanFilter;
     public function __construct()
     {
         $this->middleware('auth:sanctum');
@@ -41,7 +43,15 @@ class UserController extends Controller
 
         $query = User::with(['companyProfile:id,user_id,company_name'])
             ->where('user_type', 'company')
-            ->select(['id', 'first_name', 'last_name', 'avatar']);
+            ->select(['id', 'first_name', 'last_name', 'avatar', 'email']);
+
+        // apply search + foreign key filters
+        $query = $this->applyFilters(
+            $query,
+            $request,
+            $this->getSearchableFields(),
+            $this->getForeignKeyFilters()
+        );
 
         $paginated = $query->paginate($perPage);
 
@@ -71,7 +81,15 @@ class UserController extends Controller
         $perPage = (int) $request->get('per_page', 20);
 
         $query = User::where('user_type', 'customer')
-            ->select(['id', 'first_name', 'last_name', 'avatar']);
+            ->select(['id', 'first_name', 'last_name', 'avatar', 'email']);
+
+        // apply search + foreign key filters
+        $query = $this->applyFilters(
+            $query,
+            $request,
+            $this->getSearchableFields(),
+            $this->getForeignKeyFilters()
+        );
 
         $paginated = $query->paginate($perPage);
 
@@ -89,4 +107,28 @@ class UserController extends Controller
             'data' => $paginated,
         ], 200);
     }
+
+        /**
+     * Fields that can be searched using CanFilter
+     */
+    protected function getSearchableFields(): array
+    {
+        return [
+            'first_name',
+            'last_name',
+            'email',
+        ];
+    }
+
+    /**
+     * Foreign key filters that CanFilter should map from request
+     */
+    protected function getForeignKeyFilters(): array
+    {
+        return [
+            // example: allow filtering by user_type if needed (company/customer)
+            'user_type' => 'user_type',
+        ];
+    }
+    
 }

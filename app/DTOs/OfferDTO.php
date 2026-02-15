@@ -218,4 +218,115 @@ class OfferDTO
             'updated_at' => $this->updated_at,
         ];
     }
+
+    /**
+     * ✅ تسطيح البيانات: كل منتج في العرض يصبح صف منفصل مع تفاصيل العرض
+     * بدلاً من عرض واحد يحتوي على قائمة منتجات، نحصل على قائمة مسطحة
+     * كل عنصر يحتوي على: معلومات العرض + معلومات المنتج + معلومات الشركة + المستهدفين
+     */
+    public function toFlattenedArray(): array
+    {
+        $flattenedItems = [];
+
+        // معلومات العرض الأساسية (ستتكرر مع كل منتج)
+        $offerBase = [
+            'offer_id' => $this->id,
+            'offer_title' => $this->title,
+            'offer_description' => $this->description,
+            'offer_scope' => $this->scope,
+            'offer_status' => $this->status,
+            'offer_start_at' => $this->start_at,
+            'offer_end_at' => $this->end_at,
+            'offer_created_at' => $this->created_at,
+            'offer_updated_at' => $this->updated_at,
+        ];
+
+        // معلومات الشركة (ستتكرر مع كل منتج)
+        $companyData = [
+            'company_id' => $this->company['id'] ?? null,
+            'company_name' => $this->company['name'] ?? null,
+            'company_business_name' => $this->company['company_name'] ?? null,
+        ];
+
+        // المستهدفين (ستتكرر مع كل منتج)
+        $targetsData = [
+            'targets_count' => $this->targets_count,
+            'targets' => $this->targets, // يمكن إزالتها إذا لم تكن مطلوبة
+        ];
+
+        // إذا لم يكن هناك items، نرجع العرض بدون منتجات
+        if (empty($this->items)) {
+            return [
+                array_merge(
+                    $offerBase,
+                    $companyData,
+                    $targetsData,
+                    [
+                        'item_id' => null,
+                        'product_id' => null,
+                        'product_name' => null,
+                        'product_sku' => null,
+                        'product_base_price' => null,
+                        'product_main_image' => null,
+                        'product_is_active' => null,
+                        'min_qty' => null,
+                        'reward_type' => null,
+                        'discount_percent' => null,
+                        'discount_fixed' => null,
+                        'bonus_product_id' => null,
+                        'bonus_qty' => null,
+                        'bonus_product_name' => null,
+                        'bonus_product_sku' => null,
+                        'bonus_product_base_price' => null,
+                        'bonus_product_main_image' => null,
+                        'bonus_product_is_active' => null,
+                    ]
+                )
+            ];
+        }
+
+        // لكل منتج في العرض، نضيف صف منفصل
+        foreach ($this->items as $item) {
+            $itemData = [
+                'item_id' => $item['id'] ?? null,
+                'product_id' => $item['product_id'] ?? null,
+                'min_qty' => $item['min_qty'] ?? null,
+                'reward_type' => $item['reward_type'] ?? null,
+                'discount_percent' => $item['discount_percent'] ?? null,
+                'discount_fixed' => $item['discount_fixed'] ?? null,
+                'bonus_product_id' => $item['bonus_product_id'] ?? null,
+                'bonus_qty' => $item['bonus_qty'] ?? null,
+            ];
+
+            // معلومات المنتج
+            $productData = [
+                'product_name' => $item['product']['name'] ?? null,
+                'product_sku' => $item['product']['sku'] ?? null,
+                'product_base_price' => $item['product']['base_price'] ?? null,
+                'product_main_image' => $item['product']['main_image'] ?? null,
+                'product_is_active' => $item['product']['is_active'] ?? null,
+            ];
+
+            // معلومات المنتج المكافأة (إذا وجد)
+            $bonusProductData = [
+                'bonus_product_name' => $item['bonus_product']['name'] ?? null,
+                'bonus_product_sku' => $item['bonus_product']['sku'] ?? null,
+                'bonus_product_base_price' => $item['bonus_product']['base_price'] ?? null,
+                'bonus_product_main_image' => $item['bonus_product']['main_image'] ?? null,
+                'bonus_product_is_active' => $item['bonus_product']['is_active'] ?? null,
+            ];
+
+            // دمج كل البيانات في صف واحد
+            $flattenedItems[] = array_merge(
+                $offerBase,
+                $companyData,
+                $targetsData,
+                $itemData,
+                $productData,
+                $bonusProductData
+            );
+        }
+
+        return $flattenedItems;
+    }
 }

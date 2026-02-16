@@ -296,7 +296,7 @@ class OfferController extends Controller
             'items',
             'items.product:id,name,sku,base_price,main_image,is_active',
             'items.bonusProduct:id,name,sku,base_price,main_image,is_active',
-            'targets',
+            'targets', // target_name سيتم جلبه عبر accessor
         ];
     }
 

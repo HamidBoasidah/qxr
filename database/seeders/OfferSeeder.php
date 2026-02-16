@@ -5,9 +5,10 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Offer;
 use App\Models\OfferItem;
+use App\Models\OfferTarget;
 use App\Models\Product;
 use App\Models\User;
-use Illuminate\Support\Str;
+use App\Models\Category;
 use Illuminate\Support\Carbon;
 
 class OfferSeeder extends Seeder
@@ -76,16 +77,22 @@ class OfferSeeder extends Seeder
             }
 
             $statuses = ['draft', 'active', 'paused'];
+            $scope = (rand(0, 1) ? 'public' : 'private');
 
             $offer = Offer::create([
                 'company_user_id' => $companyId,
-                'scope' => (rand(0, 1) ? 'public' : 'private'),
+                'scope' => $scope,
                 'status' => $statuses[array_rand($statuses)],
                 'title' => $title,
                 'description' => $description,
                 'start_at' => $start->format('Y-m-d'),
                 'end_at' => $end->format('Y-m-d'),
             ]);
+
+            // إذا كان العرض خاص، يجب إضافة targets
+            if ($scope === 'private') {
+                $this->createTargetsForOffer($offer);
+            }
 
             // create 1-3 items for the offer
             $itemsCount = rand(1, 3);
@@ -120,6 +127,58 @@ class OfferSeeder extends Seeder
                 }
 
                 OfferItem::create($itemData);
+            }
+        }
+    }
+
+    /**
+     * إنشاء targets للعروض الخاصة
+     */
+    private function createTargetsForOffer(Offer $offer): void
+    {
+        // عدد الـ targets (1-3)
+        $targetsCount = rand(1, 3);
+
+        // أنواع الـ targets المتاحة
+        $targetTypes = ['customer', 'customer_category', 'customer_tag'];
+
+        for ($i = 0; $i < $targetsCount; $i++) {
+            $targetType = $targetTypes[array_rand($targetTypes)];
+            $targetId = null;
+
+            switch ($targetType) {
+                case 'customer':
+                    // اختيار عميل عشوائي
+                    $customerIds = User::where('user_type', 'customer')->pluck('id')->toArray();
+                    if (!empty($customerIds)) {
+                        $targetId = $customerIds[array_rand($customerIds)];
+                    }
+                    break;
+
+                case 'customer_category':
+                    // اختيار فئة عملاء عشوائية
+                    $categoryIds = Category::where('category_type', 'customer')->pluck('id')->toArray();
+                    if (!empty($categoryIds)) {
+                        $targetId = $categoryIds[array_rand($categoryIds)];
+                    }
+                    break;
+
+                case 'customer_tag':
+                    // اختيار وسم عملاء عشوائي
+                    $tagIds = \App\Models\Tag::where('tag_type', 'customer')->pluck('id')->toArray();
+                    if (!empty($tagIds)) {
+                        $targetId = $tagIds[array_rand($tagIds)];
+                    }
+                    break;
+            }
+
+            // إذا وجدنا target_id صالح، نضيفه
+            if ($targetId) {
+                OfferTarget::create([
+                    'offer_id' => $offer->id,
+                    'target_type' => $targetType,
+                    'target_id' => $targetId,
+                ]);
             }
         }
     }

@@ -146,6 +146,7 @@ class OfferDTO
                     'id' => $target->id,
                     'target_type' => $target->target_type,
                     'target_id' => $target->target_id,
+                    'target_name' => $target->target_name, // استخدام accessor
                 ];
             })->values()->toArray();
         }
@@ -248,11 +249,8 @@ class OfferDTO
             'company_business_name' => $this->company['company_name'] ?? null,
         ];
 
-        // المستهدفين (ستتكرر مع كل منتج)
-        $targetsData = [
-            'targets_count' => $this->targets_count,
-            'targets' => $this->targets, // يمكن إزالتها إذا لم تكن مطلوبة
-        ];
+        // تسطيح المستهدفين: تحويلهم إلى حقول منفصلة
+        $targetsData = $this->flattenTargets();
 
         // إذا لم يكن هناك items، نرجع العرض بدون منتجات
         if (empty($this->items)) {
@@ -328,5 +326,31 @@ class OfferDTO
         }
 
         return $flattenedItems;
+    }
+
+    /**
+     * تسطيح معلومات المستهدفين إلى حقول منفصلة
+     */
+    private function flattenTargets(): array
+    {
+        $flattened = [
+            'targets_count' => $this->targets_count,
+        ];
+
+        // إذا لم يكن هناك targets
+        if (empty($this->targets)) {
+            return $flattened;
+        }
+
+        // تسطيح كل target (فقط الموجودة)
+        foreach ($this->targets as $index => $target) {
+            $num = $index + 1;
+            
+            $flattened["target_{$num}_id"] = $target['target_id'] ?? null;
+            $flattened["target_{$num}_type"] = $target['target_type'] ?? null;
+            $flattened["target_{$num}_name"] = $target['target_name'] ?? null;
+        }
+
+        return $flattened;
     }
 }

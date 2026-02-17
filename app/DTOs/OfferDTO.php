@@ -224,9 +224,17 @@ class OfferDTO
      * ✅ تسطيح البيانات: كل منتج في العرض يصبح صف منفصل مع تفاصيل العرض
      * بدلاً من عرض واحد يحتوي على قائمة منتجات، نحصل على قائمة مسطحة
      * كل عنصر يحتوي على: معلومات العرض + معلومات المنتج + معلومات الشركة + المستهدفين
+     * 
+     * @param int|null $maxItems الحد الأقصى لعدد المنتجات (null = بدون حد)
+     * @param bool $groupProducts هل نجمع المنتجات في قائمة داخلية (افتراضي: false)
      */
-    public function toFlattenedArray(): array
+    public function toFlattenedArray(?int $maxItems = null, bool $groupProducts = false): array
     {
+        // إذا كان groupProducts = true، نرجع شكل مختلف
+        if ($groupProducts) {
+            return $this->toFlattenedWithGroupedProducts($maxItems);
+        }
+
         $flattenedItems = [];
 
         // معلومات العرض الأساسية (ستتكرر مع كل منتج)
@@ -283,8 +291,11 @@ class OfferDTO
             ];
         }
 
+        // تحديد عدد المنتجات المراد معالجتها
+        $itemsToProcess = $maxItems !== null ? array_slice($this->items, 0, $maxItems) : $this->items;
+
         // لكل منتج في العرض، نضيف صف منفصل
-        foreach ($this->items as $item) {
+        foreach ($itemsToProcess as $item) {
             $itemData = [
                 'item_id' => $item['id'] ?? null,
                 'product_id' => $item['product_id'] ?? null,
@@ -329,6 +340,70 @@ class OfferDTO
     }
 
     /**
+     * تسطيح البيانات مع تجميع المنتجات في قائمة داخلية
+     */
+    private function toFlattenedWithGroupedProducts(?int $maxItems = null): array
+    {
+        // معلومات العرض مسطحة
+        $data = [
+            'offer_id' => $this->id,
+            'offer_title' => $this->title,
+            'offer_description' => $this->description,
+            'offer_scope' => $this->scope,
+            'offer_status' => $this->status,
+            'offer_start_at' => $this->start_at,
+            'offer_end_at' => $this->end_at,
+            'offer_created_at' => $this->created_at,
+            'offer_updated_at' => $this->updated_at,
+        ];
+
+        // معلومات الشركة مسطحة
+        $data['company_id'] = $this->company['id'] ?? null;
+        $data['company_name'] = $this->company['name'] ?? null;
+        $data['company_business_name'] = $this->company['company_name'] ?? null;
+
+        // تسطيح المستهدفين
+        $targetsData = $this->flattenTargets();
+        $data = array_merge($data, $targetsData);
+
+        // تحديد عدد المنتجات المراد معالجتها
+        $itemsToProcess = !empty($this->items) 
+            ? ($maxItems !== null ? array_slice($this->items, 0, $maxItems) : $this->items)
+            : [];
+
+        $data['items_count'] = count($itemsToProcess);
+
+        // المنتجات في قائمة داخلية (كل منتج مسطح)
+        $data['products'] = [];
+        foreach ($itemsToProcess as $item) {
+            $productData = [
+                'item_id' => $item['id'] ?? null,
+                'product_id' => $item['product_id'] ?? null,
+                'product_name' => $item['product']['name'] ?? null,
+                'product_sku' => $item['product']['sku'] ?? null,
+                'product_base_price' => $item['product']['base_price'] ?? null,
+                'product_main_image' => $item['product']['main_image'] ?? null,
+                'product_is_active' => $item['product']['is_active'] ?? null,
+                'min_qty' => $item['min_qty'] ?? null,
+                'reward_type' => $item['reward_type'] ?? null,
+                'discount_percent' => $item['discount_percent'] ?? null,
+                'discount_fixed' => $item['discount_fixed'] ?? null,
+                'bonus_product_id' => $item['bonus_product_id'] ?? null,
+                'bonus_qty' => $item['bonus_qty'] ?? null,
+                'bonus_product_name' => $item['bonus_product']['name'] ?? null,
+                'bonus_product_sku' => $item['bonus_product']['sku'] ?? null,
+                'bonus_product_base_price' => $item['bonus_product']['base_price'] ?? null,
+                'bonus_product_main_image' => $item['bonus_product']['main_image'] ?? null,
+                'bonus_product_is_active' => $item['bonus_product']['is_active'] ?? null,
+            ];
+
+            $data['products'][] = $productData;
+        }
+
+        return $data;
+    }
+
+    /**
      * تسطيح معلومات المستهدفين إلى حقول منفصلة
      */
     private function flattenTargets(): array
@@ -352,5 +427,102 @@ class OfferDTO
         }
 
         return $flattened;
+    }
+
+    /**
+     * ✅ تسطيح البيانات بطريقة مختلفة: عرض واحد مع منتجات مسطحة
+     * بدلاً من تكرار معلومات العرض مع كل منتج، نعرض العرض مرة واحدة
+     * مع معلومات المنتجات كحقول منفصلة (product_1_*, product_2_*, ...)
+     * 
+     * @param int $maxItems الحد الأقصى لعدد المنتجات (افتراضي: 10)
+     */
+    public function toFlattenedSingleRow(int $maxItems = 10): array
+    {
+        // معلومات العرض الأساسية
+        $data = [
+            'offer_id' => $this->id,
+            'offer_title' => $this->title,
+            'offer_description' => $this->description,
+            'offer_scope' => $this->scope,
+            'offer_status' => $this->status,
+            'offer_start_at' => $this->start_at,
+            'offer_end_at' => $this->end_at,
+            'offer_created_at' => $this->created_at,
+            'offer_updated_at' => $this->updated_at,
+        ];
+
+        // معلومات الشركة
+        $data['company_id'] = $this->company['id'] ?? null;
+        $data['company_name'] = $this->company['name'] ?? null;
+        $data['company_business_name'] = $this->company['company_name'] ?? null;
+
+        // تسطيح المستهدفين
+        $targetsData = $this->flattenTargets();
+        $data = array_merge($data, $targetsData);
+
+        // تحديد عدد المنتجات المراد معالجتها
+        $itemsToProcess = !empty($this->items) ? array_slice($this->items, 0, $maxItems) : [];
+        $data['items_count'] = count($itemsToProcess);
+
+        // تسطيح المنتجات
+        for ($i = 0; $i < $maxItems; $i++) {
+            $num = $i + 1;
+            
+            if (isset($itemsToProcess[$i])) {
+                $item = $itemsToProcess[$i];
+                
+                // معلومات العنصر
+                $data["item_{$num}_id"] = $item['id'] ?? null;
+                $data["product_{$num}_id"] = $item['product_id'] ?? null;
+                $data["product_{$num}_name"] = $item['product']['name'] ?? null;
+                $data["product_{$num}_sku"] = $item['product']['sku'] ?? null;
+                $data["product_{$num}_base_price"] = $item['product']['base_price'] ?? null;
+                $data["product_{$num}_main_image"] = $item['product']['main_image'] ?? null;
+                $data["product_{$num}_is_active"] = $item['product']['is_active'] ?? null;
+                $data["product_{$num}_min_qty"] = $item['min_qty'] ?? null;
+                $data["product_{$num}_reward_type"] = $item['reward_type'] ?? null;
+                $data["product_{$num}_discount_percent"] = $item['discount_percent'] ?? null;
+                $data["product_{$num}_discount_fixed"] = $item['discount_fixed'] ?? null;
+                $data["product_{$num}_bonus_product_id"] = $item['bonus_product_id'] ?? null;
+                $data["product_{$num}_bonus_qty"] = $item['bonus_qty'] ?? null;
+                
+                // معلومات المنتج المكافأة
+                if (!empty($item['bonus_product'])) {
+                    $data["product_{$num}_bonus_product_name"] = $item['bonus_product']['name'] ?? null;
+                    $data["product_{$num}_bonus_product_sku"] = $item['bonus_product']['sku'] ?? null;
+                    $data["product_{$num}_bonus_product_base_price"] = $item['bonus_product']['base_price'] ?? null;
+                    $data["product_{$num}_bonus_product_main_image"] = $item['bonus_product']['main_image'] ?? null;
+                    $data["product_{$num}_bonus_product_is_active"] = $item['bonus_product']['is_active'] ?? null;
+                } else {
+                    $data["product_{$num}_bonus_product_name"] = null;
+                    $data["product_{$num}_bonus_product_sku"] = null;
+                    $data["product_{$num}_bonus_product_base_price"] = null;
+                    $data["product_{$num}_bonus_product_main_image"] = null;
+                    $data["product_{$num}_bonus_product_is_active"] = null;
+                }
+            } else {
+                // منتج غير موجود - نضع null
+                $data["item_{$num}_id"] = null;
+                $data["product_{$num}_id"] = null;
+                $data["product_{$num}_name"] = null;
+                $data["product_{$num}_sku"] = null;
+                $data["product_{$num}_base_price"] = null;
+                $data["product_{$num}_main_image"] = null;
+                $data["product_{$num}_is_active"] = null;
+                $data["product_{$num}_min_qty"] = null;
+                $data["product_{$num}_reward_type"] = null;
+                $data["product_{$num}_discount_percent"] = null;
+                $data["product_{$num}_discount_fixed"] = null;
+                $data["product_{$num}_bonus_product_id"] = null;
+                $data["product_{$num}_bonus_qty"] = null;
+                $data["product_{$num}_bonus_product_name"] = null;
+                $data["product_{$num}_bonus_product_sku"] = null;
+                $data["product_{$num}_bonus_product_base_price"] = null;
+                $data["product_{$num}_bonus_product_main_image"] = null;
+                $data["product_{$num}_bonus_product_is_active"] = null;
+            }
+        }
+
+        return $data;
     }
 }

@@ -43,11 +43,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('products/{product}/deactivate', [App\Http\Controllers\Api\ProductController::class, 'deactivate']);
     
     // Offers - Public endpoints (must come BEFORE apiResource to avoid route conflicts)
+    Route::get('offers/public/flat', [App\Http\Controllers\Api\OfferController::class, 'publicIndexFlat']);
     Route::get('offers/public/details', [App\Http\Controllers\Api\OfferController::class, 'publicIndexDetails']);
     Route::get('offers/public', [App\Http\Controllers\Api\OfferController::class, 'publicIndex']);
     Route::get('offers/public/{id}', [App\Http\Controllers\Api\OfferController::class, 'publicShow']);
     
     // Offers - Company endpoints with details
+    Route::get('offers/flat', [App\Http\Controllers\Api\OfferController::class, 'indexFlat']);
     Route::get('offers/details', [App\Http\Controllers\Api\OfferController::class, 'indexDetails']);
     
     // Offers - Company endpoints (CRUD)
@@ -65,6 +67,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // Categories
     Route::get('categories', [App\Http\Controllers\Api\CategoryController::class, 'index']);
     Route::get('categories/type/{type}', [App\Http\Controllers\Api\CategoryController::class, 'byType']);
+
+    // Orders
+    Route::post('orders', [App\Http\Controllers\Api\OrderController::class, 'store']);
 });
     
 

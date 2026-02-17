@@ -1,0 +1,41 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Order extends Model
+{
+    protected $fillable = [
+        'order_no',
+        'company_user_id',
+        'customer_user_id',
+        'status',
+        'submitted_at',
+        'approved_at',
+        'approved_by_user_id',
+        'delivered_at',
+        'notes_customer',
+        'notes_company',
+    ];
+
+    public function company()
+    {
+        return $this->belongsTo(User::class, 'company_user_id');
+    }
+
+    public function customer()
+    {
+        return $this->belongsTo(User::class, 'customer_user_id');
+    }
+
+    public function items()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+
+    public function statusLogs()
+    {
+        return $this->hasMany(OrderStatusLog::class);
+    }
+}

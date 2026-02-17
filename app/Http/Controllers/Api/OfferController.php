@@ -87,6 +87,70 @@ class OfferController extends Controller
     }
 
     /**
+     * قائمة عروض الشركة المسجلة بشكل مسطح تماماً (للشركة فقط)
+     * تعرض العروض بشكل مسطح (صف واحد لكل منتج)
+     * بدون حد أقصى للمنتجات
+     */
+    public function indexFlat(Request $request, OfferRepository $offers)
+    {
+        $perPage = (int) $request->get('per_page', 10);
+
+        $userId = $request->user()->id;
+
+        $query = $offers->query($this->showWith())
+            ->where('company_user_id', $userId);
+
+        $query = $this->applyFilters(
+            $query,
+            $request,
+            $this->getSearchableFields(),
+            $this->getForeignKeyFilters()
+        );
+
+        $paginated = $query->latest()->paginate($perPage);
+
+        // تحويل البيانات: بيانات مسطحة تماماً (صف واحد لكل منتج، حد أقصى 1000)
+        $paginated->getCollection()->transform(function ($offer) {
+            return OfferDTO::fromModel($offer)->toFlattenedSingleRow(1000);
+        });
+
+        return $this->collectionResponse($paginated, 'تم جلب قائمة عروض الشركة بشكل مسطح بنجاح');
+    }
+
+
+    /**
+     * قائمة العروض العامة بشكل مسطح تماماً (للمستخدمين المسجلين فقط)
+     * تعرض العروض النشطة والعامة بشكل مسطح (صف واحد لكل منتج)
+     * الحد الأقصى: 10 منتجات لكل عرض
+     */
+    public function publicIndexFlat(Request $request, OfferRepository $offers)
+    {
+        $perPage = (int) $request->get('per_page', 10);
+
+        $query = $offers->query($this->showWith())
+            ->where('scope', 'public')
+            ->where('status', 'active')
+            ->where(function ($q) {
+                $q->whereNull('start_at')
+                    ->orWhere('start_at', '<=', now());
+            })
+            ->where(function ($q) {
+                $q->whereNull('end_at')
+                    ->orWhere('end_at', '>=', now());
+            });
+
+        $paginated = $query->latest()->paginate($perPage);
+
+        // تحويل البيانات: بيانات مسطحة تماماً (صف واحد لكل منتج، حد أقصى 10)
+        $paginated->getCollection()->transform(function ($offer) {
+            return OfferDTO::fromModel($offer)->toFlattenedSingleRow(10);
+        });
+
+        return $this->collectionResponse($paginated, 'تم جلب قائمة العروض العامة بشكل مسطح بنجاح');
+    }
+
+
+    /**
      * عرض تفاصيل عرض عام (للمستخدمين المسجلين فقط)
      */
     public function publicShow(OfferRepository $offers, $id)

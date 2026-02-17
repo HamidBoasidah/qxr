@@ -92,6 +92,14 @@ class ProductController extends Controller
                 $q->where('id', $userId);
             });
 
+        // Apply same filters as index (search + foreign keys)
+        $query = $this->applyFilters(
+            $query,
+            $request,
+            $this->getSearchableFields(),
+            $this->getForeignKeyFilters()
+        );
+
         $paginated = $query->latest()->paginate($perPage);
 
         $paginated->getCollection()->transform(fn ($product) => ProductDTO::fromModel($product)->toMobileArray());

@@ -54,7 +54,11 @@ trait CanFilter
      */
     protected function applyTextSearch(Builder $query, Request $request, array $searchableFields): Builder
     {
+        // accept common aliases for search (search, q, name)
         $search = $request->get('search');
+        if (!$search) {
+            $search = $request->get('q', $request->get('name'));
+        }
         
         if ($search && !empty($searchableFields)) {
             $query->where(function ($q) use ($search, $searchableFields) {

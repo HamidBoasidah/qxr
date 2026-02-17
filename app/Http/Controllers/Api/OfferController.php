@@ -109,12 +109,48 @@ class OfferController extends Controller
 
         $paginated = $query->latest()->paginate($perPage);
 
-        // تحويل البيانات: بيانات مسطحة تماماً (صف واحد لكل منتج، حد أقصى 1000)
-        $paginated->getCollection()->transform(function ($offer) {
-            return OfferDTO::fromModel($offer)->toFlattenedSingleRow(1000);
-        });
+        // تحويل البيانات: صف منفصل لكل منتج (بدون حد أقصى)
+        $flattenedData = [];
+        foreach ($paginated->items() as $offer) {
+            $offerDTO = OfferDTO::fromModel($offer);
+            $flatArray = $offerDTO->toFlattenedArray(null, true);
+            
+            // تحويل كل منتج إلى صف منفصل
+            if (!empty($flatArray['products'])) {
+                foreach ($flatArray['products'] as $product) {
+                    $row = [
+                        'offer_id' => $flatArray['offer_id'],
+                        'offer_title' => $flatArray['offer_title'],
+                        'offer_description' => $flatArray['offer_description'],
+                        'offer_scope' => $flatArray['offer_scope'],
+                        'offer_status' => $flatArray['offer_status'],
+                        'offer_start_at' => $flatArray['offer_start_at'],
+                        'offer_end_at' => $flatArray['offer_end_at'],
+                        'offer_created_at' => $flatArray['offer_created_at'],
+                        'offer_updated_at' => $flatArray['offer_updated_at'],
+                        'company_id' => $flatArray['company_id'],
+                        'company_name' => $flatArray['company_name'],
+                        'company_business_name' => $flatArray['company_business_name'],
+                    ];
+                    
+                    // دمج بيانات المنتج
+                    $flattenedData[] = array_merge($row, $product);
+                }
+            }
+        }
 
-        return $this->collectionResponse($paginated, 'تم جلب قائمة عروض الشركة بشكل مسطح بنجاح');
+        return response()->json([
+            'success' => true,
+            'message' => 'تم جلب قائمة عروض الشركة بشكل مسطح بنجاح',
+            'status_code' => 200,
+            'data' => $flattenedData,
+            'pagination' => [
+                'current_page' => $paginated->currentPage(),
+                'per_page' => $paginated->perPage(),
+                'total' => $paginated->total(),
+                'last_page' => $paginated->lastPage(),
+            ]
+        ], 200);
     }
 
 
@@ -141,12 +177,48 @@ class OfferController extends Controller
 
         $paginated = $query->latest()->paginate($perPage);
 
-        // تحويل البيانات: بيانات مسطحة تماماً (صف واحد لكل منتج، حد أقصى 10)
-        $paginated->getCollection()->transform(function ($offer) {
-            return OfferDTO::fromModel($offer)->toFlattenedSingleRow(10);
-        });
+        // تحويل البيانات: صف منفصل لكل منتج (حد أقصى 10 منتجات لكل عرض)
+        $flattenedData = [];
+        foreach ($paginated->items() as $offer) {
+            $offerDTO = OfferDTO::fromModel($offer);
+            $flatArray = $offerDTO->toFlattenedArray(10, true);
+            
+            // تحويل كل منتج إلى صف منفصل
+            if (!empty($flatArray['products'])) {
+                foreach ($flatArray['products'] as $product) {
+                    $row = [
+                        'offer_id' => $flatArray['offer_id'],
+                        'offer_title' => $flatArray['offer_title'],
+                        'offer_description' => $flatArray['offer_description'],
+                        'offer_scope' => $flatArray['offer_scope'],
+                        'offer_status' => $flatArray['offer_status'],
+                        'offer_start_at' => $flatArray['offer_start_at'],
+                        'offer_end_at' => $flatArray['offer_end_at'],
+                        'offer_created_at' => $flatArray['offer_created_at'],
+                        'offer_updated_at' => $flatArray['offer_updated_at'],
+                        'company_id' => $flatArray['company_id'],
+                        'company_name' => $flatArray['company_name'],
+                        'company_business_name' => $flatArray['company_business_name'],
+                    ];
+                    
+                    // دمج بيانات المنتج
+                    $flattenedData[] = array_merge($row, $product);
+                }
+            }
+        }
 
-        return $this->collectionResponse($paginated, 'تم جلب قائمة العروض العامة بشكل مسطح بنجاح');
+        return response()->json([
+            'success' => true,
+            'message' => 'تم جلب قائمة العروض العامة بشكل مسطح بنجاح',
+            'status_code' => 200,
+            'data' => $flattenedData,
+            'pagination' => [
+                'current_page' => $paginated->currentPage(),
+                'per_page' => $paginated->perPage(),
+                'total' => $paginated->total(),
+                'last_page' => $paginated->lastPage(),
+            ]
+        ], 200);
     }
 
 

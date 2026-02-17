@@ -225,18 +225,46 @@ class OfferController extends Controller
     /**
      * عرض تفاصيل عرض عام (للمستخدمين المسجلين فقط)
      */
-    public function publicShow(OfferRepository $offers, $id)
+    public function publicShow(Request $request, OfferRepository $offers, $id)
     {
         try {
-            $offer = $offers->query($this->showWith())
+            $perPage = (int) $request->get('per_page', 10);
+            
+            $offer = $offers->query([
+                'company:id,first_name,last_name',
+                'company.companyProfile:id,user_id,company_name',
+                'targets',
+            ])
                 ->where('scope', 'public')
                 ->where('status', 'active')
                 ->findOrFail($id);
 
-            return $this->resourceResponse(
-                OfferDTO::fromModel($offer)->toArray(),
-                'تم جلب بيانات العرض بنجاح'
-            );
+            // تحميل المنتجات مع pagination
+            $items = $offer->items()
+                ->with([
+                    'product:id,name,sku,base_price,main_image,is_active',
+                    'bonusProduct:id,name,sku,base_price,main_image,is_active'
+                ])
+                ->paginate($perPage);
+
+            // تحويل البيانات
+            $offerData = OfferDTO::fromModel($offer)->toArray();
+            
+            // استبدال items بالبيانات المقسمة
+            $offerData['items'] = $items->items();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'تم جلب بيانات العرض بنجاح',
+                'status_code' => 200,
+                'data' => $offerData,
+                'items_pagination' => [
+                    'current_page' => $items->currentPage(),
+                    'per_page' => $items->perPage(),
+                    'total' => $items->total(),
+                    'last_page' => $items->lastPage(),
+                ]
+            ], 200);
         } catch (ModelNotFoundException) {
             $this->throwNotFoundException('العرض المطلوب غير موجود');
         }
@@ -331,17 +359,45 @@ class OfferController extends Controller
     /**
      * عرض تفاصيل عرض (للشركة المالكة فقط)
      */
-    public function show(OfferRepository $offers, $id)
+    public function show(Request $request, OfferRepository $offers, $id)
     {
         try {
-            $offer = $offers->query($this->showWith())
+            $perPage = (int) $request->get('per_page', 10);
+            
+            $offer = $offers->query([
+                'company:id,first_name,last_name',
+                'company.companyProfile:id,user_id,company_name',
+                'targets',
+            ])
                 ->where('company_user_id', Auth::id())
                 ->findOrFail($id);
 
-            return $this->resourceResponse(
-                OfferDTO::fromModel($offer)->toArray(),
-                'تم جلب بيانات العرض بنجاح'
-            );
+            // تحميل المنتجات مع pagination
+            $items = $offer->items()
+                ->with([
+                    'product:id,name,sku,base_price,main_image,is_active',
+                    'bonusProduct:id,name,sku,base_price,main_image,is_active'
+                ])
+                ->paginate($perPage);
+
+            // تحويل البيانات
+            $offerData = OfferDTO::fromModel($offer)->toArray();
+            
+            // استبدال items بالبيانات المقسمة
+            $offerData['items'] = $items->items();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'تم جلب بيانات العرض بنجاح',
+                'status_code' => 200,
+                'data' => $offerData,
+                'items_pagination' => [
+                    'current_page' => $items->currentPage(),
+                    'per_page' => $items->perPage(),
+                    'total' => $items->total(),
+                    'last_page' => $items->lastPage(),
+                ]
+            ], 200);
         } catch (ModelNotFoundException) {
             $this->throwNotFoundException('العرض المطلوب غير موجود');
         }

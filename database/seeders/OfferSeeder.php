@@ -142,13 +142,21 @@ class OfferSeeder extends Seeder
         // أنواع الـ targets المتاحة
         $targetTypes = ['customer', 'customer_category', 'customer_tag'];
 
-        for ($i = 0; $i < $targetsCount; $i++) {
+        // استخدم مجموعة لتجنب التكرار (offer_id, target_type, target_id)
+        $used = [];
+
+        // نحاول عددًا محدودًا من المرات حتى نجد أهدافًا فريدة
+        $attempts = 0;
+        $maxAttempts = $targetsCount * 4; // هامش آمن
+
+        while (count($used) < $targetsCount && $attempts < $maxAttempts) {
+            $attempts++;
+
             $targetType = $targetTypes[array_rand($targetTypes)];
             $targetId = null;
 
             switch ($targetType) {
                 case 'customer':
-                    // اختيار عميل عشوائي
                     $customerIds = User::where('user_type', 'customer')->pluck('id')->toArray();
                     if (!empty($customerIds)) {
                         $targetId = $customerIds[array_rand($customerIds)];
@@ -156,7 +164,6 @@ class OfferSeeder extends Seeder
                     break;
 
                 case 'customer_category':
-                    // اختيار فئة عملاء عشوائية
                     $categoryIds = Category::where('category_type', 'customer')->pluck('id')->toArray();
                     if (!empty($categoryIds)) {
                         $targetId = $categoryIds[array_rand($categoryIds)];
@@ -164,7 +171,6 @@ class OfferSeeder extends Seeder
                     break;
 
                 case 'customer_tag':
-                    // اختيار وسم عملاء عشوائي
                     $tagIds = \App\Models\Tag::where('tag_type', 'customer')->pluck('id')->toArray();
                     if (!empty($tagIds)) {
                         $targetId = $tagIds[array_rand($tagIds)];
@@ -172,14 +178,22 @@ class OfferSeeder extends Seeder
                     break;
             }
 
-            // إذا وجدنا target_id صالح، نضيفه
-            if ($targetId) {
-                OfferTarget::create([
-                    'offer_id' => $offer->id,
-                    'target_type' => $targetType,
-                    'target_id' => $targetId,
-                ]);
+            if (!$targetId) {
+                continue;
             }
+
+            $key = $targetType . '-' . $targetId;
+            if (isset($used[$key])) {
+                continue; // تكرار، تجاوز
+            }
+
+            $used[$key] = true;
+
+            OfferTarget::firstOrCreate([
+                'offer_id' => $offer->id,
+                'target_type' => $targetType,
+                'target_id' => $targetId,
+            ]);
         }
     }
 }

@@ -59,7 +59,7 @@ class OrderDTO extends BaseDTO
             'id' => $order->id,
             'order_no' => $order->order_no,
             'status' => $order->status,
-            'submitted_at' => $order->submitted_at->toIso8601String(),
+            'submitted_at' => optional($order->submitted_at)->toIso8601String(),
             'notes' => $order->notes_customer,
             'items' => $items,
             'subtotal' => round($subtotal, 2),

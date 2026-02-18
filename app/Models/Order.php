@@ -19,6 +19,12 @@ class Order extends Model
         'notes_company',
     ];
 
+    protected $casts = [
+        'submitted_at' => 'datetime',
+        'approved_at' => 'datetime',
+        'delivered_at' => 'datetime',
+    ];
+
     public function company()
     {
         return $this->belongsTo(User::class, 'company_user_id');

@@ -69,7 +69,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('categories/type/{type}', [App\Http\Controllers\Api\CategoryController::class, 'byType']);
 
     // Orders
-    Route::post('orders', [App\Http\Controllers\Api\OrderController::class, 'store']);
+    Route::apiResource('orders', App\Http\Controllers\Api\OrderController::class);
 });
     
 

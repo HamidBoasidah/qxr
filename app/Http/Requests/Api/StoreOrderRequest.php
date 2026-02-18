@@ -4,7 +4,7 @@ namespace App\Http\Requests\Api;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateOrderRequest extends FormRequest
+class StoreOrderRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,7 +25,7 @@ class CreateOrderRequest extends FormRequest
     {
         return [
             'company_id' => ['required', 'integer', 'exists:users,id'],
-            'notes' => ['nullable', 'string', 'max:1000'],
+            'notes_customer' => ['nullable', 'string', 'max:1000'],
             
             'order_items' => ['required', 'array', 'min:1'],
             'order_items.*.product_id' => ['required', 'integer', 'exists:products,id'],

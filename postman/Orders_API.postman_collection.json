@@ -1,0 +1,577 @@
+{
+  "info": {
+    "name": "Orders API (RESTful)",
+    "description": "Complete RESTful API collection for Orders with CRUD operations",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{auth_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000/api",
+      "type": "string"
+    },
+    {
+      "key": "auth_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "company_id",
+      "value": "35",
+      "type": "string"
+    },
+    {
+      "key": "order_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "product_id_1",
+      "value": "53",
+      "type": "string"
+    },
+    {
+      "key": "product_id_2",
+      "value": "66",
+      "type": "string"
+    },
+    {
+      "key": "bonus_product_id",
+      "value": "53",
+      "type": "string"
+    },
+    {
+      "key": "offer_id_percentage",
+      "value": "7",
+      "type": "string"
+    },
+    {
+      "key": "offer_id_fixed",
+      "value": "8",
+      "type": "string"
+    },
+    {
+      "key": "offer_id_bonus",
+      "value": "14",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "0. Authentication",
+      "item": [
+        {
+          "name": "Login as Customer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('auth_token', jsonData.data.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"customer@example.com\",\n    \"password\": \"password\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Login as Company",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('auth_token', jsonData.data.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"company@example.com\",\n    \"password\": \"password\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "login"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "1. CRUD Operations",
+      "item": [
+        {
+          "name": "1.1 Get All Orders",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/orders?per_page=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "orders"
+              ],
+              "query": [
+                {
+                  "key": "per_page",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "1.2 Get Single Order",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/orders/{{order_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "orders",
+                "{{order_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "1.3 Update Order",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"status\": \"approved\",\n    \"notes_company\": \"\\u062a\\u0645\\u062a \\u0627\\u0644\\u0645\\u0648\\u0627\\u0641\\u0642\\u0629\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/orders/{{order_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "orders",
+                "{{order_id}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "1.4 Delete Order",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/orders/{{order_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "orders",
+                "{{order_id}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Create Order Scenarios",
+      "item": [
+        {
+          "name": "2.1 Order Without Offers - Complete",
+          "description": "طلب كامل بدون عروض مع جميع التفاصيل",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.data && jsonData.data.order && jsonData.data.order.id) {",
+                  "        pm.collectionVariables.set('order_id', jsonData.data.order.id);",
+                  "        console.log('Order ID saved:', jsonData.data.order.id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"company_id\": 35,\n    \"notes_customer\": \"طلب بدون عروض - اختبار كامل مع جميع التفاصيل\",\n    \"order_items\": [\n        {\n            \"product_id\": 53,\n            \"qty\": 100,\n            \"unit_price_snapshot\": 200.0,\n            \"discount_amount_snapshot\": 0.0,\n            \"final_line_total_snapshot\": 20000.0,\n            \"selected_offer_id\": null\n        }\n    ],\n    \"order_item_bonuses\": []\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/orders",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            }
+          }
+        },
+        {
+          "name": "2.2 Order With Percentage Discount (20%) - Complete",
+          "description": "طلب مع خصم نسبة مئوية 20% - عرض رقم 7",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"company_id\": 35,\n    \"notes_customer\": \"طلب مع خصم نسبة مئوية 20% على منتج انسولين (1000 قطعة × 200 ريال = 200,000 ريال، خصم 40,000 ريال = 160,000 ريال)\",\n    \"order_items\": [\n        {\n            \"product_id\": 53,\n            \"qty\": 1000,\n            \"unit_price_snapshot\": 200.0,\n            \"discount_amount_snapshot\": 40000.0,\n            \"final_line_total_snapshot\": 160000.0,\n            \"selected_offer_id\": 7\n        }\n    ],\n    \"order_item_bonuses\": []\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/orders",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            }
+          }
+        },
+        {
+          "name": "2.3 Order With Fixed Discount (1000 SAR) - Complete",
+          "description": "طلب مع خصم ثابت 1000 ريال - عرض رقم 8",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"company_id\": 35,\n    \"notes_customer\": \"طلب مع خصم ثابت 1000 ريال على منتج Test Product (1000 قطعة × 50 ريال = 50,000 ريال، خصم 1,000 ريال = 49,000 ريال)\",\n    \"order_items\": [\n        {\n            \"product_id\": 69,\n            \"qty\": 1000,\n            \"unit_price_snapshot\": 50.0,\n            \"discount_amount_snapshot\": 1000.0,\n            \"final_line_total_snapshot\": 49000.0,\n            \"selected_offer_id\": 8\n        }\n    ],\n    \"order_item_bonuses\": []\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/orders",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            }
+          }
+        },
+        {
+          "name": "2.4 Order With Bonus Quantity (12 units) - Complete",
+          "description": "طلب مع بونص 12 قطعة مجانية - عرض رقم 14",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"company_id\": 35,\n    \"notes_customer\": \"طلب مع بونص 12 قطعة مجانية من منتج انسولين (1000 قطعة × 200 ريال = 200,000 ريال + 12 قطعة مجاناً)\",\n    \"order_items\": [\n        {\n            \"product_id\": 53,\n            \"qty\": 1000,\n            \"unit_price_snapshot\": 200.0,\n            \"discount_amount_snapshot\": 0.0,\n            \"final_line_total_snapshot\": 200000.0,\n            \"selected_offer_id\": 14\n        }\n    ],\n    \"order_item_bonuses\": [\n        {\n            \"order_item_index\": 0,\n            \"bonus_product_id\": 53,\n            \"bonus_qty\": 12\n        }\n    ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/orders",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            }
+          }
+        },
+        {
+          "name": "2.5 Multiple Items with Mixed Offers - Complete",
+          "description": "طلب متعدد المنتجات: منتج بخصم نسبة + منتج ببونص",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"company_id\": 35,\n    \"notes_customer\": \"طلب متعدد: انسولين (1000 قطعة بخصم 20%) + Test Product (500 قطعة ببونص 10 قطع)\",\n    \"order_items\": [\n        {\n            \"product_id\": 53,\n            \"qty\": 1000,\n            \"unit_price_snapshot\": 200.0,\n            \"discount_amount_snapshot\": 40000.0,\n            \"final_line_total_snapshot\": 160000.0,\n            \"selected_offer_id\": 7\n        },\n        {\n            \"product_id\": 66,\n            \"qty\": 500,\n            \"unit_price_snapshot\": 50.0,\n            \"discount_amount_snapshot\": 0.0,\n            \"final_line_total_snapshot\": 25000.0,\n            \"selected_offer_id\": 14\n        }\n    ],\n    \"order_item_bonuses\": [\n        {\n            \"order_item_index\": 1,\n            \"bonus_product_id\": 66,\n            \"bonus_qty\": 10\n        }\n    ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/orders",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            }
+          }
+        },
+        {
+          "name": "2.6 Large Order - Multiple Products & Bonuses",
+          "description": "طلب كبير: 3 منتجات مختلفة مع عروض متنوعة",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"company_id\": 35,\n    \"notes_customer\": \"طلب كبير: 3 منتجات - انسولين (خصم 20%) + Test Product 1 (بونص) + Test Product 2 (بدون عرض)\",\n    \"order_items\": [\n        {\n            \"product_id\": 53,\n            \"qty\": 2000,\n            \"unit_price_snapshot\": 200.0,\n            \"discount_amount_snapshot\": 80000.0,\n            \"final_line_total_snapshot\": 320000.0,\n            \"selected_offer_id\": 7\n        },\n        {\n            \"product_id\": 66,\n            \"qty\": 1000,\n            \"unit_price_snapshot\": 50.0,\n            \"discount_amount_snapshot\": 0.0,\n            \"final_line_total_snapshot\": 50000.0,\n            \"selected_offer_id\": 14\n        },\n        {\n            \"product_id\": 69,\n            \"qty\": 500,\n            \"unit_price_snapshot\": 50.0,\n            \"discount_amount_snapshot\": 0.0,\n            \"final_line_total_snapshot\": 25000.0,\n            \"selected_offer_id\": null\n        }\n    ],\n    \"order_item_bonuses\": [\n        {\n            \"order_item_index\": 1,\n            \"bonus_product_id\": 66,\n            \"bonus_qty\": 20\n        }\n    ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/orders",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Filtering & Pagination",
+      "item": [
+        {
+          "name": "3.1 Filter by Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/orders?status=pending",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "orders"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "pending"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "3.2 Search by Order Number",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/orders?search=ORD",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "orders"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "ORD"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

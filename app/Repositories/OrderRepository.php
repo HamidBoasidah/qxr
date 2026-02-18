@@ -94,7 +94,7 @@ class OrderRepository extends BaseRepository
                 'customer_user_id' => $customerId,
                 'order_no' => $this->generateOrderNumber(),
                 'status' => 'pending',
-                'notes_customer' => $data['notes'] ?? null,
+                'notes_customer' => $data['notes_customer'] ?? null,
                 'submitted_at' => now(),
                 'approved_at' => null,
                 'delivered_at' => null

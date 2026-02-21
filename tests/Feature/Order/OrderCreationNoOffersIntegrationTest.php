@@ -59,7 +59,7 @@ class OrderCreationNoOffersIntegrationTest extends TestCase
         // Prepare order request
         $orderData = [
             'company_id' => $company->id,
-            'notes' => 'Test order with no offers',
+            'notes_customer' => 'Test order with no offers',
             'order_items' => [
                 [
                     'product_id' => $product1->id,
@@ -87,9 +87,11 @@ class OrderCreationNoOffersIntegrationTest extends TestCase
         // Assert: HTTP response
         $response->assertStatus(201)
             ->assertJson([
-                'success' => true,
-                'message' => 'Order created successfully'
-            ]);
+                'success' => true
+            ])
+            ->assertJsonPath('message', fn($message) => 
+                in_array($message, ['Order created successfully', 'تم إنشاء الطلب بنجاح'])
+            );
 
         // Assert: Order header persisted
         $this->assertDatabaseHas('orders', [

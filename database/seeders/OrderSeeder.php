@@ -20,6 +20,19 @@ class OrderSeeder extends Seeder
     {
         $fakerAr = \Faker\Factory::create('ar_SA');
 
+        $arabicNotes = [
+            'تم تحديث الحالة بعد مراجعة الطلب.',
+            'تم التواصل مع العميل وتأكيد التفاصيل.',
+            'تم تجهيز الشحنة وجاهزة للتسليم.',
+            'تم إلغاء الطلب بناءً على طلب العميل.',
+            'تمت الموافقة على الطلب من قبل الإدارة.',
+            'تم تسجيل ملاحظة بخصوص المخزون.',
+            'تم تسليم الطلب للعميل بنجاح.',
+            'تم رفض الطلب لعدم استيفاء الشروط.',
+            'تم إضافة ملاحظة خدمة العملاء.',
+            'تم تحديث معلومات الشحن.',
+        ];
+
         $companyIds = User::where('user_type', 'company')->pluck('id')->toArray();
         if (count($companyIds) < 3) {
             $extra = 3 - count($companyIds);
@@ -75,8 +88,8 @@ class OrderSeeder extends Seeder
                 'approved_at' => null,
                 'approved_by_user_id' => null,
                 'delivered_at' => null,
-                'notes_customer' => $fakerAr->sentence(8),
-                'notes_company' => $fakerAr->sentence(8),
+                'notes_customer' => Arr::random($arabicNotes),
+                'notes_company' => Arr::random($arabicNotes),
             ]);
 
             // create items
@@ -133,7 +146,7 @@ class OrderSeeder extends Seeder
                     'from_status' => $previous,
                     'to_status' => $status,
                     'changed_by_user_id' => Arr::random([$companyId, $customerId, Arr::random($customerIds)]),
-                    'note' => $fakerAr->sentence(10),
+                    'note' => Arr::random($arabicNotes),
                     'changed_at' => (clone $timeCursor),
                 ]);
 

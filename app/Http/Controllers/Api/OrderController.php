@@ -5,9 +5,14 @@ namespace App\Http\Controllers\Api;
 use App\DTOs\OrderDTO;
 use App\Exceptions\AuthorizationException;
 use App\Exceptions\NotFoundException;
+use App\Exceptions\PreviewInvalidatedException;
+use App\Exceptions\PreviewNotFoundException;
+use App\Exceptions\PreviewOwnershipException;
 use App\Exceptions\StaleDataException;
 use App\Exceptions\TamperingException;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\ConfirmOrderRequest;
+use App\Http\Requests\Api\PreviewOrderRequest;
 use App\Http\Requests\Api\StoreOrderRequest;
 use App\Http\Requests\Api\UpdateOrderRequest;
 use App\Http\Traits\CanFilter;
@@ -62,10 +67,89 @@ class OrderController extends Controller
 
         $paginated = $query->latest()->paginate($perPage);
 
-        $paginated->getCollection()->transform(fn ($order) => OrderDTO::fromModel($order));
+        $paginated->getCollection()->transform(fn ($order) => OrderDTO::fromModel($order)->toArray());
 
         return $this->collectionResponse($paginated, 'تم جلب قائمة الطلبات بنجاح');
     }
+
+    
+    public function preview(PreviewOrderRequest $request): JsonResponse
+    {
+        try {
+            $previewDTO = $this->orderService->previewOrder(
+                $request->validated(),
+                $request->user()
+            );
+            
+            return response()->json([
+                'success' => true,
+                'data' => $previewDTO
+            ], 200);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (NotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 404);
+        } catch (AuthorizationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 403);
+        } catch (\Exception $e) {
+            Log::error('Order preview failed', ['error' => $e->getMessage()]);
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while previewing the order'
+            ], 500);
+        }
+    }
+
+    
+    
+    public function confirm(ConfirmOrderRequest $request): JsonResponse
+    {
+        try {
+            $orderDTO = $this->orderService->confirmOrder(
+                $request->validated()['preview_token'],
+                $request->user()
+            );
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Order created successfully',
+                'data' => ['order' => $orderDTO]
+            ], 201);
+        } catch (PreviewInvalidatedException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'details' => $e->getDetails()
+            ], 409);
+        } catch (PreviewNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 404);
+        } catch (PreviewOwnershipException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 403);
+        } catch (\Exception $e) {
+            Log::error('Order confirmation failed', ['error' => $e->getMessage()]);
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while confirming the order'
+            ], 500);
+        }
+    }
+
 
     /**
      * Display the specified order
@@ -73,13 +157,12 @@ class OrderController extends Controller
     public function show(Request $request, $id): JsonResponse
     {
         try {
-            $order = Order::with(['company', 'customer', 'items.product', 'items.bonuses.bonusProduct'])
-                ->findOrFail($id);
+            $order = $this->orders->findOrFail($id, $this->indexWith());
 
             $this->authorize('view', $order);
 
             return $this->resourceResponse(
-                $order->toArray(),
+                OrderDTO::fromModel($order)->toArray(),
                 'تم جلب بيانات الطلب بنجاح'
             );
         } catch (ModelNotFoundException) {
@@ -95,11 +178,7 @@ class OrderController extends Controller
         }
     }
 
-    /**
-     * Create a new order
-     * 
-     * Requirements: 1.1, 1.3, 1.4, 10.1-10.8, 14.1-14.7
-     */
+    
     public function store(StoreOrderRequest $request): JsonResponse
     {
         try {
@@ -162,15 +241,19 @@ class OrderController extends Controller
     public function update(UpdateOrderRequest $request, $id): JsonResponse
     {
         try {
-            $order = Order::findOrFail($id);
+            $order = $this->orders->findOrFail($id);
             
             $this->authorize('update', $order);
 
-            $order->update($request->validated());
-            $order->load(['company', 'customer', 'items.product', 'items.bonuses.bonusProduct']);
+            $order = $this->orderService->updateOrder(
+                $id,
+                $request->validated(),
+                $request->user()
+            );
+            $order->load($this->indexWith());
 
             return $this->updatedResponse(
-                $order->toArray(),
+                OrderDTO::fromModel($order)->toArray(),
                 'تم تحديث الطلب بنجاح'
             );
         } catch (ModelNotFoundException) {
@@ -183,6 +266,11 @@ class OrderController extends Controller
                 'success' => false,
                 'message' => 'غير مصرح لك بتعديل هذا الطلب'
             ], 403);
+        } catch (\App\Exceptions\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 422);
         } catch (\Exception $e) {
             Log::error('Order update failed', [
                 'error' => $e->getMessage(),
@@ -202,20 +290,11 @@ class OrderController extends Controller
     public function destroy($id): JsonResponse
     {
         try {
-            $order = Order::findOrFail($id);
+            $order = $this->orders->findOrFail($id);
             
             $this->authorize('delete', $order);
 
-            // حتى مع التفويض، إذا كان الطلب في حالة مقفلة لا نحذفه ونعيد 409
-            $lockedStatuses = ['approved', 'preparing', 'shipped', 'delivered'];
-            if (in_array($order->status, $lockedStatuses, true)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'لا يمكن حذف طلب تم اعتماده أو جاري معالجته أو تم شحنه/تسليمه'
-                ], 409);
-            }
-
-            $order->delete();
+            $this->orderService->deleteOrder($id);
 
             return $this->deletedResponse('تم حذف الطلب بنجاح');
         } catch (ModelNotFoundException) {
@@ -237,6 +316,55 @@ class OrderController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'حدث خطأ أثناء حذف الطلب'
+            ], 500);
+        }
+    }
+
+    /**
+     * Cancel an order (only if status is pending)
+     */
+    public function cancel(UpdateOrderRequest $request, $id): JsonResponse
+    {
+        try {
+            $order = $this->orders->findOrFail($id);
+            
+            $this->authorize('cancel', $order);
+
+            $order = $this->orderService->cancelOrder(
+                $id,
+                $request->user(),
+                $request->validated()['notes_customer'] ?? null
+            );
+            $order->load($this->indexWith());
+
+            return $this->updatedResponse(
+                OrderDTO::fromModel($order)->toArray(),
+                'تم إلغاء الطلب بنجاح'
+            );
+        } catch (ModelNotFoundException) {
+            return response()->json([
+                'success' => false,
+                'message' => 'الطلب المطلوب غير موجود'
+            ], 404);
+        } catch (\Illuminate\Auth\Access\AuthorizationException) {
+            return response()->json([
+                'success' => false,
+                'message' => 'غير مصرح لك بإلغاء هذا الطلب'
+            ], 403);
+        } catch (\App\Exceptions\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 422);
+        } catch (\Exception $e) {
+            Log::error('Order cancellation failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'حدث خطأ أثناء إلغاء الطلب'
             ], 500);
         }
     }

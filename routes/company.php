@@ -12,6 +12,7 @@ use App\Http\Controllers\Company\ConversationController;
 use App\Http\Controllers\Company\MessageController;
 use App\Http\Controllers\Company\UserController;
 use App\Http\Controllers\Company\ProductController;
+use App\Http\Controllers\Company\OrderController;
 use App\Http\Controllers\Company\Auth\ProfileController;
 use App\Http\Controllers\Company\DashboardController;
 use Illuminate\Support\Facades\Route;
@@ -65,6 +66,11 @@ Route::middleware(['auth:web', 'company'])
         // Offers
         Route::resource('offers', \App\Http\Controllers\Company\OfferController::class)
             ->names('offers');
+
+        // Orders
+        Route::resource('orders', \App\Http\Controllers\Company\OrderController::class)
+            ->only(['index', 'show'])
+            ->names('orders');
 
         // Users (for company to manage their own users if needed)
         Route::resource('users', UserController::class)

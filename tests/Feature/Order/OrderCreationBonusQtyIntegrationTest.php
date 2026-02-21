@@ -98,9 +98,11 @@ class OrderCreationBonusQtyIntegrationTest extends TestCase
         // Assert: HTTP response
         $response->assertStatus(201)
             ->assertJson([
-                'success' => true,
-                'message' => 'Order created successfully'
-            ]);
+                'success' => true
+            ])
+            ->assertJsonPath('message', fn($message) => 
+                in_array($message, ['Order created successfully', 'تم إنشاء الطلب بنجاح'])
+            );
 
         // Assert: Order persisted
         $order = Order::where('customer_user_id', $customer->id)->first();

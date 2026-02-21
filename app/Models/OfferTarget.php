@@ -15,6 +15,21 @@ class OfferTarget extends Model
         'target_id',
     ];
 
+    /**
+     * Handle customer_user_id as an alias for target_type/target_id
+     */
+    public function setAttribute($key, $value)
+    {
+        // Redirect customer_user_id to target_type and target_id
+        if ($key === 'customer_user_id') {
+            $this->attributes['target_type'] = 'customer';
+            $this->attributes['target_id'] = $value;
+            return $this;
+        }
+        
+        return parent::setAttribute($key, $value);
+    }
+
     public function offer()
     {
         return $this->belongsTo(Offer::class);

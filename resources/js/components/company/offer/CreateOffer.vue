@@ -64,7 +64,7 @@
             >
               <option value="draft">{{ t('offers.status_draft') }}</option>
               <option value="active">{{ t('offers.status_active') }}</option>
-              <option value="paused">{{ t('offers.status_paused') }}</option>
+              <option value="inactive">{{ t('offers.status_inactive') }}</option>
               <option value="expired">{{ t('offers.status_expired') }}</option>
             </select>
             <p v-if="form.errors.status" class="mt-1 text-sm text-error-500">{{ form.errors.status }}</p>

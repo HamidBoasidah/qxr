@@ -22,6 +22,32 @@ class Product extends Model
         'is_active',
     ];
 
+    /**
+     * Handle company_id as an alias for company_user_id
+     * Handle price as an alias for base_price
+     * Round base_price to 2 decimal places
+     */
+    public function setAttribute($key, $value)
+    {
+        // Redirect company_id to company_user_id
+        if ($key === 'company_id') {
+            $key = 'company_user_id';
+        }
+        
+        // Redirect price to base_price and round it
+        if ($key === 'price') {
+            $key = 'base_price';
+            $value = round((float)$value, 2, PHP_ROUND_HALF_UP);
+        }
+        
+        // Round base_price to ensure proper decimal precision
+        if ($key === 'base_price' && $value !== null) {
+            $value = round((float)$value, 2, PHP_ROUND_HALF_UP);
+        }
+        
+        return parent::setAttribute($key, $value);
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Relationships

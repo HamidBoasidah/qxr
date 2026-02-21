@@ -285,8 +285,10 @@ import { route } from '@/route'
 import { useI18n } from 'vue-i18n'
 import { ProductIcon } from '@/icons'
 import SortArrows from '@/components/common/SortArrows.vue'
+import { usePermissions } from '@/composables/usePermissions'
 
 const { t, locale } = useI18n()
+const { hasAnyPermission } = usePermissions()
 
 // Props from Inertia (server-paginated products)
 const props = defineProps({ products: Object })
@@ -304,6 +306,7 @@ function goToView(id) {
 }
 
 function handleViewClick(id) {
+  if (!canView.value) return
   goToView(id)
 }
 
@@ -350,6 +353,8 @@ const totalEntries = computed(() => props.products?.total || filteredData.value.
 const startEntry = computed(() => props.products?.from || 1)
 const endEntry = computed(() => props.products?.to || filteredData.value.length)
 const totalPages = computed(() => props.products?.last_page || 1)
+
+const canView = computed(() => hasAnyPermission(['products.view', 'products.show', 'products.read']))
 
 const pagesAroundCurrent = computed(() => {
   let pages = []

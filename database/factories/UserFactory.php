@@ -29,7 +29,7 @@ class UserFactory extends Factory
             // Explicitly use an Arabic Faker generator for first/last names
             'first_name' => $arabic->firstName(),
             'last_name' => $arabic->lastName(),
-            'email' => $arabic->unique()->safeEmail(),
+            'email' => $arabic->unique()->safeEmail() . '.' . uniqid(),
             'avatar' => null,
             'phone_number' => fake()->numerify('5########'),
             'whatsapp_number' => fake()->numerify('7########'),

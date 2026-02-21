@@ -148,6 +148,11 @@ Route::middleware('auth:admin')
             ->only(['index', 'show'])    
             ->names('products');
 
+        // Orders
+        Route::resource('orders', \App\Http\Controllers\Admin\OrderController::class)
+            ->only(['index', 'show'])
+            ->names('orders');
+
         // Offers
         Route::resource('offers', OfferController::class)
             ->only(['index', 'show'])  

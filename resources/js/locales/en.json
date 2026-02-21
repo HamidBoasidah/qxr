@@ -66,6 +66,7 @@
     "active": "Active",
     "inactive": "Inactive",
     "action": "Action",
+    "quantity": "Quantity",
     "address": "Address",
     "type": "Type",
     "attachment": "Attachment",
@@ -357,6 +358,38 @@
     "noUsersFound": "No users found.",
     "noUsers": "No users available.",
     "errorCreatingConversation": "An error occurred while creating the conversation"
+  },
+  "offers": {
+    "selectedOffer": "Selected Offer",
+    "bonuses": "Bonuses"
+  },
+  "order": {
+    "title": "Orders",
+    "order_no": "Order No",
+    "orderDetails": "Order Details",
+    "showOrder": "Show Order",
+    "submitted_at": "Submitted At",
+    "approved_at": "Approved At",
+    "delivered_at": "Delivered At",
+    "totals": "Totals",
+    "subtotal": "Subtotal",
+    "total_discount": "Total Discount",
+    "final_total": "Final Total",
+    "items": "Items",
+    "discount": "Discount",
+    "total": "Total",
+    "statusHistory": "Status History",
+    "noStatusLogs": "No status logs",
+    "selectedOffer": "Selected Offer",
+    "statuses": {
+      "pending": "Pending",
+      "approved": "Approved",
+      "preparing": "Preparing",
+      "shipped": "Shipped",
+      "delivered": "Delivered",
+      "rejected": "Rejected",
+      "cancelled": "Cancelled"
+    }
   },
   "datatable": {
     "show": "Show",

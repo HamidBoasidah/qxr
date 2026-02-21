@@ -100,7 +100,7 @@
                 :class="{
                   'bg-green-50 text-green-600 dark:bg-green-500/15 dark:text-green-500': offer.status === 'active',
                   'bg-gray-50 text-gray-600 dark:bg-gray-500/15 dark:text-gray-500': offer.status === 'draft',
-                  'bg-yellow-50 text-yellow-600 dark:bg-yellow-500/15 dark:text-yellow-500': offer.status === 'paused',
+                  'bg-yellow-50 text-yellow-600 dark:bg-yellow-500/15 dark:text-yellow-500': offer.status === 'inactive',
                   'bg-error-50 text-error-600 dark:bg-error-500/15 dark:text-error-500': offer.status === 'expired',
                 }"
               >

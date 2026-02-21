@@ -17,7 +17,7 @@ class StoreOfferRequest extends BaseOfferRequest
             'title'       => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'scope'       => ['sometimes', 'in:public,private'],
-            'status'      => ['sometimes', 'in:draft,active,paused'],
+            'status'      => ['sometimes', 'in:draft,active,inactive'],
             'start_at'    => ['nullable', 'date'],
             'end_at'      => ['nullable', 'date', 'after_or_equal:start_at'],
             'items'                   => ['required', 'array', 'min:1'],

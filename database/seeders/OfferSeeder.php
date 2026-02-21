@@ -76,7 +76,7 @@ class OfferSeeder extends Seeder
                 $productIds = [$p->id];
             }
 
-            $statuses = ['draft', 'active', 'paused'];
+            $statuses = ['draft', 'active', 'inactive'];
             $scope = (rand(0, 1) ? 'public' : 'private');
 
             $offer = Offer::create([

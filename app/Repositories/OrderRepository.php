@@ -16,9 +16,30 @@ use Illuminate\Support\Facades\DB;
 
 class OrderRepository extends BaseRepository
 {
+    /**
+     * العلاقات التي تُحمَّل افتراضيًا
+     */
+    protected array $defaultWith = [
+        'company:id,first_name,last_name',
+        'company.companyProfile:id,user_id,company_name',
+        'customer:id,first_name,last_name',
+        'items.product:id,name',
+        'items.selectedOffer:id,title',
+        'items.bonuses.bonusProduct:id,name',
+        'items.bonuses.offer:id,title'
+    ];
+
     public function __construct(Order $model)
     {
         parent::__construct($model);
+    }
+
+    /**
+     * إرجاع العلاقات الافتراضية لاستخدامها خارج الـ Repository
+     */
+    public function getDefaultWith(): array
+    {
+        return $this->defaultWith;
     }
 
     /**
@@ -56,6 +77,25 @@ class OrderRepository extends BaseRepository
     }
 
     /**
+     * Find all offers that include a specific product
+     */
+    public function findOffersForProduct(int $productId): \Illuminate\Support\Collection
+    {
+        // Get the product to find its company_user_id
+        $product = $this->findProduct($productId);
+        
+        if (!$product) {
+            return collect();
+        }
+        
+        return Offer::where('company_user_id', $product->company_user_id)
+            ->whereHas('items', function ($query) use ($productId) {
+                $query->where('product_id', $productId);
+            })
+            ->get();
+    }
+
+    /**
      * Check if a customer is targeted for a private offer
      */
     public function isCustomerTargeted(int $offerId, int $customerId): bool
@@ -70,12 +110,33 @@ class OrderRepository extends BaseRepository
      * Generate a unique order number
      * Format: ORD-YYYYMMDDHHMMSS-XXXX (e.g., ORD-20260217103045-A3F2)
      * Uses timestamp + random for concurrency safety
+     * Retries up to 5 times if collision occurs
      */
     private function generateOrderNumber(): string
     {
+        $maxAttempts = 5;
+        $attempt = 0;
+        
+        while ($attempt < $maxAttempts) {
+            $timestamp = now()->format('YmdHis');
+            $random = strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 4));
+            $orderNo = "ORD-{$timestamp}-{$random}";
+            
+            // Check if this order number already exists
+            if (!Order::where('order_no', $orderNo)->exists()) {
+                return $orderNo;
+            }
+            
+            $attempt++;
+            // Add a small delay to increase randomness
+            usleep(1000); // 1ms delay
+        }
+        
+        // If all attempts fail, add microseconds for uniqueness
         $timestamp = now()->format('YmdHis');
+        $microseconds = substr((string) microtime(true), -6);
         $random = strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 4));
-        return "ORD-{$timestamp}-{$random}";
+        return "ORD-{$timestamp}-{$microseconds}-{$random}";
     }
 
     /**

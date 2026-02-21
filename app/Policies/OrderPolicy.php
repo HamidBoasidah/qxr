@@ -43,20 +43,22 @@ class OrderPolicy
 
     /**
      * Determine if the user can update the order.
+     * Only company can update order (change status, add company notes)
      */
     public function update(User $user, Order $order): bool
     {
-        // العميل يمكنه تعديل طلباته فقط (مثل الملاحظات أو الإلغاء)
-        if ($user->user_type === 'customer') {
-            return $order->customer_user_id === $user->id;
-        }
-        
-        // الشركة يمكنها تعديل الطلبات الموجهة لها (مثل الموافقة أو التسليم)
-        if ($user->user_type === 'company') {
-            return $order->company_user_id === $user->id;
-        }
-        
-        return false;
+        // الشركة فقط يمكنها تعديل الطلبات الموجهة لها (مثل تغيير الحالة)
+        return $user->user_type === 'company' && $order->company_user_id === $user->id;
+    }
+
+    /**
+     * Determine if the user can cancel the order.
+     * Only customer can cancel their own pending orders
+     */
+    public function cancel(User $user, Order $order): bool
+    {
+        // العميل يمكنه إلغاء طلباته المعلقة فقط
+        return $user->user_type === 'customer' && $order->customer_user_id === $user->id;
     }
 
     /**

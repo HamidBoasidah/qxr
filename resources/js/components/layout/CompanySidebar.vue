@@ -215,6 +215,7 @@ import {
   ProductIcon,
   ChatIcon,
   OfferIcon,
+  OrderIcon,
 } from "../../icons"
 import { useSidebar } from "@/composables/useSidebar"
 
@@ -258,6 +259,11 @@ const menuGroups = computed(() => [
         icon: OfferIcon,
         name: t('menu.offers'),
         path: route('company.offers.index'),
+      },
+      {
+        icon: OrderIcon,
+        name: t('menu.orders'),
+        path: route('company.orders.index'),
       },
       {
         icon: AddressIcon,

@@ -23,7 +23,7 @@ return new class extends Migration
             $table->enum('scope', ['public', 'private'])->default('public');
 
             // حالة العرض
-            $table->enum('status', ['draft', 'active', 'expired', 'paused'])->default('draft');
+            $table->enum('status', ['draft', 'active', 'inactive', 'expired'])->default('draft');
 
             $table->string('title');
             $table->text('description')->nullable();

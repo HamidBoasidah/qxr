@@ -20,7 +20,7 @@ class UpdateOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'status' => ['sometimes', 'string', 'in:pending,approved,delivered,cancelled'],
+            'status' => ['sometimes', 'string', 'in:pending,approved,preparing,shipped,delivered,rejected,cancelled'],
             'notes_customer' => ['nullable', 'string', 'max:1000'],
             'notes_company' => ['nullable', 'string', 'max:1000'],
         ];

@@ -1,0 +1,693 @@
+{
+	"info": {
+		"_postman_id": "orders-api-complete-2026",
+		"name": "Orders API - Complete CRUD",
+		"description": "مجموعة كاملة لاختبار API الطلبات - Preview, Confirm, List, Show, Update, Delete",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "orders-api"
+	},
+	"item": [
+		{
+			"name": "Orders Management",
+			"item": [
+				{
+					"name": "1. Preview Order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// التحقق من نجاح الطلب",
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"// التحقق من وجود preview_token",
+									"pm.test('Response has preview_token', function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data).to.have.property('preview_token');",
+									"});",
+									"",
+									"// حفظ preview_token تلقائياً",
+									"var jsonData = pm.response.json();",
+									"if (jsonData.success && jsonData.data.preview_token) {",
+									"    pm.environment.set('preview_token', jsonData.data.preview_token);",
+									"    console.log('Preview token saved: ' + jsonData.data.preview_token);",
+									"}",
+									"",
+									"// التحقق من وجود items",
+									"pm.test('Response has items', function () {",
+									"    pm.expect(jsonData.data.items).to.be.an('array');",
+									"    pm.expect(jsonData.data.items.length).to.be.above(0);",
+									"});",
+									"",
+									"// التحقق من وجود totals",
+									"pm.test('Response has totals', function () {",
+									"    pm.expect(jsonData.data).to.have.property('subtotal');",
+									"    pm.expect(jsonData.data).to.have.property('total_discount');",
+									"    pm.expect(jsonData.data).to.have.property('final_total');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"company_id\": 1,\n    \"items\": [\n        {\n            \"product_id\": 1,\n            \"qty\": 10\n        },\n        {\n            \"product_id\": 2,\n            \"qty\": 5\n        }\n    ],\n    \"notes\": \"طلب اختبار من Postman\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/orders/preview",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"orders",
+								"preview"
+							]
+						},
+						"description": "معاينة الطلب قبل التأكيد - يعرض الأسعار والعروض المتاحة"
+					},
+					"response": []
+				},
+				{
+					"name": "2. Confirm Order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// التحقق من نجاح الطلب",
+									"pm.test('Status code is 201', function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"var jsonData = pm.response.json();",
+									"",
+									"// حفظ order_id تلقائياً",
+									"if (jsonData.success && jsonData.data.id) {",
+									"    pm.environment.set('last_order_id', jsonData.data.id);",
+									"    console.log('Order ID saved: ' + jsonData.data.id);",
+									"}",
+									"",
+									"// التحقق من وجود order_number",
+									"pm.test('Response has order_number', function () {",
+									"    pm.expect(jsonData.data).to.have.property('order_number');",
+									"});",
+									"",
+									"// التحقق من حالة الطلب",
+									"pm.test('Order status is pending', function () {",
+									"    pm.expect(jsonData.data.status).to.eql('pending');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"preview_token\": \"{{preview_token}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/orders/confirm",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"orders",
+								"confirm"
+							]
+						},
+						"description": "تأكيد الطلب المُعاين - ينشئ الطلب في قاعدة البيانات"
+					},
+					"response": []
+				},
+				{
+					"name": "3. List Orders",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test('Response has data array', function () {",
+									"    pm.expect(jsonData.data).to.be.an('array');",
+									"});",
+									"",
+									"pm.test('Response has pagination', function () {",
+									"    pm.expect(jsonData).to.have.property('meta');",
+									"    pm.expect(jsonData.meta).to.have.property('current_page');",
+									"    pm.expect(jsonData.meta).to.have.property('total');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/orders?page=1&per_page=15&sort_by=created_at&sort_order=desc",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"orders"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "رقم الصفحة"
+								},
+								{
+									"key": "per_page",
+									"value": "15",
+									"description": "عدد العناصر في الصفحة"
+								},
+								{
+									"key": "sort_by",
+									"value": "created_at",
+									"description": "الترتيب حسب (created_at, order_number, final_total)"
+								},
+								{
+									"key": "sort_order",
+									"value": "desc",
+									"description": "اتجاه الترتيب (asc, desc)"
+								},
+								{
+									"key": "status",
+									"value": "pending",
+									"description": "تصفية حسب الحالة",
+									"disabled": true
+								},
+								{
+									"key": "company_id",
+									"value": "1",
+									"description": "تصفية حسب الشركة",
+									"disabled": true
+								},
+								{
+									"key": "customer_id",
+									"value": "2",
+									"description": "تصفية حسب العميل",
+									"disabled": true
+								}
+							]
+						},
+						"description": "عرض قائمة الطلبات مع pagination وفلترة وترتيب"
+					},
+					"response": []
+				},
+				{
+					"name": "4. Show Order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test('Response has order data', function () {",
+									"    pm.expect(jsonData.data).to.have.property('id');",
+									"    pm.expect(jsonData.data).to.have.property('order_number');",
+									"    pm.expect(jsonData.data).to.have.property('status');",
+									"});",
+									"",
+									"pm.test('Order has items', function () {",
+									"    pm.expect(jsonData.data.items).to.be.an('array');",
+									"    pm.expect(jsonData.data.items.length).to.be.above(0);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/orders/{{last_order_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"orders",
+								"{{last_order_id}}"
+							]
+						},
+						"description": "عرض تفاصيل طلب محدد"
+					},
+					"response": []
+				},
+				{
+					"name": "5. Update Order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test('Order was updated', function () {",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    pm.expect(jsonData.data).to.have.property('id');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"confirmed\",\n    \"notes\": \"تم تحديث الطلب من Postman\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/orders/{{last_order_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"orders",
+								"{{last_order_id}}"
+							]
+						},
+						"description": "تحديث بيانات الطلب (الحالة، الملاحظات، إلخ)"
+					},
+					"response": []
+				},
+				{
+					"name": "6. Delete Order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200 or 204', function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
+									"});",
+									"",
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.test('Delete was successful', function () {",
+									"        pm.expect(jsonData.success).to.be.true;",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/orders/{{last_order_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"orders",
+								"{{last_order_id}}"
+							]
+						},
+						"description": "حذف طلب من النظام"
+					},
+					"response": []
+				}
+			],
+			"description": "عمليات CRUD الكاملة للطلبات"
+		},
+		{
+			"name": "Advanced Queries",
+			"item": [
+				{
+					"name": "Filter by Status",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/orders?status=pending",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"orders"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "pending",
+									"description": "pending, confirmed, processing, completed, cancelled"
+								}
+							]
+						},
+						"description": "عرض الطلبات حسب الحالة"
+					},
+					"response": []
+				},
+				{
+					"name": "Filter by Company",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/orders?company_id=1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"orders"
+							],
+							"query": [
+								{
+									"key": "company_id",
+									"value": "1"
+								}
+							]
+						},
+						"description": "عرض طلبات شركة محددة"
+					},
+					"response": []
+				},
+				{
+					"name": "Filter by Customer",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/orders?customer_id=2",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"orders"
+							],
+							"query": [
+								{
+									"key": "customer_id",
+									"value": "2"
+								}
+							]
+						},
+						"description": "عرض طلبات عميل محدد"
+					},
+					"response": []
+				},
+				{
+					"name": "Sort by Total (Descending)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/orders?sort_by=final_total&sort_order=desc",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"orders"
+							],
+							"query": [
+								{
+									"key": "sort_by",
+									"value": "final_total"
+								},
+								{
+									"key": "sort_order",
+									"value": "desc"
+								}
+							]
+						},
+						"description": "ترتيب الطلبات حسب الإجمالي (من الأعلى للأقل)"
+					},
+					"response": []
+				}
+			],
+			"description": "استعلامات متقدمة مع فلترة وترتيب"
+		},
+		{
+			"name": "Examples",
+			"item": [
+				{
+					"name": "Preview - Single Item No Offer",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"company_id\": 1,\n    \"items\": [\n        {\n            \"product_id\": 1,\n            \"qty\": 5\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/orders/preview",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"orders",
+								"preview"
+							]
+						},
+						"description": "مثال: طلب منتج واحد بدون عرض"
+					},
+					"response": []
+				},
+				{
+					"name": "Preview - Multiple Items with Offers",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"company_id\": 1,\n    \"items\": [\n        {\n            \"product_id\": 1,\n            \"qty\": 100\n        },\n        {\n            \"product_id\": 2,\n            \"qty\": 50\n        },\n        {\n            \"product_id\": 3,\n            \"qty\": 25\n        }\n    ],\n    \"notes\": \"طلب كبير مع كميات تحقق شروط العروض\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/orders/preview",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"orders",
+								"preview"
+							]
+						},
+						"description": "مثال: طلب متعدد المنتجات مع كميات تحقق شروط العروض"
+					},
+					"response": []
+				}
+			],
+			"description": "أمثلة جاهزة للاختبار السريع"
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://127.0.0.1:8000/api",
+			"type": "string"
+		}
+	]
+}

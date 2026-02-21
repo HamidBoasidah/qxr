@@ -40,7 +40,8 @@ return [
     'categories'   => ['view', 'create', 'update', 'delete'],
     'addresses'    => ['view', 'create', 'update', 'delete'],
     'tags'         => ['view', 'create', 'update', 'delete'],
-    'products'     => ['view', 'create', 'update', 'delete', 'activate', 'deactivate'],
+    'products'     => ['view'],
+    'orders'       => ['view'],
     'offers'       => ['view', 'create', 'update', 'delete', 'activate', 'deactivate'],
     // backend management resources
     'users'        => ['view', 'create', 'update', 'delete'],

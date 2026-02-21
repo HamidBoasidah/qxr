@@ -17,7 +17,7 @@ class UpdateOfferRequest extends BaseOfferRequest
             'title'       => ['sometimes', 'required', 'string', 'max:255'],
             'description' => ['sometimes', 'nullable', 'string'],
             'scope'       => ['sometimes', 'in:public,private'],
-            'status'      => ['sometimes', 'in:draft,active,paused'],
+            'status'      => ['sometimes', 'in:draft,active,inactive'],
             'start_at'    => ['sometimes', 'nullable', 'date'],
             'end_at'      => ['sometimes', 'nullable', 'date', 'after_or_equal:start_at'],
             'items'                   => ['sometimes', 'array'],

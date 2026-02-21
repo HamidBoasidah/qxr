@@ -5,6 +5,7 @@
     "dashboard": "لوحة التحكم",
     "dashboard_short": "لوحة التحكم",
     "products": "المنتجات",
+    "orders": "الطلبات",
     "offers": "العروض",
     "profile": "الملف الشخصي",
     "chat": "المحادثات",
@@ -93,8 +94,10 @@
     "all": "الكل",
     "read": "قراءة",
     "write": "كتابة",
-    "view": "عرض"
+    "view": "عرض",
+    "quantity": "الكمية"
   },
+  
   "product": {
     "title": "المنتجات",
     "description": "وصف المنتجات",
@@ -144,13 +147,15 @@
     "status": "حالة العرض",
     "status_draft": "مسودة",
     "status_active": "نشط",
-    "status_paused": "متوقّف مؤقتًا",
+    "status_inactive": "متوقّف مؤقتًا",
     "status_expired": "منتهٍ",
     "startDate": "تاريخ البدء",
     "endDate": "تاريخ الانتهاء",
     "period": "الفترة",
     "noLimit": "بدون حد زمني",
     "items": "العناصر",
+    "selectedOffer": "العرض المختار",
+    "bonuses": "الهدايا",
     "targets": "المستهدفون",
     "offerDetails": "تفاصيل العرض",
     "editOffer": "تعديل العرض",
@@ -188,6 +193,34 @@
     "target_customer_category_label": "فئة العملاء",
     "target_customer_tag_label": "وسم العملاء",
     "createOfferButton": "إنشاء عرض"
+  },
+  "order": {
+    "title": "الطلبات",
+    "order_no": "رقم الطلب",
+    "orderDetails": "تفاصيل الطلب",
+    "showOrder": "عرض الطلب",
+    "submitted_at": "تاريخ الإنشاء",
+    "approved_at": "تاريخ الموافقة",
+    "delivered_at": "تاريخ التسليم",
+    "totals": "الإجماليات",
+    "subtotal": "الإجمالي قبل الخصم",
+    "total_discount": "إجمالي الخصم",
+    "final_total": "الإجمالي النهائي",
+    "items": "العناصر",
+    "discount": "الخصم",
+    "total": "الإجمالي",
+    "statusHistory": "سجل الحالات",
+    "noStatusLogs": "لا يوجد سجلات",
+    "selectedOffer": "العرض المختار",
+    "statuses": {
+      "pending": "قيد الانتظار",
+      "approved": "تمت الموافقة",
+      "preparing": "قيد التحضير",
+      "shipped": "تم الشحن",
+      "delivered": "تم التسليم",
+      "rejected": "مرفوض",
+      "cancelled": "تم الإلغاء"
+    }
   },
   "user": {
     "name": "كود براينس",

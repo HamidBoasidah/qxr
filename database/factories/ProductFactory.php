@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Models\Category;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Model;
 
 class ProductFactory extends Factory
 {
@@ -31,5 +32,49 @@ class ProductFactory extends Factory
             'is_active' => $this->faker->boolean(85),
             'main_image' => null,
         ];
+    }
+
+    /**
+     * Configure the factory to handle attribute mapping
+     */
+    public function configure()
+    {
+        return $this->afterMaking(function (Product $product) {
+            // Already handled in raw() and make()
+        })->afterCreating(function (Product $product) {
+            // Already persisted
+        });
+    }
+
+    /**
+     * Override the raw method to map company_id to company_user_id
+     */
+    public function raw($attributes = [], ?Model $parent = null)
+    {
+        // Map company_id to company_user_id for backward compatibility
+        if (array_key_exists('company_id', $attributes)) {
+            if (!array_key_exists('company_user_id', $attributes)) {
+                $attributes['company_user_id'] = $attributes['company_id'];
+            }
+            unset($attributes['company_id']);
+        }
+        
+        return parent::raw($attributes, $parent);
+    }
+
+    /**
+     * Override the make method to handle attribute mapping
+     */
+    public function make($attributes = [], ?Model $parent = null)
+    {
+        // Map company_id to company_user_id for backward compatibility
+        if (array_key_exists('company_id', $attributes)) {
+            if (!array_key_exists('company_user_id', $attributes)) {
+                $attributes['company_user_id'] = $attributes['company_id'];
+            }
+            unset($attributes['company_id']);
+        }
+        
+        return parent::make($attributes, $parent);
     }
 }

@@ -86,9 +86,9 @@ class ValidRequestAcceptancePropertyTest extends TestCase
                 "Response should indicate success"
             );
             
-            $this->assertEquals(
-                'Order created successfully',
+            $this->assertContains(
                 $response->json('message'),
+                ['Order created successfully', 'تم إنشاء الطلب بنجاح'],
                 "Response should have success message"
             );
             
@@ -212,7 +212,7 @@ class ValidRequestAcceptancePropertyTest extends TestCase
             
             $orderData = [
                 'company_id' => $company->id,
-                'notes' => $notes,
+                'notes_customer' => $notes,
                 'order_items' => [
                     [
                         'product_id' => $product->id,

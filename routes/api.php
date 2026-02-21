@@ -68,6 +68,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('categories', [App\Http\Controllers\Api\CategoryController::class, 'index']);
     Route::get('categories/type/{type}', [App\Http\Controllers\Api\CategoryController::class, 'byType']);
 
+    // Orders - Custom endpoints (must come BEFORE apiResource to avoid route conflicts)
+    Route::post('orders/preview', [App\Http\Controllers\Api\OrderController::class, 'preview']);
+    Route::post('orders/confirm', [App\Http\Controllers\Api\OrderController::class, 'confirm']);
+    Route::post('orders/{id}/cancel', [App\Http\Controllers\Api\OrderController::class, 'cancel']);
+    
     // Orders
     Route::apiResource('orders', App\Http\Controllers\Api\OrderController::class);
 });

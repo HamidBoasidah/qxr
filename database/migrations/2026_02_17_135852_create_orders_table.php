@@ -56,6 +56,7 @@ return new class extends Migration
             $table->text('notes_customer')->nullable();
             $table->text('notes_company')->nullable();
 
+            $table->softDeletes();
             $table->timestamps();
 
             $table->index(['company_user_id', 'status']);

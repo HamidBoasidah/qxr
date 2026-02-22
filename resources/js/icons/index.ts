@@ -14,12 +14,14 @@ import ProductIcon from "./ProductIcon.vue";
 import ChatIcon from "./ChatIcon.vue";
 import OfferIcon from "./OfferIcon.vue";
 import OrderIcon from "./OrderIcon.vue";
+import InvoiceIcon from "./InvoiceIcon.vue";
 
 export {
   GridIcon,
   UserCircleIcon,
   OfferIcon,
   OrderIcon,
+  InvoiceIcon,
   ChevronDownIcon,
   HorizontalDots,
   BuildingIcon,

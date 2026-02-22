@@ -1,0 +1,211 @@
+{
+  "info": {
+    "name": "Invoices API",
+    "description": "API endpoints للفواتير - يسمح للعملاء والشركات بعرض فواتيرهم",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get All Invoices",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/invoices",
+          "host": ["{{base_url}}"],
+          "path": ["api", "invoices"]
+        },
+        "description": "عرض جميع الفواتير للمستخدم الحالي (عميل أو شركة)"
+      },
+      "response": []
+    },
+    {
+      "name": "Get All Invoices (Paginated)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/invoices?per_page=20&page=1",
+          "host": ["{{base_url}}"],
+          "path": ["api", "invoices"],
+          "query": [
+            {
+              "key": "per_page",
+              "value": "20",
+              "description": "عدد العناصر في الصفحة"
+            },
+            {
+              "key": "page",
+              "value": "1",
+              "description": "رقم الصفحة"
+            }
+          ]
+        },
+        "description": "عرض الفواتير مع pagination"
+      },
+      "response": []
+    },
+    {
+      "name": "Search Invoices",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/invoices?search=INV-2024",
+          "host": ["{{base_url}}"],
+          "path": ["api", "invoices"],
+          "query": [
+            {
+              "key": "search",
+              "value": "INV-2024",
+              "description": "البحث في invoice_no"
+            }
+          ]
+        },
+        "description": "البحث في الفواتير حسب رقم الفاتورة"
+      },
+      "response": []
+    },
+    {
+      "name": "Filter by Status",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/invoices?status=unpaid",
+          "host": ["{{base_url}}"],
+          "path": ["api", "invoices"],
+          "query": [
+            {
+              "key": "status",
+              "value": "unpaid",
+              "description": "الحالة: unpaid, paid, void"
+            }
+          ]
+        },
+        "description": "تصفية الفواتير حسب الحالة"
+      },
+      "response": []
+    },
+    {
+      "name": "Filter by Order ID",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/invoices?order_id=123",
+          "host": ["{{base_url}}"],
+          "path": ["api", "invoices"],
+          "query": [
+            {
+              "key": "order_id",
+              "value": "123",
+              "description": "رقم الطلب"
+            }
+          ]
+        },
+        "description": "تصفية الفواتير حسب رقم الطلب"
+      },
+      "response": []
+    },
+    {
+      "name": "Get Invoice Details",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/invoices/:id",
+          "host": ["{{base_url}}"],
+          "path": ["api", "invoices", ":id"],
+          "variable": [
+            {
+              "key": "id",
+              "value": "1",
+              "description": "رقم الفاتورة"
+            }
+          ]
+        },
+        "description": "عرض تفاصيل فاتورة محددة مع العناصر والهدايا والطلب المرتبط"
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

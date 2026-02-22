@@ -153,6 +153,11 @@ Route::middleware('auth:admin')
             ->only(['index', 'show'])
             ->names('orders');
 
+        // Invoices
+        Route::resource('invoices', \App\Http\Controllers\Admin\InvoiceController::class)
+            ->only(['index', 'show'])
+            ->names('invoices');
+
         // Offers
         Route::resource('offers', OfferController::class)
             ->only(['index', 'show'])  

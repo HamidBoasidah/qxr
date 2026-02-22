@@ -75,6 +75,11 @@ Route::middleware(['auth:web', 'company'])
         Route::patch('orders/{id}/status', [\App\Http\Controllers\Company\OrderController::class, 'updateStatus'])
             ->name('orders.updateStatus');
 
+        // Invoices
+        Route::resource('invoices', \App\Http\Controllers\Company\InvoiceController::class)
+            ->only(['index', 'show'])
+            ->names('invoices');
+
         // Users (for company to manage their own users if needed)
         Route::resource('users', UserController::class)
             ->names('users');

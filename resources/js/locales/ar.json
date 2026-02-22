@@ -6,6 +6,7 @@
     "dashboard_short": "لوحة التحكم",
     "products": "المنتجات",
     "orders": "الطلبات",
+    "invoices": "الفواتير",
     "offers": "العروض",
     "profile": "الملف الشخصي",
     "chat": "المحادثات",
@@ -67,6 +68,7 @@
     "home": "الرئيسية",
     "new": "جديد",
     "pro": "برو",
+    "note": "ملاحظة",
     "remove": "إزالة",
     "loading": "جاري التحميل...",
     "selectItems": "اختر العناصر",
@@ -230,6 +232,20 @@
       "delivered": "تم التسليم",
       "rejected": "مرفوض",
       "cancelled": "تم الإلغاء"
+    }
+  },
+  "invoice": {
+    "title": "الفواتير",
+    "invoice_no": "رقم الفاتورة",
+    "invoiceDetails": "تفاصيل الفاتورة",
+    "showInvoice": "عرض الفاتورة",
+    "issued_at": "تاريخ الإصدار",
+    "items": "عناصر الفاتورة",
+    "relatedOrder": "الطلب المرتبط",
+    "status": {
+      "unpaid": "غير مدفوعة",
+      "paid": "مدفوعة",
+      "void": "ملغاة"
     }
   },
   "user": {

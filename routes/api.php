@@ -75,6 +75,10 @@ Route::middleware('auth:sanctum')->group(function () {
     
     // Orders
     Route::apiResource('orders', App\Http\Controllers\Api\OrderController::class);
+
+    // Invoices (عرض الفواتير فقط - للعملاء والشركات)
+    Route::get('invoices', [App\Http\Controllers\Api\InvoiceController::class, 'index']);
+    Route::get('invoices/{id}', [App\Http\Controllers\Api\InvoiceController::class, 'show']);
 });
     
 

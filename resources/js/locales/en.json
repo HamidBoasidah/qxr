@@ -401,6 +401,20 @@
       "cancelled": "Cancelled"
     }
   },
+  "invoice": {
+    "title": "Invoices",
+    "invoice_no": "Invoice No",
+    "invoiceDetails": "Invoice Details",
+    "showInvoice": "Show Invoice",
+    "issued_at": "Issued At",
+    "items": "Invoice Items",
+    "relatedOrder": "Related Order",
+    "status": {
+      "unpaid": "Unpaid",
+      "paid": "Paid",
+      "void": "Void"
+    }
+  },
   "datatable": {
     "show": "Show",
     "entries": "entries",

@@ -22,7 +22,8 @@ class OrderService
         private CalculationVerifier $calculationVerifier,
         private OfferSelector $offerSelector,
         private PricingCalculator $pricingCalculator,
-        private PreviewValidator $previewValidator
+        private PreviewValidator $previewValidator,
+        private InvoiceService $invoiceService
     ) {
     }
 
@@ -493,6 +494,10 @@ class OrderService
                 'note'               => $note ?: null,
                 'changed_at'         => now(),
             ]);
+
+            if ($newStatus === 'approved') {
+                $this->invoiceService->createInvoiceForOrder($order);
+            }
 
             return $order;
         });

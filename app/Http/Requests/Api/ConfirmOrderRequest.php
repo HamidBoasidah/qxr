@@ -3,6 +3,8 @@
 namespace App\Http\Requests\Api;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class ConfirmOrderRequest extends FormRequest
 {
@@ -15,7 +17,7 @@ class ConfirmOrderRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return auth()->check() && auth()->user()->user_type === 'customer';
+        return Auth::check() && Auth::user()?->user_type === 'customer';
     }
 
     /**
@@ -25,14 +27,19 @@ class ConfirmOrderRequest extends FormRequest
      */
     public function rules(): array
     {
-        $customerId = auth()->id();
+        $customerId = Auth::id();
 
         return [
             'preview_token'       => ['required', 'string', 'regex:/^PV-\d{8}-[A-Z0-9]{4}$/'],
             'delivery_address_id' => [
                 'required',
                 'integer',
-                "exists:addresses,id,user_id,{$customerId},is_active,1,deleted_at,NULL",
+                Rule::exists('addresses', 'id')
+                    ->where(function ($query) use ($customerId) {
+                        $query->where('user_id', $customerId)
+                              ->where('is_active', 1)
+                              ->whereNull('deleted_at');
+                    }),
             ],
         ];
     }

@@ -35,6 +35,7 @@ class OrderController extends Controller
         private OrderService $orderService,
         private OrderRepository $orders
     ) {
+        $this->middleware('auth:sanctum');
     }
 
     /**

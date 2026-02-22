@@ -9,6 +9,7 @@ use App\Models\OrderItemBonus;
 use App\Models\OrderStatusLog;
 use App\Models\Product;
 use App\Models\User;
+use App\Models\Address;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Arr;
@@ -79,6 +80,10 @@ class OrderSeeder extends Seeder
                 $products = Product::where('company_user_id', $companyId)->inRandomOrder()->get();
             }
 
+            // pick or create a delivery address for this customer
+            $deliveryAddressId = Address::where('user_id', $customerId)->inRandomOrder()->value('id')
+                ?? Address::factory()->create(['user_id' => $customerId])->id;
+
             $order = Order::create([
                 'order_no' => 'ORD-' . Carbon::now()->format('ymd') . '-' . strtoupper(Str::random(6)),
                 'company_user_id' => $companyId,
@@ -88,6 +93,7 @@ class OrderSeeder extends Seeder
                 'approved_at' => null,
                 'approved_by_user_id' => null,
                 'delivered_at' => null,
+                'delivery_address_id' => $deliveryAddressId,
                 'notes_customer' => Arr::random($arabicNotes),
                 'notes_company' => Arr::random($arabicNotes),
             ]);

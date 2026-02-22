@@ -38,9 +38,9 @@ class OrderController extends Controller
             [
                 'items.product:id,name,unit_name',
                 'statusLogs.changedBy:id,first_name,last_name',
-                'deliveryAddress.governorate:id,name',
-                'deliveryAddress.district:id,name',
-                'deliveryAddress.area:id,name',
+                'deliveryAddress.governorate:id,name_ar,name_en',
+                'deliveryAddress.district:id,name_ar,name_en',
+                'deliveryAddress.area:id,name_ar,name_en',
             ]
         );
 

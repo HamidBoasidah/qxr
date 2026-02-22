@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Order;
 use App\Models\User;
+use App\Models\Address;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
@@ -46,6 +47,10 @@ class OrderFactory extends Factory
             $deliveredAt = (clone ($approvedAt ?? $submittedAt))->addHours(rand(6, 72));
         }
 
+        // attempt to pick an existing address for the customer or create one
+        $deliveryAddressId = Address::where('user_id', $customerId)->inRandomOrder()->value('id')
+            ?? Address::factory()->create(['user_id' => $customerId])->id;
+
         return [
             'order_no' => 'ORD-' . now()->format('Ymd') . '-' . strtoupper(Str::random(6)),
             'company_user_id' => $companyId,
@@ -57,6 +62,7 @@ class OrderFactory extends Factory
             'delivered_at' => $deliveredAt,
             'notes_customer' => $arabic->sentence(),
             'notes_company' => $arabic->sentence(),
+            'delivery_address_id' => $deliveryAddressId,
         ];
     }
 }

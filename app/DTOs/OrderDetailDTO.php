@@ -72,13 +72,18 @@ class OrderDetailDTO extends BaseDTO
         $deliveryAddress = null;
         if ($order->relationLoaded('deliveryAddress') && $order->deliveryAddress) {
             $addr = $order->deliveryAddress;
+
+            $gov = $addr->governorate;
+            $district = $addr->district;
+            $area = $addr->area;
+
             $deliveryAddress = [
                 'id'           => $addr->id,
                 'label'        => $addr->label,
                 'address'      => $addr->address,
-                'governorate'  => $addr->governorate?->name ?? null,
-                'district'     => $addr->district?->name  ?? null,
-                'area'         => $addr->area?->name      ?? null,
+                'governorate'  => $gov?->name_ar ?? $gov?->name_en ?? null,
+                'district'     => $district?->name_ar ?? $district?->name_en ?? null,
+                'area'         => $area?->name_ar ?? $area?->name_en ?? null,
                 'lat'          => $addr->lat,
                 'lng'          => $addr->lang,
             ];

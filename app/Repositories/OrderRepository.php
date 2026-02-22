@@ -151,14 +151,15 @@ class OrderRepository extends BaseRepository
         return DB::transaction(function () use ($customerId, $data) {
             // Create order header
             $order = Order::create([
-                'company_user_id' => $data['company_id'],
-                'customer_user_id' => $customerId,
-                'order_no' => $this->generateOrderNumber(),
-                'status' => 'pending',
-                'notes_customer' => $data['notes_customer'] ?? null,
-                'submitted_at' => now(),
-                'approved_at' => null,
-                'delivered_at' => null
+                'company_user_id'     => $data['company_id'],
+                'customer_user_id'    => $customerId,
+                'order_no'            => $this->generateOrderNumber(),
+                'status'              => 'pending',
+                'notes_customer'      => $data['notes_customer'] ?? null,
+                'delivery_address_id' => $data['delivery_address_id'] ?? null,
+                'submitted_at'        => now(),
+                'approved_at'         => null,
+                'delivered_at'        => null
             ]);
 
             // Create order items

@@ -47,6 +47,12 @@ return new class extends Migration
 
             $table->timestamp('delivered_at')->nullable();
 
+            // عنوان التوصيل الذي اختاره العميل عند تأكيد الطلب
+            $table->foreignId('delivery_address_id')
+                ->nullable()
+                ->constrained('addresses')
+                ->nullOnDelete();
+
             $table->text('notes_customer')->nullable();
             $table->text('notes_company')->nullable();
 

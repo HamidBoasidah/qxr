@@ -7,7 +7,7 @@ use App\Models\Order;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Repositories\OrderRepository;
-use App\DTOs\AdminOrderDTO;
+use App\DTOs\OrderDetailDTO;
 
 class OrderController extends Controller
 {
@@ -23,7 +23,7 @@ class OrderController extends Controller
         $orders = $this->orders->paginate($perPage); // uses defaultWith
 
         $orders->getCollection()->transform(function (Order $order) {
-            return AdminOrderDTO::fromModel($order)->toIndexArray();
+            return OrderDetailDTO::fromModel($order)->toIndexArray();
         });
 
         return Inertia::render('Admin/Order/Index', [
@@ -38,12 +38,15 @@ class OrderController extends Controller
             [
                 'items.product:id,name,unit_name',
                 'statusLogs.changedBy:id,first_name,last_name',
+                'deliveryAddress.governorate:id,name',
+                'deliveryAddress.district:id,name',
+                'deliveryAddress.area:id,name',
             ]
         );
 
         $order = $this->orders->findOrFail($id, $with);
 
-        $detail = AdminOrderDTO::fromModel($order)->toDetailArray();
+        $detail = OrderDetailDTO::fromModel($order)->toDetailArray();
 
         return Inertia::render('Admin/Order/Show', [
             'order' => $detail,

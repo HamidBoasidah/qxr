@@ -121,7 +121,7 @@ class OrderService
      * @throws PreviewOwnershipException if preview belongs to another customer
      * @throws PreviewInvalidatedException if preview data is no longer valid
      */
-    public function confirmOrder(string $previewToken, User $customer): array
+    public function confirmOrder(string $previewToken, User $customer, int $deliveryAddressId = 0): array
     {
         // Retrieve preview data
         $previewData = Cache::get("preview:{$previewToken}");
@@ -139,7 +139,7 @@ class OrderService
         
         // Revalidate and persist in SAME transaction to avoid race conditions
         try {
-            $order = DB::transaction(function () use ($previewData, $customer) {
+            $order = DB::transaction(function () use ($previewData, $customer, $deliveryAddressId) {
                 // Revalidate preview using CURRENT database data
                 $revalidationResult = $this->previewValidator->revalidate($previewData, $customer);
                 
@@ -183,8 +183,9 @@ class OrderService
                 
                 // Create order with recalculated values (NOT preview cache values)
                 $orderData = [
-                    'company_id' => $previewData['company_id'],
-                    'notes_customer' => $previewData['notes'],
+                    'company_id'          => $previewData['company_id'],
+                    'notes_customer'      => $previewData['notes'],
+                    'delivery_address_id' => $deliveryAddressId ?: null,
                     'order_items' => array_map(function($item) {
                         return [
                             'product_id' => $item['product_id'],
@@ -425,6 +426,76 @@ class OrderService
                 . "الحالات المسموحة: " . implode(', ', $allowedTransitions[$fromStatus] ?: ['لا يوجد'])
             );
         }
+    }
+
+    /**
+     * الانتقالات المسموح بها للشركة من كل حالة
+     */
+    private function companyAllowedTransitions(): array
+    {
+        return [
+            'pending'   => ['approved', 'rejected'],
+            'approved'  => ['preparing', 'cancelled'],
+            'preparing' => ['shipped',   'cancelled'],
+            'shipped'   => ['delivered'],
+        ];
+    }
+
+    /**
+     * تغيير حالة الطلب من قِبَل الشركة
+     *
+     * @param int    $orderId   معرّف الطلب
+     * @param string $newStatus الحالة الجديدة
+     * @param int    $companyId معرّف المستخدم (الشركة)
+     * @param string|null $note ملاحظة اختيارية
+     * @return \App\Models\Order
+     * @throws \App\Exceptions\AuthorizationException إذا لم يكن الطلب خاصًا بالشركة
+     * @throws \App\Exceptions\ValidationException    إذا كانت الحالة غير مسموح بها
+     */
+    public function updateStatusByCompany(int $orderId, string $newStatus, int $companyId, ?string $note = null): \App\Models\Order
+    {
+        return DB::transaction(function () use ($orderId, $newStatus, $companyId, $note) {
+            $order = $this->orderRepository->findOrFail($orderId);
+
+            if ($order->company_user_id !== $companyId) {
+                throw new AuthorizationException('ليس لديك صلاحية تعديل هذا الطلب');
+            }
+
+            $allowed = $this->companyAllowedTransitions()[$order->status] ?? [];
+
+            if (!in_array($newStatus, $allowed, true)) {
+                throw new ValidationException(
+                    "لا يمكن تغيير حالة الطلب من '{$order->status}' إلى '{$newStatus}'. "
+                    . 'الحالات المسموحة: ' . implode(', ', $allowed ?: ['لا يوجد'])
+                );
+            }
+
+            $oldStatus = $order->status;
+
+            $updates = ['status' => $newStatus];
+
+            if ($newStatus === 'approved') {
+                $updates['approved_at']         = now();
+                $updates['approved_by_user_id'] = $companyId;
+            }
+
+            if ($newStatus === 'delivered') {
+                $updates['delivered_at'] = now();
+            }
+
+            $order = $this->orderRepository->updateModel($order, $updates);
+
+            \App\Models\OrderStatusLog::create([
+                'order_id'           => $order->id,
+                'from_status'        => $oldStatus,
+                'to_status'          => $newStatus,
+                'changed_by_user_id' => $companyId,
+                'note'               => $note ?: null,
+                'changed_at'         => now(),
+            ]);
+
+            return $order;
+        });
     }
 
     /**

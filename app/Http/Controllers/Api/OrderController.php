@@ -115,9 +115,11 @@ class OrderController extends Controller
     public function confirm(ConfirmOrderRequest $request): JsonResponse
     {
         try {
+            $validated = $request->validated();
             $orderDTO = $this->orderService->confirmOrder(
-                $request->validated()['preview_token'],
-                $request->user()
+                $validated['preview_token'],
+                $request->user(),
+                (int) $validated['delivery_address_id']
             );
 
             return response()->json([

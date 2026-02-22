@@ -22,6 +22,30 @@
       </div>
     </div>
 
+    <!-- Delivery Address -->
+    <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+      <div class="border-b border-gray-200 px-6 py-4 dark:border-gray-800">
+        <h2 class="text-lg font-medium text-gray-800 dark:text-white">{{ t('order.deliveryAddress') || 'عنوان التوصيل' }}</h2>
+      </div>
+      <div class="p-4 sm:p-6">
+        <template v-if="order.delivery_address">
+          <div class="grid grid-cols-1 gap-x-5 gap-y-6 md:grid-cols-2">
+            <InfoItem :label="t('addresses.label') || 'التسمية'" :value="order.delivery_address.label || '—'" />
+            <InfoItem :label="t('addresses.address') || 'العنوان'" :value="order.delivery_address.address || '—'" />
+            <InfoItem :label="t('governorates.governorate') || 'المحافظة'" :value="order.delivery_address.governorate || '—'" />
+            <InfoItem :label="t('districts.district') || 'المديرية'" :value="order.delivery_address.district || '—'" />
+            <InfoItem :label="t('areas.area') || 'المنطقة'" :value="order.delivery_address.area || '—'" />
+            <InfoItem v-if="order.delivery_address.lat" :label="t('order.coordinates') || 'الإحداثيات'">
+              <span class="text-sm text-gray-700 dark:text-gray-200 font-mono">
+                {{ order.delivery_address.lat }}, {{ order.delivery_address.lng }}
+              </span>
+            </InfoItem>
+          </div>
+        </template>
+        <p v-else class="text-sm text-gray-500 dark:text-gray-400">{{ t('order.noDeliveryAddress') || 'لم يُحدَّد عنوان توصيل' }}</p>
+      </div>
+    </div>
+
     <!-- Totals -->
     <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
       <div class="border-b border-gray-200 px-6 py-4 dark:border-gray-800">

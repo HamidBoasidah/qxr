@@ -4,15 +4,20 @@ namespace App\Http\Controllers\Company;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Exceptions\AuthorizationException;
+use App\Exceptions\ValidationException;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Repositories\OrderRepository;
-use App\DTOs\AdminOrderDTO;
+use App\Services\OrderService;
+use App\DTOs\OrderDetailDTO;
 
 class OrderController extends Controller
 {
-    public function __construct(private OrderRepository $orders)
-    {
+    public function __construct(
+        private OrderRepository $orders,
+        private OrderService $orderService,
+    ) {
         $this->middleware('auth:web');
     }
 
@@ -29,7 +34,7 @@ class OrderController extends Controller
             ->paginate($perPage);
 
         $orders->getCollection()->transform(function (Order $order) {
-            return AdminOrderDTO::fromModel($order)->toIndexArray();
+            return OrderDetailDTO::fromModel($order)->toIndexArray();
         });
 
         return Inertia::render('Company/Order/Index', [
@@ -44,15 +49,41 @@ class OrderController extends Controller
             [
                 'items.product:id,name,unit_name',
                 'statusLogs.changedBy:id,first_name,last_name',
+                'deliveryAddress.governorate:id,name',
+                'deliveryAddress.district:id,name',
+                'deliveryAddress.area:id,name',
             ]
         );
 
         $order = $this->orders->findOrFail($id, $with);
 
-        $detail = AdminOrderDTO::fromModel($order)->toDetailArray();
+        $detail = OrderDetailDTO::fromModel($order)->toDetailArray();
 
         return Inertia::render('Company/Order/Show', [
             'order' => $detail,
         ]);
+    }
+
+    public function updateStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => ['required', 'string'],
+            'note'   => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        try {
+            $this->orderService->updateStatusByCompany(
+                (int) $id,
+                $request->input('status'),
+                $request->user()->id,
+                $request->input('note'),
+            );
+        } catch (AuthorizationException $e) {
+            abort(403, $e->getMessage());
+        } catch (ValidationException $e) {
+            return back()->withErrors(['status' => $e->getMessage()]);
+        }
+
+        return redirect()->back()->with('success', true);
     }
 }

@@ -17,6 +17,7 @@ class Order extends Model
         'approved_at',
         'approved_by_user_id',
         'delivered_at',
+        'delivery_address_id',
         'notes_customer',
         'notes_company',
     ];
@@ -45,5 +46,10 @@ class Order extends Model
     public function statusLogs()
     {
         return $this->hasMany(OrderStatusLog::class);
+    }
+
+    public function deliveryAddress()
+    {
+        return $this->belongsTo(Address::class, 'delivery_address_id');
     }
 }

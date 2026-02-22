@@ -4,7 +4,7 @@ namespace App\DTOs;
 
 use App\Models\Order;
 
-class AdminOrderDTO extends BaseDTO
+class OrderDetailDTO extends BaseDTO
 {
     public function __construct(
         public int $id,
@@ -22,6 +22,7 @@ class AdminOrderDTO extends BaseDTO
         public float $total_discount,
         public float $final_total,
         public array $status_logs = [],
+        public ?array $delivery_address = null,
     ) {
     }
 
@@ -68,6 +69,21 @@ class AdminOrderDTO extends BaseDTO
             ?: null;
         $customerName = trim(($order->customer?->first_name ?? '') . ' ' . ($order->customer?->last_name ?? '')) ?: null;
 
+        $deliveryAddress = null;
+        if ($order->relationLoaded('deliveryAddress') && $order->deliveryAddress) {
+            $addr = $order->deliveryAddress;
+            $deliveryAddress = [
+                'id'           => $addr->id,
+                'label'        => $addr->label,
+                'address'      => $addr->address,
+                'governorate'  => $addr->governorate?->name ?? null,
+                'district'     => $addr->district?->name  ?? null,
+                'area'         => $addr->area?->name      ?? null,
+                'lat'          => $addr->lat,
+                'lng'          => $addr->lang,
+            ];
+        }
+
         return new self(
             $order->id,
             $order->order_no,
@@ -84,6 +100,7 @@ class AdminOrderDTO extends BaseDTO
             round($totalDiscount, 2),
             round($finalTotal, 2),
             $statusLogs,
+            $deliveryAddress,
         );
     }
 
@@ -106,21 +123,22 @@ class AdminOrderDTO extends BaseDTO
     public function toDetailArray(): array
     {
         return [
-            'id' => $this->id,
-            'order_no' => $this->order_no,
-            'status' => $this->status,
-            'submitted_at' => $this->submitted_at,
-            'approved_at' => $this->approved_at,
-            'delivered_at' => $this->delivered_at,
-            'company_name' => $this->company_name,
-            'customer_name' => $this->customer_name,
-            'notes_customer' => $this->notes_customer,
-            'notes_company' => $this->notes_company,
-            'items' => $this->items,
-            'subtotal' => $this->subtotal,
-            'total_discount' => $this->total_discount,
-            'final_total' => $this->final_total,
-            'status_logs' => $this->status_logs,
+            'id'               => $this->id,
+            'order_no'         => $this->order_no,
+            'status'           => $this->status,
+            'submitted_at'     => $this->submitted_at,
+            'approved_at'      => $this->approved_at,
+            'delivered_at'     => $this->delivered_at,
+            'company_name'     => $this->company_name,
+            'customer_name'    => $this->customer_name,
+            'notes_customer'   => $this->notes_customer,
+            'notes_company'    => $this->notes_company,
+            'delivery_address' => $this->delivery_address,
+            'items'            => $this->items,
+            'subtotal'         => $this->subtotal,
+            'total_discount'   => $this->total_discount,
+            'final_total'      => $this->final_total,
+            'status_logs'      => $this->status_logs,
         ];
     }
 }

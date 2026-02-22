@@ -25,8 +25,15 @@ class ConfirmOrderRequest extends FormRequest
      */
     public function rules(): array
     {
+        $customerId = auth()->id();
+
         return [
-            'preview_token' => ['required', 'string', 'regex:/^PV-\d{8}-[A-Z0-9]{4}$/'],
+            'preview_token'       => ['required', 'string', 'regex:/^PV-\d{8}-[A-Z0-9]{4}$/'],
+            'delivery_address_id' => [
+                'required',
+                'integer',
+                "exists:addresses,id,user_id,{$customerId},is_active,1,deleted_at,NULL",
+            ],
         ];
     }
 }

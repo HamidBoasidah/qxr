@@ -1,34 +1,46 @@
 <?php
 
-namespace App\Http\Controllers\Company;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Services\CompanyDashboardStatsService;
+use App\Models\User;
+use App\Services\AdminDashboardStatsService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class DashboardController extends Controller
 {
+    public function __construct(
+        private AdminDashboardStatsService $statsService
+    ) {
+        $this->middleware('permission:dashboard.view')->only(['index']);
+    }
+
     /**
-     * Display the company dashboard.
+     * Display the admin dashboard
      */
     public function index(Request $request): Response
     {
-        $user = Auth::guard('web')->user();
-        $profile = $user->companyProfile;
-        
         // Parse filters from request
         $filters = $this->parseFilters($request);
 
-        // Get dashboard statistics using the service
-        $statsService = new CompanyDashboardStatsService($user->id);
-        $stats = $statsService->getStats($filters);
-        
-        return Inertia::render('Company/Dashboard', [
+        // Get dashboard statistics
+        $stats = $this->statsService->getStats($filters);
+
+        // Get companies list for filter dropdown
+        $companies = User::where('user_type', 'company')
+            ->select('id', 'first_name', 'last_name')
+            ->orderBy('first_name')
+            ->get()
+            ->map(fn($user) => [
+                'id' => $user->id,
+                'name' => $user->first_name . ' ' . $user->last_name,
+            ]);
+
+        return Inertia::render('Dashboard', [
             'stats' => $stats,
-            'profile' => $profile,
+            'companies' => $companies,
             'filters' => $filters,
             'presets' => $this->getDatePresets(),
         ]);
@@ -39,11 +51,8 @@ class DashboardController extends Controller
      */
     public function chartData(Request $request)
     {
-        $user = Auth::guard('web')->user();
         $filters = $this->parseFilters($request);
-        
-        $statsService = new CompanyDashboardStatsService($user->id);
-        $stats = $statsService->getStats($filters);
+        $stats = $this->statsService->getStats($filters);
 
         return response()->json([
             'success' => true,
@@ -56,9 +65,7 @@ class DashboardController extends Controller
      */
     public function clearCache()
     {
-        $user = Auth::guard('web')->user();
-        $statsService = new CompanyDashboardStatsService($user->id);
-        $statsService->clearCache();
+        $this->statsService->clearCache();
 
         return response()->json([
             'success' => true,
@@ -90,6 +97,11 @@ class DashboardController extends Controller
             $filters['date_from'] = $dateRange['from'];
             $filters['date_to'] = $dateRange['to'];
             $filters['date_preset'] = 'last_30_days';
+        }
+
+        // Company filter
+        if ($request->filled('company_id')) {
+            $filters['company_id'] = (int) $request->input('company_id');
         }
 
         // Status filter

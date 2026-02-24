@@ -30,14 +30,14 @@ class OfferController extends Controller
 
     /**
      * قائمة العروض العامة (للمستخدمين المسجلين فقط)
-     * تعرض فقط العروض النشطة والعامة
+     * تعرض العروض النشطة العامة أو الخاصة المستهدفة للمستخدم
      */
     public function publicIndex(Request $request, OfferRepository $offers)
     {
         $perPage = (int) $request->get('per_page', 10);
+        $user = $request->user();
 
         $query = $offers->query($this->baseWith())
-            ->where('scope', 'public')
             ->where('status', 'active')
             ->where(function ($q) {
                 $q->whereNull('start_at')
@@ -47,6 +47,9 @@ class OfferController extends Controller
                 $q->whereNull('end_at')
                     ->orWhere('end_at', '>=', now());
             });
+
+        // تطبيق فلتر النطاق: عام أو خاص مستهدف للمستخدم
+        $this->applyScopeFilter($query, $user);
 
         $paginated = $query->latest()->paginate($perPage);
 
@@ -57,15 +60,15 @@ class OfferController extends Controller
 
     /**
      * قائمة العروض العامة مع التفاصيل الكاملة (للمستخدمين المسجلين فقط)
-     * تعرض العروض النشطة والعامة مع items و targets
+     * تعرض العروض النشطة العامة أو الخاصة المستهدفة للمستخدم مع items و targets
      * الحد الأقصى: 10 منتجات لكل عرض
      */
     public function publicIndexDetails(Request $request, OfferRepository $offers)
     {
         $perPage = (int) $request->get('per_page', 10);
+        $user = $request->user();
 
         $query = $offers->query($this->showWith())
-            ->where('scope', 'public')
             ->where('status', 'active')
             ->where(function ($q) {
                 $q->whereNull('start_at')
@@ -75,6 +78,9 @@ class OfferController extends Controller
                 $q->whereNull('end_at')
                     ->orWhere('end_at', '>=', now());
             });
+
+        // تطبيق فلتر النطاق: عام أو خاص مستهدف للمستخدم
+        $this->applyScopeFilter($query, $user);
 
         $paginated = $query->latest()->paginate($perPage);
 
@@ -156,15 +162,15 @@ class OfferController extends Controller
 
     /**
      * قائمة العروض العامة بشكل مسطح تماماً (للمستخدمين المسجلين فقط)
-     * تعرض العروض النشطة والعامة بشكل مسطح (صف واحد لكل منتج)
+     * تعرض العروض النشطة العامة أو الخاصة المستهدفة للمستخدم بشكل مسطح (صف واحد لكل منتج)
      * الحد الأقصى: 10 منتجات لكل عرض
      */
     public function publicIndexFlat(Request $request, OfferRepository $offers)
     {
         $perPage = (int) $request->get('per_page', 10);
+        $user = $request->user();
 
         $query = $offers->query($this->showWith())
-            ->where('scope', 'public')
             ->where('status', 'active')
             ->where(function ($q) {
                 $q->whereNull('start_at')
@@ -174,6 +180,9 @@ class OfferController extends Controller
                 $q->whereNull('end_at')
                     ->orWhere('end_at', '>=', now());
             });
+
+        // تطبيق فلتر النطاق: عام أو خاص مستهدف للمستخدم
+        $this->applyScopeFilter($query, $user);
 
         $paginated = $query->latest()->paginate($perPage);
 
@@ -229,15 +238,19 @@ class OfferController extends Controller
     {
         try {
             $perPage = (int) $request->get('per_page', 10);
+            $user = $request->user();
             
-            $offer = $offers->query([
+            $query = $offers->query([
                 'company:id,first_name,last_name',
                 'company.companyProfile:id,user_id,company_name',
                 'targets',
             ])
-                ->where('scope', 'public')
-                ->where('status', 'active')
-                ->findOrFail($id);
+                ->where('status', 'active');
+
+            // تطبيق فلتر النطاق: عام أو خاص مستهدف للمستخدم
+            $this->applyScopeFilter($query, $user);
+
+            $offer = $query->findOrFail($id);
 
             // تحميل المنتجات مع pagination
             $items = $offer->items()
@@ -499,5 +512,50 @@ class OfferController extends Controller
             'scope' => 'scope',
             'status' => 'status',
         ];
+    }
+
+    /**
+     * تطبيق فلتر النطاق: العروض العامة أو الخاصة المستهدفة للمستخدم
+     * 
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param \App\Models\User $user
+     * @return void
+     */
+    protected function applyScopeFilter($query, $user): void
+    {
+        $query->where(function($q) use ($user) {
+            // العروض العامة
+            $q->where('scope', 'public')
+              // أو العروض الخاصة المستهدفة للمستخدم
+              ->orWhere(function($subQ) use ($user) {
+                  $subQ->where('scope', 'private')
+                      ->whereHas('targets', function($targetQ) use ($user) {
+                          // مستهدف مباشر (customer)
+                          $targetQ->where(function($tq) use ($user) {
+                              $tq->where('target_type', 'customer')
+                                 ->where('target_id', $user->id);
+                          });
+                          
+                          // أو مستهدف عبر الفئة (customer_category)
+                          if ($user->relationLoaded('customerProfile') && $user->customerProfile && $user->customerProfile->category_id) {
+                              $targetQ->orWhere(function($tq) use ($user) {
+                                  $tq->where('target_type', 'customer_category')
+                                     ->where('target_id', $user->customerProfile->category_id);
+                              });
+                          } elseif (!$user->relationLoaded('customerProfile')) {
+                              // تحميل customerProfile إذا لم يكن محملاً
+                              $user->load('customerProfile');
+                              if ($user->customerProfile && $user->customerProfile->category_id) {
+                                  $targetQ->orWhere(function($tq) use ($user) {
+                                      $tq->where('target_type', 'customer_category')
+                                         ->where('target_id', $user->customerProfile->category_id);
+                                  });
+                              }
+                          }
+                          
+                          // TODO: دعم customer_tag عندما يتم تطبيق نظام الوسوم للمستخدمين
+                      });
+              });
+        });
     }
 }

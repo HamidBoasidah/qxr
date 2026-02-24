@@ -17,6 +17,7 @@
           <InfoItem :label="t('invoice.issued_at') || 'تاريخ الإصدار'" :value="invoice.issued_at" />
           <InfoItem :label="t('users.company') || 'الشركة'" :value="invoice.company_name" />
           <InfoItem :label="t('users.customer') || 'العميل'" :value="invoice.customer_name" />
+          <InfoItem :label="t('invoice.statusNote') || 'ملاحظة'" :value="invoice.note || '—'" />
         </div>
       </div>
     </div>
@@ -115,26 +116,137 @@
         </table>
       </div>
     </div>
+
+    <!-- Change Status -->
+    <div
+      v-if="availableTransitions.length > 0"
+      class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]"
+    >
+      <div class="border-b border-gray-200 px-6 py-4 dark:border-gray-800">
+        <h2 class="text-lg font-medium text-gray-800 dark:text-white">{{ t('invoice.changeStatus') || 'تغيير الحالة' }}</h2>
+      </div>
+      <div class="p-4 sm:p-6 space-y-4">
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <!-- New Status Select -->
+          <div>
+            <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
+              {{ t('invoice.newStatus') || 'الحالة الجديدة' }}
+            </label>
+            <select
+              v-model="statusForm.status"
+              class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-700 shadow-sm transition focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
+            >
+              <option value="" disabled>{{ t('invoice.selectStatus') || 'اختر الحالة' }}</option>
+              <option v-for="s in availableTransitions" :key="s" :value="s">
+                {{ statusLabel(s) }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Note -->
+          <div>
+            <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
+              {{ t('invoice.statusNote') || 'ملاحظة (اختياري)' }}
+            </label>
+            <textarea
+              v-model="statusForm.note"
+              rows="2"
+              class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-700 shadow-sm transition focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
+              :placeholder="t('invoice.statusNotePlaceholder') || 'أضف ملاحظة حول هذا التغيير...'"
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- Error message -->
+        <p v-if="statusForm.error" class="text-sm text-red-600 dark:text-red-400">{{ statusForm.error }}</p>
+
+        <div class="flex justify-end">
+          <button
+            :disabled="!statusForm.status || statusForm.processing"
+            @click="submitStatusChange"
+            class="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-500 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-brand-500 dark:hover:bg-brand-600"
+          >
+            <svg v-if="statusForm.processing" class="h-4 w-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+            </svg>
+            {{ t('invoice.confirmStatusChange') || 'تأكيد التغيير' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-3 sm:flex-row sm:justify-end">
+      <Link :href="route('company.invoices.index')" class="shadow-theme-xs inline-flex items-center justify-center gap-2 rounded-lg bg-white px-4 py-3 text-sm font-medium text-gray-700 ring-1 ring-gray-300 transition hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-700 dark:hover:bg-white/[0.03]">
+        {{ t('buttons.backToList') || 'العودة للقائمة' }}
+      </Link>
+    </div>
   </div>
 </template>
 
 <script setup>
+import { computed, reactive } from 'vue'
+import { Link, router } from '@inertiajs/vue3'
 import { useI18n } from 'vue-i18n';
 import Badge from '@/components/ui/Badge.vue';
 import InfoItem from '@/components/common/InfoItem.vue';
 
 const { t } = useI18n();
 
-defineProps({
+const props = defineProps({
   invoice: {
     type: Object,
     required: true,
   },
 });
 
+const invoice = computed(() => props.invoice || {})
+
+// ─── Status transitions allowed for company ───────────────────────────────────
+const transitionMap = {
+  unpaid: ['paid', 'void'],
+  paid:   [],  // نهائية - لا يمكن تغييرها
+  void:   [],  // نهائية - لا يمكن تغييرها
+}
+
+const availableTransitions = computed(() => transitionMap[invoice.value.status] ?? [])
+
+// ─── Status-change form state ─────────────────────────────────────────────────
+const statusForm = reactive({
+  status:     '',
+  note:       '',
+  processing: false,
+  error:      '',
+})
+
+function submitStatusChange() {
+  if (!statusForm.status || statusForm.processing) return
+
+  statusForm.processing = true
+  statusForm.error      = ''
+
+  router.patch(
+    route('company.invoices.updateStatus', { id: invoice.value.id }),
+    { status: statusForm.status, note: statusForm.note },
+    {
+      preserveScroll: true,
+      onSuccess: () => {
+        statusForm.status = ''
+        statusForm.note   = ''
+      },
+      onError: (errors) => {
+        statusForm.error = errors?.status || errors?.message || t('invoice.statusChangeError') || 'حدث خطأ أثناء تغيير الحالة'
+      },
+      onFinish: () => {
+        statusForm.processing = false
+      },
+    }
+  )
+}
+
 function priceLabel(value) {
   if (value == null) return '—';
-  return new Intl.NumberFormat('ar-YE', { style: 'decimal', minimumFractionDigits: 2 }).format(value);
+  return new Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 2 }).format(value);
 }
 
 function statusColor(status) {

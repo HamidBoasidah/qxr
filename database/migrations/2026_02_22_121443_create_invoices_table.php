@@ -31,6 +31,9 @@ return new class extends Migration
 
             $table->enum('status', ['unpaid', 'paid', 'void'])->default('unpaid');
 
+            // Optional note left by company or admin
+            $table->text('note')->nullable();
+
             $table->softDeletes();
             $table->timestamps();
 

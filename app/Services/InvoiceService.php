@@ -85,4 +85,62 @@ class InvoiceService
         
         return "INV-{$date}-{$random}";
     }
+
+    /**
+     * تغيير حالة الفاتورة من قِبَل الشركة
+     *
+     * @param int    $invoiceId   معرّف الفاتورة
+     * @param string $newStatus الحالة الجديدة (paid, void)
+     * @param int    $companyId معرّف المستخدم (الشركة)
+     * @param string|null $note ملاحظة اختيارية
+     * @return \App\Models\Invoice
+     * @throws \App\Exceptions\AuthorizationException إذا لم تكن الفاتورة خاصة بالشركة
+     * @throws \App\Exceptions\ValidationException    إذا كانت الحالة غير مسموح بها
+     */
+    public function updateStatusByCompany(int $invoiceId, string $newStatus, int $companyId, ?string $note = null): Invoice
+    {
+        return DB::transaction(function () use ($invoiceId, $newStatus, $companyId, $note) {
+            $invoice = Invoice::with('order')->findOrFail($invoiceId);
+
+            // التحقق من أن الفاتورة تخص الشركة
+            if ($invoice->order->company_user_id !== $companyId) {
+                throw new \App\Exceptions\AuthorizationException('ليس لديك صلاحية تعديل هذه الفاتورة');
+            }
+
+            // التحولات المسموحة للفواتير
+            $allowedTransitions = [
+                'unpaid' => ['paid', 'void'],
+                'paid'   => [],  // نهائية - لا يمكن تغييرها
+                'void'   => [],  // نهائية - لا يمكن تغييرها
+            ];
+
+            $allowed = $allowedTransitions[$invoice->status] ?? [];
+
+            if (!in_array($newStatus, $allowed, true)) {
+                throw new \App\Exceptions\ValidationException(
+                    "لا يمكن تغيير حالة الفاتورة من '{$invoice->status}' إلى '{$newStatus}'. "
+                    . 'الحالات المسموحة: ' . (count($allowed) > 0 ? implode(', ', $allowed) : 'لا يوجد')
+                );
+            }
+
+            $oldStatus = $invoice->status;
+
+            $invoice->update([
+                'status' => $newStatus,
+            ]);
+
+            // تسجيل تغيير الحالة في activity log
+            activity()
+                ->performedOn($invoice)
+                ->causedBy($companyId)
+                ->withProperties([
+                    'from_status' => $oldStatus,
+                    'to_status' => $newStatus,
+                    'note' => $note,
+                ])
+                ->log('invoice_status_changed');
+
+            return $invoice->fresh();
+        });
+    }
 }

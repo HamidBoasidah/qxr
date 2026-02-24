@@ -28,6 +28,12 @@ Route::middleware(['auth:web', 'company'])
         // Dashboard
         Route::get('/dashboard', [DashboardController::class, 'index'])
             ->name('dashboard');
+        
+        Route::get('/dashboard/chart-data', [DashboardController::class, 'chartData'])
+            ->name('dashboard.chartData');
+        
+        Route::post('/dashboard/clear-cache', [DashboardController::class, 'clearCache'])
+            ->name('dashboard.clearCache');
 
         // Profile
         Route::get('/profile', [ProfileController::class, 'show'])
@@ -79,6 +85,9 @@ Route::middleware(['auth:web', 'company'])
         Route::resource('invoices', \App\Http\Controllers\Company\InvoiceController::class)
             ->only(['index', 'show'])
             ->names('invoices');
+
+        Route::patch('invoices/{id}/status', [\App\Http\Controllers\Company\InvoiceController::class, 'updateStatus'])
+            ->name('invoices.updateStatus');
 
         // Users (for company to manage their own users if needed)
         Route::resource('users', UserController::class)

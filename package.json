@@ -21,6 +21,7 @@
     },
     "dependencies": {
         "@inertiajs/vue3": "^2.1.5",
+        "chart.js": "^4.4.0",
         "dayjs": "^1.11.18",
         "flatpickr": "^4.6.13",
         "swiper": "^12.0.1",

@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Admin\Auth\VerifyEmailController;
 use App\Http\Controllers\Admin\AreaController;
 use App\Http\Controllers\Admin\AddressController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DistrictController;
 use App\Http\Controllers\Admin\GovernorateController;
 use App\Http\Controllers\Admin\UserController;
@@ -66,8 +67,17 @@ Route::middleware('auth:admin')
     ->group(function () {
 
         // Dashboard
-        Route::get('/dashboard', fn () => Inertia('Dashboard'))
+        Route::get('/dashboard', [DashboardController::class, 'index'])
             ->name('dashboard')
+            ->middleware(RoutePermissions::can('dashboard.view'));
+
+        // Dashboard API endpoints
+        Route::get('/dashboard/chart-data', [DashboardController::class, 'chartData'])
+            ->name('dashboard.chartData')
+            ->middleware(RoutePermissions::can('dashboard.view'));
+
+        Route::post('/dashboard/clear-cache', [DashboardController::class, 'clearCache'])
+            ->name('dashboard.clearCache')
             ->middleware(RoutePermissions::can('dashboard.view'));
 
         // Profile

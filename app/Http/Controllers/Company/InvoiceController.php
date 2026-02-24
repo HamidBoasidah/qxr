@@ -4,14 +4,18 @@ namespace App\Http\Controllers\Company;
 
 use App\Http\Controllers\Controller;
 use App\Models\Invoice;
+use App\Services\InvoiceService;
+use App\Exceptions\AuthorizationException;
+use App\Exceptions\ValidationException;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\DTOs\InvoiceDTO;
 
 class InvoiceController extends Controller
 {
-    public function __construct()
-    {
+    public function __construct(
+        private InvoiceService $invoiceService
+    ) {
         $this->middleware('auth:web');
     }
 
@@ -57,5 +61,28 @@ class InvoiceController extends Controller
         return Inertia::render('Company/Invoice/Show', [
             'invoice' => $detail,
         ]);
+    }
+
+    public function updateStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => ['required', 'string', 'in:paid,void'],
+            'note'   => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        try {
+            $this->invoiceService->updateStatusByCompany(
+                (int) $id,
+                $request->input('status'),
+                $request->user()->id,
+                $request->input('note'),
+            );
+        } catch (AuthorizationException $e) {
+            abort(403, $e->getMessage());
+        } catch (ValidationException $e) {
+            return back()->withErrors(['status' => $e->getMessage()]);
+        }
+
+        return redirect()->back()->with('success', true);
     }
 }

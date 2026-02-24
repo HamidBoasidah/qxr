@@ -16,6 +16,7 @@ class Invoice extends BaseModel
         'total_snapshot',
         'issued_at',
         'status',
+        'note',
     ];
 
     protected $casts = [

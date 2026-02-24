@@ -21,6 +21,9 @@ trait CanFilter
         // Apply foreign key filters
         $query = $this->applyForeignKeyFilters($query, $request, $foreignKeyFilters);
         
+        // Apply direct field filters (e.g. ?first_name=...)
+        $query = $this->applyFieldFilters($query, $request, $searchableFields);
+        
         // Apply date range filter
         $query = $this->applyDateFilter($query, $request);
         
@@ -91,6 +94,28 @@ trait CanFilter
             }
         }
         
+        return $query;
+    }
+
+    /**
+     * Apply direct field filters for searchable fields.
+     *
+     * This allows queries like ?first_name=مؤيد to filter by that column.
+     */
+    protected function applyFieldFilters(Builder $query, Request $request, array $fields): Builder
+    {
+        if (empty($fields)) {
+            return $query;
+        }
+
+        foreach ($fields as $field) {
+            $value = $request->get($field);
+            if (!is_null($value) && $value !== '') {
+                // Use a LIKE match to allow partial matches for string fields
+                $query->where($field, 'like', "%{$value}%");
+            }
+        }
+
         return $query;
     }
     

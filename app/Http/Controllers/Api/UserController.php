@@ -23,9 +23,18 @@ class UserController extends Controller
     {
         $currentId = $request->user()->id;
 
-        $users = User::where('id', '!=', $currentId)
-            ->select(['id', 'first_name', 'last_name', 'avatar'])
-            ->get();
+        $query = User::where('id', '!=', $currentId)
+            ->select(['id', 'first_name', 'last_name', 'avatar']);
+
+        // Apply filters (search, foreign keys, date, role-based)
+        $query = $this->applyFilters(
+            $query,
+            $request,
+            $this->getSearchableFields(),
+            $this->getForeignKeyFilters()
+        );
+
+        $users = $query->get();
 
         return response()->json([
             'success' => true,

@@ -43,6 +43,7 @@ return [
     'products'     => ['view'],
     'orders'       => ['view'],
     'invoices'     => ['view'],
+    'reports'      => ['view'],
     'offers'       => ['view', 'create', 'update', 'delete', 'activate', 'deactivate'],
     // backend management resources
     'users'        => ['view', 'create', 'update', 'delete'],
@@ -68,6 +69,7 @@ return [
     'tags'         => ['en' => 'Tags',          'ar' => 'الوسوم'],
     'products'     => ['en' => 'Products',      'ar' => 'المنتجات'],
     'offers'       => ['en' => 'Offers',        'ar' => 'العروض'],
+    'reports'      => ['en' => 'Reports',       'ar' => 'التقارير'],
     'invoices'     => ['en' => 'Invoices',      'ar' => 'الفواتير'],
     'addresses'    => ['en' => 'Addresses',  'ar' => 'العناوين'],
     'users'        => ['en' => 'Users',         'ar' => 'المستخدمون'],

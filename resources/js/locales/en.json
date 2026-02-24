@@ -39,7 +39,8 @@
     "auth": "Authentication",
     "signin": "Signin",
     "signup": "Signup",
-    "activityLog": "Activity Log"
+    "activityLog": "Activity Log",
+    "reports": "Reports"
   },
   "pages": {
     "welcomeLoggedIn": "You're logged in!",
@@ -545,5 +546,47 @@
       "signUp": "Sign Up",
       "tagline": "Code Brains — we don't just write code, we build solutions."
     }
+  },
+  
+  "reports": {
+    "title": "Reports",
+    "invoices": "Invoices Report",
+    "invoicesDescription": "View and export comprehensive invoice reports",
+    "orders": "Orders Report",
+    "ordersDescription": "View and export comprehensive order reports",
+    "offers": "Offers Report",
+    "offersDescription": "View and export comprehensive offer reports",
+    "products": "Products Report",
+    "productsDescription": "View and export comprehensive product reports",
+    "filters": "Filters",
+    "datePreset": "Date Range",
+    "allTime": "All Time",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "last7Days": "Last 7 Days",
+    "last30Days": "Last 30 Days",
+    "thisMonth": "This Month",
+    "lastMonth": "Last Month",
+    "status": "Status",
+    "allStatuses": "All Statuses",
+    "search": "Search",
+    "searchPlaceholder": "Search in invoice, order, company or customer...",
+    "applyFilters": "Apply Filters",
+    "clearFilters": "Clear Filters",
+    "totalInvoices": "Total Invoices",
+    "paidRevenue": "Paid Revenue",
+    "unpaidAmount": "Unpaid Amount",
+    "totalDiscounts": "Total Discounts",
+    "paidInvoices": "paid invoices",
+    "unpaidInvoices": "unpaid invoices",
+    "invoiceNo": "Invoice No",
+    "orderNo": "Order No",
+    "company": "Company",
+    "customer": "Customer",
+    "subtotal": "Subtotal",
+    "discount": "Discount",
+    "total": "Total",
+    "issuedAt": "Issued At",
+    "noData": "No data available"
   }
 }

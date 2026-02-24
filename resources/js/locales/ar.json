@@ -21,7 +21,8 @@
     "districts": "المديريات",
     "activityLogs": "سجل التغييرات",
     "addresses": "العناوين",
-    "tags": "الوسوم"
+    "tags": "الوسوم",
+    "reports": "التقارير"
   },
   "pages": {
     "welcomeLoggedIn": "لقد قمت بتسجيل الدخول!",
@@ -101,7 +102,27 @@
     "quantity": "الكمية",
     "filters": "الفلاتر",
     "from": "من",
-    "to": "إلى"
+    "to": "إلى",
+    "showing": "عرض",
+    "of": "من",
+    "createdAt": "تاريخ الإنشاء"
+  },
+  
+  "status": {
+    "pending": "قيد الانتظار",
+    "approved": "تمت الموافقة",
+    "preparing": "قيد التحضير",
+    "shipped": "تم الشحن",
+    "delivered": "تم التسليم",
+    "rejected": "مرفوض",
+    "cancelled": "تم الإلغاء",
+    "paid": "مدفوعة",
+    "unpaid": "غير مدفوعة",
+    "void": "ملغاة",
+    "active": "نشط",
+    "inactive": "غير نشط",
+    "draft": "مسودة",
+    "expired": "منتهٍ"
   },
   
   "product": {
@@ -136,7 +157,9 @@
     "updatedSuccessfully": "تم تحديث المنتج بنجاح",
     "updateFailed": "فشل تحديث المنتج",
     "deletedSuccessfully": "تم حذف المنتج بنجاح",
-    "deleteFailed": "فشل حذف المنتج"
+    "deleteFailed": "فشل حذف المنتج",
+    "active": "نشط",
+    "inactive": "غير نشط"
   },
   "offers": {
     "createOffer": "إنشاء عرض",
@@ -147,11 +170,6 @@
     "titlePlaceholder": "عنوان العرض",
     "description": "الوصف",
     "descriptionPlaceholder": "وصف العرض (اختياري)",
-    "scope": "نطاق العرض",
-    "scope_public": "عام",
-    "scope_private": "خاص",
-    "public": "عام",
-    "private": "خاص",
     "status": "حالة العرض",
     "status_draft": "مسودة",
     "status_active": "نشط",
@@ -160,6 +178,12 @@
     "status_expired": "منتهٍ",
     "startDate": "تاريخ البدء",
     "endDate": "تاريخ الانتهاء",
+    "start_at": "تاريخ البدء",
+    "end_at": "تاريخ الانتهاء",
+    "scope": {
+      "public": "عام",
+      "private": "خاص"
+    },
     "period": "الفترة",
     "noLimit": "بدون حد زمني",
     "items": "العناصر",
@@ -202,6 +226,15 @@
     "target_customer_category_label": "فئة العملاء",
     "target_customer_tag_label": "وسم العملاء",
     "createOfferButton": "إنشاء عرض"
+  },
+  "offer": {
+    "title": "العنوان",
+    "scope": {
+      "public": "عام",
+      "private": "خاص"
+    },
+    "start_at": "تاريخ البدء",
+    "end_at": "تاريخ الانتهاء"
   },
   "order": {
     "title": "الطلبات",
@@ -764,6 +797,79 @@
     "isDefault": "افتراضي",
     "setAsDefault": "تعيين كعنوان افتراضي",
     "addressSetAsDefaultSuccessfully": "تم تعيين العنوان كافتراضي بنجاح"
+  },
+  
+  "reports": {
+    "title": "التقارير",
+    "invoices": "تقرير الفواتير",
+    "invoicesDescription": "عرض وتصدير تقرير شامل للفواتير",
+    "orders": "تقرير الطلبات",
+    "ordersDescription": "عرض وتصدير تقرير شامل للطلبات",
+    "offers": "تقرير العروض",
+    "offersDescription": "عرض وتصدير تقرير شامل للعروض",
+    "products": "تقرير المنتجات",
+    "productsDescription": "عرض وتصدير تقرير شامل للمنتجات",
+    "filters": "الفلاتر",
+    "datePreset": "الفترة الزمنية",
+    "allTime": "كل الأوقات",
+    "today": "اليوم",
+    "yesterday": "الأمس",
+    "last7Days": "آخر 7 أيام",
+    "last30Days": "آخر 30 يوم",
+    "thisMonth": "هذا الشهر",
+    "lastMonth": "الشهر الماضي",
+    "status": "الحالة",
+    "allStatuses": "كل الحالات",
+    "search": "البحث",
+    "searchPlaceholder": "ابحث في الفاتورة، الطلب، الشركة أو العميل...",
+    "applyFilters": "تطبيق الفلاتر",
+    "clearFilters": "مسح الفلاتر",
+    "totalInvoices": "إجمالي الفواتير",
+    "paidRevenue": "الإيرادات المدفوعة",
+    "unpaidAmount": "المبالغ غير المدفوعة",
+    "totalDiscounts": "إجمالي الخصومات",
+    "pendingOrders": "الطلبات قيد الانتظار",
+    "deliveredOrders": "الطلبات المسلمة",
+    "totalRevenue": "إجمالي الإيرادات",
+    "totalOrders": "إجمالي الطلبات",
+    "paidInvoices": "فواتير مدفوعة",
+    "unpaidInvoices": "فواتير غير مدفوعة",
+    "invoiceNo": "رقم الفاتورة",
+    "orderNo": "رقم الطلب",
+    "company": "الشركة",
+    "customer": "العميل",
+    "subtotal": "المجموع الفرعي",
+    "discount": "الخصم",
+    "total": "الإجمالي",
+    "issuedAt": "تاريخ الإصدار",
+    "submittedAt": "تاريخ الإرسال",
+    "itemsCount": "عدد العناصر",
+    "noData": "لا توجد بيانات",
+    "totalProducts": "إجمالي المنتجات",
+    "activeProducts": "المنتجات النشطة",
+    "inactiveProducts": "المنتجات غير النشطة",
+    "averagePrice": "متوسط السعر",
+    "totalOffers": "إجمالي العروض",
+    "activeOffers": "العروض النشطة",
+    "publicOffers": "العروض العامة",
+    "expiredOffers": "العروض المنتهية",
+    "allScopes": "جميع النطاقات",
+    "targetsCount": "عدد المستهدفين"
+  },
+
+  "datatable": {
+    "show": "عرض",
+    "entries": "مدخلات",
+    "searchPlaceholder": "بحث...",
+    "showing": "عرض",
+    "to": "إلى",
+    "of": "من",
+    "previous": "السابق",
+    "next": "التالي"
+  },
+
+  "category": {
+    "name": "الفئة"
   }
 
 }

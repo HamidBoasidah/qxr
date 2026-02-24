@@ -219,6 +219,7 @@ import {
   OfferIcon,
   OrderIcon,
   InvoiceIcon,
+  ReportIcon,
 } from "../../icons"
 import { useSidebar } from "@/composables/useSidebar"
 import { usePermissions } from "@/composables/usePermissions"
@@ -340,6 +341,12 @@ const menuGroups = computed(() =>
           name: t('menu.orders'),
           path: route('admin.orders.index'),
           permission: 'orders.view',
+        },
+        {
+          icon: ReportIcon,
+          name: t('reports.title'),
+          path: route('admin.reports.index'),
+          permission: 'reports.view',
         },
         {
           icon: UserCircleIcon,

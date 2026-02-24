@@ -90,6 +90,12 @@ class Product extends Model
         return $this->hasMany(OfferItem::class, 'product_id');
     }
 
+    // عناصر الطلبات (للإحصائيات - الأكثر مبيعاً)
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class, 'product_id');
+    }
+
     // العروض النشطة الحالية على هذا المنتج
     public function activeOffers()
     {

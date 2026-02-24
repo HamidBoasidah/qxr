@@ -20,6 +20,7 @@ use App\Models\Product;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -105,6 +106,70 @@ class ProductController extends Controller
         $paginated->getCollection()->transform(fn ($product) => ProductDTO::fromModel($product)->toMobileArray());
 
         return $this->collectionResponse($paginated, 'تم جلب منتجات المستخدم بنجاح');
+    }
+
+    /**
+     * المنتجات الحديثة (وصل حديثاً)
+     */
+    public function recent(Request $request, ProductRepository $products)
+    {
+        $perPage = (int) $request->get('per_page', 10);
+
+        // Get active products ordered by creation date (newest first)
+        $query = $products->query($this->mobileWith())
+            ->where('is_active', true)
+            ->latest('created_at');
+
+        // Optional filters
+        $query = $this->applyFilters(
+            $query,
+            $request,
+            $this->getSearchableFields(),
+            ['category_id' => 'category_id']
+        );
+
+        $paginated = $query->paginate($perPage);
+
+        $paginated->getCollection()->transform(fn ($product) => ProductDTO::fromModel($product)->toMobileArray());
+
+        return $this->collectionResponse($paginated, 'تم جلب المنتجات الحديثة بنجاح');
+    }
+
+    /**
+     * المنتجات الأكثر مبيعاً
+     */
+    public function bestSelling(Request $request, ProductRepository $products)
+    {
+        $perPage = (int) $request->get('per_page', 10);
+
+        // Get active products with order items count
+        $query = $products->query($this->mobileWith())
+            ->where('is_active', true)
+            ->withCount(['orderItems as total_sold' => function ($query) {
+                $query->select(DB::raw('COALESCE(SUM(qty), 0)'));
+            }])
+            ->withCount('orderItems as purchase_count') // عدد مرات الشراء
+            ->has('orderItems') // Only products that have at least one order item
+            ->orderByDesc('total_sold');
+
+        // Optional filters
+        $query = $this->applyFilters(
+            $query,
+            $request,
+            $this->getSearchableFields(),
+            ['category_id' => 'category_id']
+        );
+
+        $paginated = $query->paginate($perPage);
+
+        $paginated->getCollection()->transform(function ($product) {
+            $data = ProductDTO::fromModel($product)->toMobileArray();
+            $data['total_sold'] = (int) $product->total_sold; // إجمالي الكمية المباعة
+            $data['purchase_count'] = (int) $product->purchase_count; // عدد مرات الشراء
+            return $data;
+        });
+
+        return $this->collectionResponse($paginated, 'تم جلب المنتجات الأكثر مبيعاً بنجاح');
     }
 
     /**

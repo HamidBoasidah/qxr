@@ -15,6 +15,7 @@ import ChatIcon from "./ChatIcon.vue";
 import OfferIcon from "./OfferIcon.vue";
 import OrderIcon from "./OrderIcon.vue";
 import InvoiceIcon from "./InvoiceIcon.vue";
+import ReportIcon from "./ReportIcon.vue";
 
 export {
   GridIcon,
@@ -22,6 +23,7 @@ export {
   OfferIcon,
   OrderIcon,
   InvoiceIcon,
+  ReportIcon,
   ChevronDownIcon,
   HorizontalDots,
   BuildingIcon,

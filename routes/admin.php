@@ -214,6 +214,35 @@ Route::middleware('auth:admin')
             ->only(['index', 'show'])
             ->names('activitylogs');
 
+        // Reports
+        Route::prefix('reports')->as('reports.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\ReportController::class, 'index'])
+                ->name('index');
+            
+            // Invoices Report
+            Route::get('/invoices', [\App\Http\Controllers\Admin\ReportController::class, 'invoices'])
+                ->name('invoices');
+            Route::get('/invoices/export', [\App\Http\Controllers\Admin\ReportController::class, 'exportInvoices'])
+                ->name('invoices.export');
+            
+            // Orders Report
+            Route::get('/orders', [\App\Http\Controllers\Admin\ReportController::class, 'orders'])
+                ->name('orders');
+            Route::get('/orders/export', [\App\Http\Controllers\Admin\ReportController::class, 'exportOrders'])
+                ->name('orders.export');
+            
+            // Offers Report
+            Route::get('/offers', [\App\Http\Controllers\Admin\ReportController::class, 'offers'])
+                ->name('offers');
+            Route::get('/offers/export', [\App\Http\Controllers\Admin\ReportController::class, 'exportOffers'])
+                ->name('offers.export');
+            
+            // Products Report
+            Route::get('/products', [\App\Http\Controllers\Admin\ReportController::class, 'products'])
+                ->name('products');
+            Route::get('/products/export', [\App\Http\Controllers\Admin\ReportController::class, 'exportProducts'])
+                ->name('products.export');
+        });
 
         Route::get('verify-email', EmailVerificationPromptController::class)
             ->name('verification.notice');

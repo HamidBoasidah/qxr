@@ -30,6 +30,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('products/categories', [App\Http\Controllers\Api\ProductController::class, 'categories']);
     Route::get('products/tags', [App\Http\Controllers\Api\ProductController::class, 'tags']);
     Route::get('products/mine', [App\Http\Controllers\Api\ProductController::class, 'mine']);
+    Route::get('products/recent', [App\Http\Controllers\Api\ProductController::class, 'recent']);
+    Route::get('products/best-selling', [App\Http\Controllers\Api\ProductController::class, 'bestSelling']);
     // Users (API): get all users except current
     Route::get('users/others', [App\Http\Controllers\Api\UserController::class, 'others']);
     // Users (API): companies

@@ -1,0 +1,134 @@
+{
+	"info": {
+		"_postman_id": "a7b8c9d0-e1f2-3456-7890-abcdef123456",
+		"name": "Best Offers API - أفضل العروض",
+		"description": "API لجلب أفضل العروض حسب قيمة الخصم (نسبة مئوية، ثابت، أو بونص)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Best Offers - أفضل العروض",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// التحقق من نجاح الطلب",
+							"pm.test('Status code is 200', function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"// التحقق من بنية الاستجابة الأساسية",
+							"pm.test('Response has success flag', function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('success');",
+							"    pm.expect(jsonData.success).to.be.true;",
+							"});",
+							"",
+							"pm.test('Response has data property', function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('data');",
+							"});",
+							"",
+							"// التحقق من بنية Pagination",
+							"pm.test('Response has pagination structure', function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.data).to.have.property('current_page');",
+							"    pm.expect(jsonData.data).to.have.property('data');",
+							"    pm.expect(jsonData.data).to.have.property('per_page');",
+							"    pm.expect(jsonData.data).to.have.property('total');",
+							"});",
+							"",
+							"// التحقق من بيانات العروض",
+							"var jsonData = pm.response.json();",
+							"if (jsonData.data.data.length > 0) {",
+							"    var offer = jsonData.data.data[0];",
+							"    ",
+							"    pm.test('Offer has required fields', function () {",
+							"        pm.expect(offer).to.have.property('offer_id');",
+							"        pm.expect(offer).to.have.property('title');",
+							"        pm.expect(offer).to.have.property('status');",
+							"        pm.expect(offer).to.have.property('scope');",
+							"        pm.expect(offer).to.have.property('max_discount_value');",
+							"    });",
+							"    ",
+							"    pm.test('Offer is active', function () {",
+							"        pm.expect(offer.status).to.equal('active');",
+							"    });",
+							"    ",
+							"    pm.test('Offer has discount value', function () {",
+							"        pm.expect(offer.max_discount_value).to.be.a('number');",
+							"        pm.expect(offer.max_discount_value).to.be.at.least(0);",
+							"    });",
+							"    ",
+							"    // التحقق من ترتيب العروض حسب قيمة الخصم",
+							"    if (jsonData.data.data.length > 1) {",
+							"        var firstOffer = jsonData.data.data[0];",
+							"        var secondOffer = jsonData.data.data[1];",
+							"        ",
+							"        pm.test('Offers are sorted by max_discount_value DESC', function () {",
+							"            pm.expect(firstOffer.max_discount_value).to.be.at.least(secondOffer.max_discount_value);",
+							"        });",
+							"    }",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/offers/public/best?per_page=10",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"offers",
+						"public",
+						"best"
+					],
+					"query": [
+						{
+							"key": "per_page",
+							"value": "10",
+							"description": "عدد العروض في الصفحة"
+						},
+						{
+							"key": "page",
+							"value": "1",
+							"description": "رقم الصفحة",
+							"disabled": true
+						}
+					]
+				},
+				"description": "يرجع أفضل العروض النشطة العامة أو الخاصة المستهدفة للمستخدم، مرتبة حسب أعلى قيمة خصم.\n\n**معايير الترتيب:**\n- خصم نسبة مئوية: سعر المنتج × النسبة ÷ 100\n- خصم ثابت: المبلغ الثابت\n- بونص: سعر منتج المكافأة × عدد البونص\n\n**الفلاتر:**\n- العروض النشطة فقط (status = active)\n- العروض السارية (start_at <= الآن، end_at >= الآن)\n- العروض العامة أو الخاصة المستهدفة للمستخدم"
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000/api",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "YOUR_AUTH_TOKEN_HERE",
+			"type": "string"
+		}
+	]
+}

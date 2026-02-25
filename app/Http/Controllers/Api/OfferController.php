@@ -17,6 +17,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class OfferController extends Controller
 {
@@ -26,6 +27,89 @@ class OfferController extends Controller
     {
         // All endpoints require authentication (handled by routes middleware)
         // Public offers endpoints show public offers but require user to be logged in
+    }
+
+    /**
+     * أفضل العروض حسب قيمة الخصم (للمستخدمين المسجلين فقط)
+     * تعرض العروض النشطة العامة أو الخاصة المستهدفة للمستخدم
+     * مرتبة حسب أعلى قيمة خصم (نسبة، ثابت، أو بونص)
+     */
+    public function bestOffers(Request $request, OfferRepository $offers)
+    {
+        $perPage = (int) $request->get('per_page', 10);
+        $user = $request->user();
+
+        // Query مع joins للمنتجات لحساب قيمة الخصم
+        $query = $offers->query($this->baseWith())
+            ->leftJoin('offer_items', 'offers.id', '=', 'offer_items.offer_id')
+            ->leftJoin('products as main_products', 'offer_items.product_id', '=', 'main_products.id')
+            ->leftJoin('products as bonus_products', 'offer_items.bonus_product_id', '=', 'bonus_products.id')
+            ->where('offers.status', 'active')
+            ->where(function ($q) {
+                $q->whereNull('offers.start_at')
+                    ->orWhere('offers.start_at', '<=', now());
+            })
+            ->where(function ($q) {
+                $q->whereNull('offers.end_at')
+                    ->orWhere('offers.end_at', '>=', now());
+            });
+
+        // تطبيق فلتر النطاق: عام أو خاص مستهدف للمستخدم
+        $query->where(function($q) use ($user) {
+            // العروض العامة
+            $q->where('offers.scope', 'public')
+              // أو العروض الخاصة المستهدفة للمستخدم
+              ->orWhere(function($subQ) use ($user) {
+                  $subQ->where('offers.scope', 'private')
+                      ->whereExists(function($existsQ) use ($user) {
+                          $existsQ->select(DB::raw(1))
+                              ->from('offer_targets')
+                              ->whereColumn('offer_targets.offer_id', 'offers.id')
+                              ->where(function($targetQ) use ($user) {
+                                  // مستهدف مباشر (customer)
+                                  $targetQ->where(function($tq) use ($user) {
+                                      $tq->where('target_type', 'customer')
+                                         ->where('target_id', $user->id);
+                                  });
+                                  
+                                  // أو مستهدف عبر الفئة (customer_category)
+                                  $user->load('customerProfile');
+                                  if ($user->customerProfile && $user->customerProfile->category_id) {
+                                      $targetQ->orWhere(function($tq) use ($user) {
+                                          $tq->where('target_type', 'customer_category')
+                                             ->where('target_id', $user->customerProfile->category_id);
+                                      });
+                                  }
+                              });
+                      });
+              });
+        });
+
+        // حساب أقصى قيمة خصم لكل عرض
+        $query->select('offers.*')
+            ->selectRaw('MAX(
+                CASE 
+                    WHEN offer_items.discount_percent > 0 THEN 
+                        (main_products.base_price * offer_items.discount_percent / 100)
+                    WHEN offer_items.discount_fixed > 0 THEN 
+                        offer_items.discount_fixed
+                    WHEN offer_items.bonus_qty > 0 AND bonus_products.id IS NOT NULL THEN 
+                        (bonus_products.base_price * offer_items.bonus_qty)
+                    ELSE 0
+                END
+            ) as max_discount_value')
+            ->groupBy('offers.id')
+            ->orderByDesc('max_discount_value');
+
+        $paginated = $query->paginate($perPage);
+
+        $paginated->getCollection()->transform(function ($offer) {
+            $data = OfferDTO::fromModel($offer)->toIndexArray();
+            $data['max_discount_value'] = round((float) $offer->max_discount_value, 2);
+            return $data;
+        });
+
+        return $this->collectionResponse($paginated, 'تم جلب أفضل العروض بنجاح');
     }
 
     /**

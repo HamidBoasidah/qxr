@@ -45,6 +45,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('products/{product}/deactivate', [App\Http\Controllers\Api\ProductController::class, 'deactivate']);
     
     // Offers - Public endpoints (must come BEFORE apiResource to avoid route conflicts)
+    Route::get('offers/public/best', [App\Http\Controllers\Api\OfferController::class, 'bestOffers']);
     Route::get('offers/public/flat', [App\Http\Controllers\Api\OfferController::class, 'publicIndexFlat']);
     Route::get('offers/public/details', [App\Http\Controllers\Api\OfferController::class, 'publicIndexDetails']);
     Route::get('offers/public', [App\Http\Controllers\Api\OfferController::class, 'publicIndex']);

@@ -350,7 +350,7 @@ watch(() => props.offers?.per_page, (val) => {
 const fetchPage = (page) => {
   const targetPage = page ?? currentPage.value
   router.get(
-    route('admin.reports.offers'),
+    route('company.reports.offers'),
     {
       page: targetPage,
       per_page: perPage.value,
@@ -401,7 +401,7 @@ const exportReport = (format) => {
     sort: sortColumn.value,
     direction: sortDirection.value,
   })
-  window.location.href = route('admin.reports.offers.export') + '?' + params.toString()
+  window.location.href = route('company.reports.offers.export') + '?' + params.toString()
 }
 
 // Watchers for filter changes

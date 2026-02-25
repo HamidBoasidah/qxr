@@ -217,6 +217,7 @@ import {
   OfferIcon,
   OrderIcon,
   InvoiceIcon,
+  ReportIcon,
 } from "../../icons"
 import { useSidebar } from "@/composables/useSidebar"
 
@@ -270,6 +271,11 @@ const menuGroups = computed(() => [
         icon: InvoiceIcon,
         name: t('menu.invoices'),
         path: route('company.invoices.index'),
+      },
+      {
+        icon: ReportIcon,
+        name: t('menu.reports'),
+        path: route('company.reports.index'),
       },
       {
         icon: AddressIcon,

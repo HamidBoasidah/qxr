@@ -99,6 +99,36 @@ Route::middleware(['auth:web', 'company'])
         Route::patch('users/{id}/deactivate', [UserController::class, 'deactivate'])
             ->name('users.deactivate');
 
+        // Reports
+        Route::prefix('reports')->as('reports.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Company\ReportController::class, 'index'])
+                ->name('index');
+            
+            // Invoices Report
+            Route::get('/invoices', [\App\Http\Controllers\Company\ReportController::class, 'invoices'])
+                ->name('invoices');
+            Route::get('/invoices/export', [\App\Http\Controllers\Company\ReportController::class, 'exportInvoices'])
+                ->name('invoices.export');
+            
+            // Orders Report
+            Route::get('/orders', [\App\Http\Controllers\Company\ReportController::class, 'orders'])
+                ->name('orders');
+            Route::get('/orders/export', [\App\Http\Controllers\Company\ReportController::class, 'exportOrders'])
+                ->name('orders.export');
+            
+            // Offers Report
+            Route::get('/offers', [\App\Http\Controllers\Company\ReportController::class, 'offers'])
+                ->name('offers');
+            Route::get('/offers/export', [\App\Http\Controllers\Company\ReportController::class, 'exportOffers'])
+                ->name('offers.export');
+            
+            // Products Report
+            Route::get('/products', [\App\Http\Controllers\Company\ReportController::class, 'products'])
+                ->name('products');
+            Route::get('/products/export', [\App\Http\Controllers\Company\ReportController::class, 'exportProducts'])
+                ->name('products.export');
+        });
+
         // Chat
         Route::prefix('chat')->as('chat.')->group(function () {
             // Get users for chat (no permission required - all authenticated users can see other users for chat)

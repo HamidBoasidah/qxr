@@ -690,7 +690,6 @@
     }
   },
   "dashboard": {
-    "title": "لوحة التحكم",
     "date_range": "النطاق الزمني",
     "select_date_range": "اختر النطاق الزمني",
     "from": "من",

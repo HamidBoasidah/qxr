@@ -26,9 +26,10 @@ class ReportFilters
             static::applyDatePreset($query, $filters['date_preset']);
         }
 
-        // Company filter
-        if (!empty($filters['company_id'])) {
-            static::applyCompanyFilter($query, $filters['company_id']);
+        // Company filter (supports both company_id and company_user_id)
+        $companyId = $filters['company_id'] ?? $filters['company_user_id'] ?? null;
+        if (!empty($companyId)) {
+            static::applyCompanyFilter($query, $companyId);
         }
 
         // Customer filter

@@ -4,7 +4,7 @@
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
       <div class="bg-white dark:bg-gray-800 p-5 rounded-lg shadow border border-gray-200 dark:border-gray-700">
         <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">
-          {{ t('reports.totalOffers') || 'إجمالي العروض' }}
+          {{ t('reports.totalInvoices') }}
         </div>
         <div class="text-2xl font-bold text-gray-900 dark:text-white">
           {{ summary?.total_count?.toLocaleString('en-US') || 0 }}
@@ -13,28 +13,34 @@
       
       <div class="bg-white dark:bg-gray-800 p-5 rounded-lg shadow border border-gray-200 dark:border-gray-700">
         <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">
-          {{ t('reports.activeOffers') || 'العروض النشطة' }}
+          {{ t('reports.paidRevenue') }}
         </div>
         <div class="text-2xl font-bold text-green-600 dark:text-green-400">
-          {{ summary?.active_count?.toLocaleString('en-US') || 0 }}
+          {{ summary?.paid_revenue?.toLocaleString('en-US', { minimumFractionDigits: 2 }) || '0.00' }}
+        </div>
+        <div class="text-xs text-gray-500 mt-1">
+          {{ summary?.paid_count?.toLocaleString('en-US') || 0 }} {{ t('reports.paidInvoices') }}
         </div>
       </div>
       
       <div class="bg-white dark:bg-gray-800 p-5 rounded-lg shadow border border-gray-200 dark:border-gray-700">
         <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">
-          {{ t('reports.publicOffers') || 'العروض العامة' }}
+          {{ t('reports.unpaidAmount') }}
         </div>
-        <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">
-          {{ summary?.public_count?.toLocaleString('en-US') || 0 }}
+        <div class="text-2xl font-bold text-red-600 dark:text-red-400">
+          {{ summary?.unpaid_amount?.toLocaleString('en-US', { minimumFractionDigits: 2 }) || '0.00' }}
+        </div>
+        <div class="text-xs text-gray-500 mt-1">
+          {{ summary?.unpaid_count?.toLocaleString('en-US') || 0 }} {{ t('reports.unpaidInvoices') }}
         </div>
       </div>
       
       <div class="bg-white dark:bg-gray-800 p-5 rounded-lg shadow border border-gray-200 dark:border-gray-700">
         <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">
-          {{ t('reports.expiredOffers') || 'العروض المنتهية' }}
+          {{ t('reports.totalDiscounts') }}
         </div>
-        <div class="text-2xl font-bold text-orange-600 dark:text-orange-400">
-          {{ summary?.expired_count?.toLocaleString('en-US') || 0 }}
+        <div class="text-2xl font-bold text-gray-900 dark:text-white">
+          {{ summary?.total_discounts?.toLocaleString('en-US', { minimumFractionDigits: 2 }) || '0.00' }}
         </div>
       </div>
     </div>
@@ -62,14 +68,18 @@
       </div>
 
       <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
-        <!-- Scope -->
+        <!-- Date Preset -->
         <select
-          v-model="scope"
+          v-model="datePreset"
           class="py-2 pl-3 pr-8 text-sm text-gray-800 bg-transparent border border-gray-300 rounded-lg appearance-none h-11 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
         >
-          <option value="">{{ t('reports.allScopes') || 'جميع النطاقات' }}</option>
-          <option value="public">{{ t('offer.scope.public') || 'عام' }}</option>
-          <option value="private">{{ t('offer.scope.private') || 'خاص' }}</option>
+          <option value="">{{ t('reports.allTime') }}</option>
+          <option value="today">{{ t('reports.today') }}</option>
+          <option value="yesterday">{{ t('reports.yesterday') }}</option>
+          <option value="last_7_days">{{ t('reports.last7Days') }}</option>
+          <option value="last_30_days">{{ t('reports.last30Days') }}</option>
+          <option value="this_month">{{ t('reports.thisMonth') }}</option>
+          <option value="last_month">{{ t('reports.lastMonth') }}</option>
         </select>
 
         <!-- Status -->
@@ -78,10 +88,9 @@
           class="py-2 pl-3 pr-8 text-sm text-gray-800 bg-transparent border border-gray-300 rounded-lg appearance-none h-11 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
         >
           <option value="">{{ t('reports.allStatuses') }}</option>
-          <option value="active">{{ t('status.active') }}</option>
-          <option value="inactive">{{ t('status.inactive') }}</option>
-          <option value="draft">{{ t('status.draft') }}</option>
-          <option value="expired">{{ t('status.expired') }}</option>
+          <option value="paid">{{ t('status.paid') }}</option>
+          <option value="unpaid">{{ t('status.unpaid') }}</option>
+          <option value="void">{{ t('status.void') }}</option>
         </select>
 
         <!-- Search -->
@@ -129,54 +138,67 @@
         <thead>
           <tr>
             <th class="px-4 py-3 text-start border border-gray-100 dark:border-gray-800">
-              <div class="flex items-center justify-between w-full cursor-pointer" @click="sortBy('title')">
-                <p class="font-medium text-gray-700 text-theme-xs dark:text-gray-400">{{ t('offer.title') || 'العنوان' }}</p>
+              <div class="flex items-center justify-between w-full cursor-pointer" @click="sortBy('invoice_no')">
+                <p class="font-medium text-gray-700 text-theme-xs dark:text-gray-400">{{ t('reports.invoiceNo') }}</p>
                 <span class="flex flex-col gap-0.5">
-                  <svg :class="sortColumn === 'title' && sortDirection === 'asc' ? 'fill-brand-500' : 'fill-gray-300 dark:fill-gray-700'" width="8" height="5" viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <svg :class="sortColumn === 'invoice_no' && sortDirection === 'asc' ? 'fill-brand-500' : 'fill-gray-300 dark:fill-gray-700'" width="8" height="5" viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M4.40962 0.585167C4.21057 0.300808 3.78943 0.300807 3.59038 0.585166L1.05071 4.21327C0.81874 4.54466 1.05582 5 1.46033 5H6.53967C6.94418 5 7.18126 4.54466 6.94929 4.21327L4.40962 0.585167Z" fill="" />
                   </svg>
-                  <svg :class="sortColumn === 'title' && sortDirection === 'desc' ? 'fill-brand-500' : 'fill-gray-300 dark:fill-gray-700'" width="8" height="5" viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <svg :class="sortColumn === 'invoice_no' && sortDirection === 'desc' ? 'fill-brand-500' : 'fill-gray-300 dark:fill-gray-700'" width="8" height="5" viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M4.40962 4.41483C4.21057 4.69919 3.78943 4.69919 3.59038 4.41483L1.05071 0.786732C0.81874 0.455343 1.05582 0 1.46033 0H6.53967C6.94418 0 7.18126 0.455342 6.94929 0.786731L4.40962 4.41483Z" fill="" />
                   </svg>
                 </span>
               </div>
+            </th>
+            <th class="px-4 py-3 text-start border border-gray-100 dark:border-gray-800">
+              <p class="font-medium text-gray-700 text-theme-xs dark:text-gray-400">{{ t('reports.orderNo') }}</p>
             </th>
             <th class="px-4 py-3 text-start border border-gray-100 dark:border-gray-800">
               <p class="font-medium text-gray-700 text-theme-xs dark:text-gray-400">{{ t('reports.company') }}</p>
             </th>
             <th class="px-4 py-3 text-start border border-gray-100 dark:border-gray-800">
-              <p class="font-medium text-gray-700 text-theme-xs dark:text-gray-400">{{ t('dashboard.scope') || 'النطاق' }}</p>
+              <p class="font-medium text-gray-700 text-theme-xs dark:text-gray-400">{{ t('reports.customer') }}</p>
             </th>
             <th class="px-4 py-3 text-start border border-gray-100 dark:border-gray-800">
-              <p class="font-medium text-gray-700 text-theme-xs dark:text-gray-400">{{ t('reports.status') }}</p>
-            </th>
-            <th class="px-4 py-3 text-start border border-gray-100 dark:border-gray-800">
-              <p class="font-medium text-gray-700 text-theme-xs dark:text-gray-400">{{ t('reports.itemsCount') || 'العناصر' }}</p>
-            </th>
-            <th class="px-4 py-3 text-start border border-gray-100 dark:border-gray-800">
-              <p class="font-medium text-gray-700 text-theme-xs dark:text-gray-400">{{ t('reports.targetsCount') || 'الأهداف' }}</p>
-            </th>
-            <th class="px-4 py-3 text-start border border-gray-100 dark:border-gray-800">
-              <div class="flex items-center justify-between w-full cursor-pointer" @click="sortBy('start_at')">
-                <p class="font-medium text-gray-700 text-theme-xs dark:text-gray-400">{{ t('offer.start_at') || 'تاريخ البدء' }}</p>
+              <div class="flex items-center justify-between w-full cursor-pointer" @click="sortBy('subtotal')">
+                <p class="font-medium text-gray-700 text-theme-xs dark:text-gray-400">{{ t('reports.subtotal') }}</p>
                 <span class="flex flex-col gap-0.5">
-                  <svg :class="sortColumn === 'start_at' && sortDirection === 'asc' ? 'fill-brand-500' : 'fill-gray-300 dark:fill-gray-700'" width="8" height="5" viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <svg :class="sortColumn === 'subtotal' && sortDirection === 'asc' ? 'fill-brand-500' : 'fill-gray-300 dark:fill-gray-700'" width="8" height="5" viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M4.40962 0.585167C4.21057 0.300808 3.78943 0.300807 3.59038 0.585166L1.05071 4.21327C0.81874 4.54466 1.05582 5 1.46033 5H6.53967C6.94418 5 7.18126 4.54466 6.94929 4.21327L4.40962 0.585167Z" fill="" />
                   </svg>
-                  <svg :class="sortColumn === 'start_at' && sortDirection === 'desc' ? 'fill-brand-500' : 'fill-gray-300 dark:fill-gray-700'" width="8" height="5" viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <svg :class="sortColumn === 'subtotal' && sortDirection === 'desc' ? 'fill-brand-500' : 'fill-gray-300 dark:fill-gray-700'" width="8" height="5" viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M4.40962 4.41483C4.21057 4.69919 3.78943 4.69919 3.59038 4.41483L1.05071 0.786732C0.81874 0.455343 1.05582 0 1.46033 0H6.53967C6.94418 0 7.18126 0.455342 6.94929 0.786731L4.40962 4.41483Z" fill="" />
                   </svg>
                 </span>
               </div>
             </th>
             <th class="px-4 py-3 text-start border border-gray-100 dark:border-gray-800">
-              <div class="flex items-center justify-between w-full cursor-pointer" @click="sortBy('end_at')">
-                <p class="font-medium text-gray-700 text-theme-xs dark:text-gray-400">{{ t('offer.end_at') || 'تاريخ الانتهاء' }}</p>
+              <p class="font-medium text-gray-700 text-theme-xs dark:text-gray-400">{{ t('reports.discount') }}</p>
+            </th>
+            <th class="px-4 py-3 text-start border border-gray-100 dark:border-gray-800">
+              <div class="flex items-center justify-between w-full cursor-pointer" @click="sortBy('total')">
+                <p class="font-medium text-gray-700 text-theme-xs dark:text-gray-400">{{ t('reports.total') }}</p>
                 <span class="flex flex-col gap-0.5">
-                  <svg :class="sortColumn === 'end_at' && sortDirection === 'asc' ? 'fill-brand-500' : 'fill-gray-300 dark:fill-gray-700'" width="8" height="5" viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <svg :class="sortColumn === 'total' && sortDirection === 'asc' ? 'fill-brand-500' : 'fill-gray-300 dark:fill-gray-700'" width="8" height="5" viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M4.40962 0.585167C4.21057 0.300808 3.78943 0.300807 3.59038 0.585166L1.05071 4.21327C0.81874 4.54466 1.05582 5 1.46033 5H6.53967C6.94418 5 7.18126 4.54466 6.94929 4.21327L4.40962 0.585167Z" fill="" />
                   </svg>
-                  <svg :class="sortColumn === 'end_at' && sortDirection === 'desc' ? 'fill-brand-500' : 'fill-gray-300 dark:fill-gray-700'" width="8" height="5" viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <svg :class="sortColumn === 'total' && sortDirection === 'desc' ? 'fill-brand-500' : 'fill-gray-300 dark:fill-gray-700'" width="8" height="5" viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4.40962 4.41483C4.21057 4.69919 3.78943 4.69919 3.59038 4.41483L1.05071 0.786732C0.81874 0.455343 1.05582 0 1.46033 0H6.53967C6.94418 0 7.18126 0.455342 6.94929 0.786731L4.40962 4.41483Z" fill="" />
+                  </svg>
+                </span>
+              </div>
+            </th>
+            <th class="px-4 py-3 text-start border border-gray-100 dark:border-gray-800">
+              <p class="font-medium text-gray-700 text-theme-xs dark:text-gray-400">{{ t('reports.status') }}</p>
+            </th>
+            <th class="px-4 py-3 text-start border border-gray-100 dark:border-gray-800">
+              <div class="flex items-center justify-between w-full cursor-pointer" @click="sortBy('issued_at')">
+                <p class="font-medium text-gray-700 text-theme-xs dark:text-gray-400">{{ t('reports.issuedAt') }}</p>
+                <span class="flex flex-col gap-0.5">
+                  <svg :class="sortColumn === 'issued_at' && sortDirection === 'asc' ? 'fill-brand-500' : 'fill-gray-300 dark:fill-gray-700'" width="8" height="5" viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4.40962 0.585167C4.21057 0.300808 3.78943 0.300807 3.59038 0.585166L1.05071 4.21327C0.81874 4.54466 1.05582 5 1.46033 5H6.53967C6.94418 5 7.18126 4.54466 6.94929 4.21327L4.40962 0.585167Z" fill="" />
+                  </svg>
+                  <svg :class="sortColumn === 'issued_at' && sortDirection === 'desc' ? 'fill-brand-500' : 'fill-gray-300 dark:fill-gray-700'" width="8" height="5" viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M4.40962 4.41483C4.21057 4.69919 3.78943 4.69919 3.59038 4.41483L1.05071 0.786732C0.81874 0.455343 1.05582 0 1.46033 0H6.53967C6.94418 0 7.18126 0.455342 6.94929 0.786731L4.40962 4.41483Z" fill="" />
                   </svg>
                 </span>
@@ -186,50 +208,49 @@
         </thead>
         <tbody>
           <tr
-            v-for="offer in paginatedData"
-            :key="offer.id"
+            v-for="invoice in paginatedData"
+            :key="invoice.id"
             class="hover:bg-gray-50 dark:hover:bg-gray-800/50"
           >
             <td class="px-4 py-3 border border-gray-100 dark:border-gray-800">
-              <span class="text-sm text-gray-800 dark:text-white/90">{{ offer.title }}</span>
+              <span class="text-sm text-gray-800 dark:text-white/90">{{ invoice.invoice_no }}</span>
             </td>
             <td class="px-4 py-3 border border-gray-100 dark:border-gray-800">
-              <span class="text-sm text-gray-800 dark:text-white/90">{{ offer.company_name || '—' }}</span>
+              <span class="text-sm text-gray-800 dark:text-white/90">{{ invoice.order_no || '—' }}</span>
+            </td>
+            <td class="px-4 py-3 border border-gray-100 dark:border-gray-800">
+              <span class="text-sm text-gray-800 dark:text-white/90">{{ invoice.company_name || '—' }}</span>
+            </td>
+            <td class="px-4 py-3 border border-gray-100 dark:border-gray-800">
+              <span class="text-sm text-gray-800 dark:text-white/90">{{ invoice.customer_name || '—' }}</span>
+            </td>
+            <td class="px-4 py-3 border border-gray-100 dark:border-gray-800">
+              <span class="text-sm text-gray-800 dark:text-white/90">{{ invoice.subtotal?.toLocaleString('en-US', { minimumFractionDigits: 2 }) }}</span>
+            </td>
+            <td class="px-4 py-3 border border-gray-100 dark:border-gray-800">
+              <span class="text-sm text-gray-800 dark:text-white/90">{{ invoice.discount?.toLocaleString('en-US', { minimumFractionDigits: 2 }) }}</span>
+            </td>
+            <td class="px-4 py-3 border border-gray-100 dark:border-gray-800">
+              <span class="text-sm font-medium text-gray-800 dark:text-white/90">{{ invoice.total?.toLocaleString('en-US', { minimumFractionDigits: 2 }) }}</span>
             </td>
             <td class="px-4 py-3 border border-gray-100 dark:border-gray-800">
               <span
                 class="inline-flex rounded-full px-2 py-0.5 text-theme-xs font-medium"
                 :class="{
-                  'bg-blue-50 text-blue-600 dark:bg-blue-500/15 dark:text-blue-500': offer.scope === 'public',
-                  'bg-purple-50 text-purple-600 dark:bg-purple-500/15 dark:text-purple-500': offer.scope === 'private'
+                  'bg-green-50 text-green-600 dark:bg-green-500/15 dark:text-green-500': invoice.status === 'paid',
+                  'bg-error-50 text-error-600 dark:bg-error-500/15 dark:text-error-500': invoice.status === 'unpaid',
+                  'bg-gray-50 text-gray-600 dark:bg-gray-500/15 dark:text-gray-400': invoice.status === 'void'
                 }"
               >
-                {{ t(`offer.scope.${offer.scope}`) || offer.scope }}
+                {{ t(`status.${invoice.status}`) }}
               </span>
             </td>
             <td class="px-4 py-3 border border-gray-100 dark:border-gray-800">
-              <span
-                class="inline-flex rounded-full px-2 py-0.5 text-theme-xs font-medium"
-                :class="getStatusClass(offer.status)"
-              >
-                {{ t(`status.${offer.status}`) || offer.status }}
-              </span>
-            </td>
-            <td class="px-4 py-3 border border-gray-100 dark:border-gray-800">
-              <span class="text-sm text-gray-800 dark:text-white/90">{{ offer.items_count?.toLocaleString('en-US') || 0 }}</span>
-            </td>
-            <td class="px-4 py-3 border border-gray-100 dark:border-gray-800">
-              <span class="text-sm text-gray-800 dark:text-white/90">{{ offer.targets_count?.toLocaleString('en-US') || 0 }}</span>
-            </td>
-            <td class="px-4 py-3 border border-gray-100 dark:border-gray-800">
-              <span class="text-sm text-gray-500 dark:text-gray-400">{{ offer.start_at || '—' }}</span>
-            </td>
-            <td class="px-4 py-3 border border-gray-100 dark:border-gray-800">
-              <span class="text-sm text-gray-500 dark:text-gray-400">{{ offer.end_at || '—' }}</span>
+              <span class="text-sm text-gray-500 dark:text-gray-400">{{ invoice.issued_at || '—' }}</span>
             </td>
           </tr>
           <tr v-if="!paginatedData || paginatedData.length === 0">
-            <td colspan="8" class="px-4 py-8 text-center text-gray-500 dark:text-gray-400 border border-gray-100 dark:border-gray-800">
+            <td colspan="9" class="px-4 py-8 text-center text-gray-500 dark:text-gray-400 border border-gray-100 dark:border-gray-800">
               {{ t('reports.noData') }}
             </td>
           </tr>
@@ -297,27 +318,27 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 
 const props = defineProps({
-  offers: Object,
+  invoices: Object,
   summary: Object,
   filters: Object
 })
 
 // Filter state
 const search = ref(props.filters?.search || '')
-const scope = ref(props.filters?.scope || '')
+const datePreset = ref(props.filters?.date_preset || '')
 const status = ref(props.filters?.status || '')
-const sortColumn = ref(props.filters?.sort || 'title')
+const sortColumn = ref(props.filters?.sort || 'invoice_no')
 const sortDirection = ref(props.filters?.direction || 'desc')
 
 // Pagination state
-const currentPage = ref(props.offers?.current_page ?? 1)
-const perPage = ref(props.offers?.per_page ?? 10)
+const currentPage = ref(props.invoices?.current_page ?? 1)
+const perPage = ref(props.invoices?.per_page ?? 10)
 
-const paginatedData = computed(() => props.offers?.data || [])
-const totalEntries = computed(() => props.offers?.total || 0)
-const startEntry = computed(() => props.offers?.from || 0)
-const endEntry = computed(() => props.offers?.to || 0)
-const totalPages = computed(() => props.offers?.last_page || 1)
+const paginatedData = computed(() => props.invoices?.data || [])
+const totalEntries = computed(() => props.invoices?.total || 0)
+const startEntry = computed(() => props.invoices?.from || 0)
+const endEntry = computed(() => props.invoices?.to || 0)
+const totalPages = computed(() => props.invoices?.last_page || 1)
 
 const pagesAroundCurrent = computed(() => {
   let pages = []
@@ -329,33 +350,23 @@ const pagesAroundCurrent = computed(() => {
   return pages
 })
 
-const getStatusClass = (status) => {
-  const classes = {
-    'active': 'bg-green-50 text-green-600 dark:bg-green-500/15 dark:text-green-500',
-    'inactive': 'bg-gray-50 text-gray-600 dark:bg-gray-500/15 dark:text-gray-400',
-    'draft': 'bg-gray-50 text-gray-600 dark:bg-gray-500/15 dark:text-gray-400',
-    'expired': 'bg-orange-50 text-orange-600 dark:bg-orange-500/15 dark:text-orange-500',
-  }
-  return classes[status] || 'bg-gray-50 text-gray-600 dark:bg-gray-500/15 dark:text-gray-400'
-}
-
 // Sync with server updates
-watch(() => props.offers?.current_page, (val) => {
+watch(() => props.invoices?.current_page, (val) => {
   currentPage.value = typeof val === 'number' ? val : 1
 })
-watch(() => props.offers?.per_page, (val) => {
+watch(() => props.invoices?.per_page, (val) => {
   if (typeof val === 'number') perPage.value = val
 })
 
 const fetchPage = (page) => {
   const targetPage = page ?? currentPage.value
   router.get(
-    route('admin.reports.offers'),
+    route('company.reports.invoices'),
     {
       page: targetPage,
       per_page: perPage.value,
       search: search.value || undefined,
-      scope: scope.value || undefined,
+      date_preset: datePreset.value || undefined,
       status: status.value || undefined,
       sort: sortColumn.value,
       direction: sortDirection.value,
@@ -396,16 +407,16 @@ const exportReport = (format) => {
   const params = new URLSearchParams({
     format,
     search: search.value || '',
-    scope: scope.value || '',
+    date_preset: datePreset.value || '',
     status: status.value || '',
     sort: sortColumn.value,
     direction: sortDirection.value,
   })
-  window.location.href = route('admin.reports.offers.export') + '?' + params.toString()
+  window.location.href = route('company.reports.invoices.export') + '?' + params.toString()
 }
 
 // Watchers for filter changes
-watch([search, scope, status], () => {
+watch([search, datePreset, status], () => {
   fetchPage(1)
 }, { debounce: 300 })
 

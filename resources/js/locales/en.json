@@ -204,6 +204,9 @@
     "edit": "Edit",
     "editPersonalInformation": "Edit Personal Information",
     "updateDetails": "Update your details to keep your profile up-to-date.",
+    "changePassword": "Change Password",
+    "changePasswordDesc": "Update your password to keep your account secure.",
+    "passwordUpdated": "Password updated successfully.",
     "socialLinks": "Social Links",
     "personalInformation": "Personal Information",
     "labels": {
@@ -214,7 +217,13 @@
       "firstName": "First Name",
       "lastName": "Last Name",
       "emailAddress": "Email Address",
-      "phone": "Phone"
+      "phone": "Phone",
+      "whatsapp": "WhatsApp",
+      "companyName": "Company Name",
+      "category": "Category",
+      "password": "New Password",
+      "passwordConfirmation": "Confirm Password",
+      "address": "Address"
     },
     "address": {
       "title": "Address",
@@ -544,10 +553,10 @@
       "submit": "Sign In",
       "noAccount": "Don't have an account?",
       "signUp": "Sign Up",
-      "tagline": "Code Brains — we don't just write code, we build solutions."
+      "tagline": "Quick XR"
     }
   },
-  
+
   "reports": {
     "title": "Reports",
     "invoices": "Invoices Report",

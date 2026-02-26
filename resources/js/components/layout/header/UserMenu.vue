@@ -77,7 +77,7 @@ const { showGlobalLoading } = useGlobalLoading()
 const user = computed(() => {
   const authUser = page.props.auth?.user
   if (!authUser) return null
-  
+
   return {
     ...authUser,
     // دعم عرض الاسم من first_name + last_name إذا لم يكن name موجود
@@ -88,11 +88,13 @@ const user = computed(() => {
 const dropdownOpen = ref(false)
 const dropdownRef = ref(null)
 
-const menuItems = [
-  { href: '/profile', icon: UserCircleIcon, text: 'user.editProfile' },
-  // { href: '/chat', icon: SettingsIcon, text: 'user.accountSettings' }, // commented out
-  // { href: '/profile', icon: InfoCircleIcon, text: 'user.support' }, // commented out
-]
+const menuItems = computed(() => {
+  const currentPath = window.location.pathname
+  const profileRoute = currentPath.startsWith('/company') ? route('company.profile') : route('admin.profile')
+  return [
+    { href: profileRoute, icon: UserCircleIcon, text: 'user.editProfile' },
+  ]
+})
 
 const toggleDropdown = () => {
   dropdownOpen.value = !dropdownOpen.value
@@ -105,11 +107,11 @@ const closeDropdown = () => {
 const signOut = () => {
   showGlobalLoading()
   closeDropdown()
-  
+
   // Determine logout route based on current URL
   const currentPath = window.location.pathname
   const logoutRoute = currentPath.startsWith('/company') ? 'company.logout' : 'admin.logout'
-  
+
   router.post(route(logoutRoute))
 }
 

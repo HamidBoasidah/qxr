@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use App\DTOs\AdminDTO;
@@ -24,16 +25,16 @@ class ProfileController extends Controller
             // المستخدم مشرف
             $admin = $request->user('admin');
             $adminDTO = AdminDTO::fromModel($admin)->toArray();
-            
+
             return Inertia::render('Admin/Profile/UserProfile', [
                 'user' => $adminDTO,
             ]);
-        } 
+        }
         elseif ($request->user('web')) {
             // المستخدم عادي
             $user = $request->user('web');
             $userDTO = UserDTO::fromModel($user)->toArray();
-            
+
             return Inertia::render('Admin/Profile/UserProfile', [
                 'user' => $userDTO,
             ]);
@@ -54,61 +55,77 @@ class ProfileController extends Controller
         // التحقق من نوع المستخدم المسجل وتحديث البيانات
         if ($request->user('admin')) {
             $admin = $request->user('admin');
-            
+
             // التعامل مع رفع الصورة
             if ($request->hasFile('avatar')) {
                 // حذف الصورة القديمة إذا كانت موجودة
                 if ($admin->avatar && Storage::disk('public')->exists($admin->avatar)) {
                     Storage::disk('public')->delete($admin->avatar);
                 }
-                
+
                 // رفع الصورة الجديدة
                 $avatarPath = $request->file('avatar')->store('avatars', 'public');
                 $validated['avatar'] = $avatarPath;
             }
-            
+
             // إزالة array_filter للسماح بالقيم الفارغة
+            // Hash password if provided
+            if (!empty($validated['password'])) {
+                $validated['password'] = Hash::make($validated['password']);
+            } else {
+                unset($validated['password']);
+            }
+            unset($validated['password_confirmation']);
+
             $admin->update($validated);
-            
+
             // إعادة تحميل البيانات المحدثة
             $admin->refresh();
-            
+
             // تحديث المستخدم في الـ auth guard لتحديث HandleInertiaRequests
             Auth::guard('admin')->setUser($admin);
-            
+
             $adminDTO = AdminDTO::fromModel($admin)->toArray();
-            
+
             // إرجاع Inertia response دائماً (مثل باقي update functions)
             return Inertia::render('Admin/Profile/UserProfile', [
                 'user' => $adminDTO,
             ])->with('success', 'تم تحديث البيانات بنجاح');
-        } 
+        }
         elseif ($request->user('web')) {
             $user = $request->user('web');
-            
+
             // التعامل مع رفع الصورة
             if ($request->hasFile('avatar')) {
                 // حذف الصورة القديمة إذا كانت موجودة
                 if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
                     Storage::disk('public')->delete($user->avatar);
                 }
-                
+
                 // رفع الصورة الجديدة
                 $avatarPath = $request->file('avatar')->store('avatars', 'public');
                 $validated['avatar'] = $avatarPath;
             }
-            
+
             // إزالة array_filter للسماح بالقيم الفارغة
+            // Hash password if provided
+            if (!empty($validated['password'])) {
+                $validated['password'] = Hash::make($validated['password']);
+            } else {
+                unset($validated['password']);
+            }
+            unset($validated['password_confirmation']);
+
             $user->update($validated);
-            
+
             // إعادة تحميل البيانات المحدثة
             $user->refresh();
-            
+
             // تحديث المستخدم في الـ auth guard لتحديث HandleInertiaRequests
             Auth::guard('web')->setUser($user);
-            
+
             $userDTO = UserDTO::fromModel($user)->toArray();
-            
+
             // إرجاع Inertia response دائماً (مثل باقي update functions)
             return Inertia::render('Admin/Profile/UserProfile', [
                 'user' => $userDTO,

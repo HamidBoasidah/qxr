@@ -3,9 +3,9 @@ export type Direction = 'ltr' | 'rtl'
 const STORAGE_KEY = 'direction'
 
 export function getSavedDirection(): Direction {
-  if (typeof window === 'undefined') return 'ltr'
+  if (typeof window === 'undefined') return 'rtl'
   const saved = localStorage.getItem(STORAGE_KEY)
-  return (saved === 'rtl' || saved === 'ltr') ? (saved as Direction) : 'ltr'
+  return (saved === 'rtl' || saved === 'ltr') ? (saved as Direction) : 'rtl'
 }
 
 export function applyDirection(dir: Direction) {
@@ -28,7 +28,7 @@ export function toggleDirection(): Direction {
 }
 
 export function getCurrentDirection(): Direction {
-  if (typeof document === 'undefined') return 'ltr'
+  if (typeof document === 'undefined') return 'rtl'
   const attr = document.documentElement.getAttribute('dir') as Direction | null
   return attr === 'rtl' ? 'rtl' : 'ltr'
 }

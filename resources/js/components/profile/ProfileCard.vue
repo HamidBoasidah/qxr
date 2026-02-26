@@ -7,15 +7,15 @@
             <div
               class="w-20 h-20 overflow-hidden border border-gray-200 rounded-full dark:border-gray-800 flex items-center justify-center"
             >
-              <img 
-                v-if="user?.avatar" 
-                :src="`/storage/${user.avatar}`" 
-                alt="User" 
-                class="w-full h-full object-cover object-center" 
+              <img
+                v-if="user?.avatar"
+                :src="`/storage/${user.avatar}`"
+                alt="User"
+                class="w-full h-full object-cover object-center"
               />
-              <UserCircleIcon 
-                v-else 
-                class="w-20 h-20 text-gray-400" 
+              <UserCircleIcon
+                v-else
+                class="w-20 h-20 text-gray-400"
               />
             </div>
             <!-- Edit button overlay -->
@@ -168,7 +168,7 @@
               {{ t('profile.chooseNewImage') }}
             </p>
           </div>
-          
+
           <div class="px-2">
             <label
               for="profile-image"
@@ -240,9 +240,9 @@
 </template>
 
 <script setup>
-import { ref, onBeforeUnmount } from 'vue'
+import { ref, computed, onBeforeUnmount } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useForm } from '@inertiajs/vue3'
+import { useForm, usePage } from '@inertiajs/vue3'
 import { useNotifications } from '@/composables/useNotifications'
 import { UserCircleIcon } from '@/icons'
 import Modal from './Modal.vue'
@@ -258,6 +258,11 @@ const isProfileImageModal = ref(false)
 const imagePreview = ref(props.user?.avatar ? `/storage/${props.user.avatar}` : null)
 const fileInput = ref(null)
 
+const updatePostRoute = computed(() => {
+  if (usePage().url.startsWith('/admin')) return route('admin.profile.update.post')
+  return route('company.profile.update.post')
+})
+
 // Form for image upload
 const imageForm = useForm({
   avatar: null
@@ -266,7 +271,7 @@ const imageForm = useForm({
 function handleFileUpload(event) {
   const file = event.target.files?.[0] || null
   imageForm.avatar = file
-  
+
   // cleanup previous preview URL
   if (imagePreview.value && !imagePreview.value.startsWith('/storage/')) {
     URL.revokeObjectURL(imagePreview.value)
@@ -286,11 +291,11 @@ function removeImage() {
 }
 
 function saveProfileImage() {
-  imageForm.post(route('company.profile.update.post'), {
+  imageForm.post(updatePostRoute.value, {
     onSuccess: () => {
       isProfileImageModal.value = false
       success(t('users.userUpdatedSuccessfully'))
-      
+
       // إعادة تعيين الـ form
       imageForm.avatar = null
       if (fileInput.value) {

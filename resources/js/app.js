@@ -26,22 +26,22 @@ createInertiaApp({
   },
   setup({ el, App, props, plugin }) {
     // Sync locale and direction from backend
-    const backendLocale = props.initialPage.props.locale || 'en';
-    const backendDir = props.initialPage.props.dir || 'ltr';
-    
+    const backendLocale = props.initialPage.props.locale || 'ar';
+    const backendDir = props.initialPage.props.dir || 'rtl';
+
     // Update i18n locale to match backend
     i18n.global.locale.value = backendLocale;
-    
+
     // Apply direction and language
     applyDirection(backendDir);
     setHtmlLang(backendLocale);
-    
+
     // Also update localStorage to keep frontend in sync
     if (typeof localStorage !== 'undefined') {
       localStorage.setItem('locale', backendLocale);
       localStorage.setItem('direction', backendDir);
     }
-    
+
     // Hook global Inertia router events to toggle loading overlay
     const { showGlobalLoading, hideGlobalLoading } = useGlobalLoading()
     router.on('start', () => showGlobalLoading())

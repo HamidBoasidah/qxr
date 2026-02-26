@@ -22,7 +22,7 @@ class ProfileUpdateRequest extends FormRequest
     public function rules(): array
     {
         $user = $this->user('web');
-        
+
         return [
             // User fields
             'first_name' => 'sometimes|nullable|string|max:255',
@@ -32,12 +32,13 @@ class ProfileUpdateRequest extends FormRequest
             'phone_number' => ['nullable', 'regex:/^\d{9,15}$/'],
             'whatsapp_number' => ['nullable', 'regex:/^\d{9,15}$/'],
             'address' => 'nullable|string|max:255',
-            'password' => 'nullable|string|min:8',
+            'password' => 'nullable|string|min:8|confirmed',
+            'password_confirmation' => 'nullable|string|min:8',
             'facebook' => 'nullable|url',
             'x_url' => 'nullable|url',
             'linkedin' => 'nullable|url',
             'instagram' => 'nullable|url',
-            
+
             // Company-specific fields
             'company_name' => 'sometimes|nullable|string|max:255',
             'category_id' => 'sometimes|nullable|exists:categories,id',

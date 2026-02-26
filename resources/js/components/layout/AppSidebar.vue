@@ -12,30 +12,30 @@
     @mouseenter="!isExpanded && (isHovered = true)"
     @mouseleave="isHovered = false"
   >
-    <div :class="['py-8 flex', (!isExpanded && !isHovered) ? 'lg:justify-center' : 'justify-start']">
+    <div class="py-3 flex justify-center">
       <Link href="/">
         <img
           v-if="isExpanded || isHovered || isMobileOpen"
           class="dark:hidden"
           src="/images/logo/logo.png"
           alt="Logo"
-          width="150"
-          height="40"
+          width="100"
+          height="28"
         />
         <img
           v-if="isExpanded || isHovered || isMobileOpen"
           class="hidden dark:block"
           src="/images/logo/logo-dark.png"
           alt="Logo"
-          width="150"
-          height="40"
+          width="100"
+          height="28"
         />
         <img
           v-else
           src="/images/logo/logo-icon.png"
           alt="Logo"
-          width="32"
-          height="32"
+          width="28"
+          height="28"
         />
       </Link>
     </div>

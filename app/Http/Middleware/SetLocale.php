@@ -13,14 +13,13 @@ class SetLocale
     {
         // اللغات المدعومة
         $supported = ['ar', 'en'];
-        $fallback  = config('app.fallback_locale', 'en');
+        $fallback  = config('app.locale', 'ar');
 
-        // أولوية تحديد اللغة: Session → حقل المستخدم → Cookie → تفضيل المتصفح → Fallback
+        // أولوية تحديد اللغة: Session → حقل المستخدم → Cookie → اللغة الافتراضية للتطبيق
         $locale =
             Session::get('locale') ??
             optional($request->user())->locale ??
             $request->cookie('locale') ??
-            $request->getPreferredLanguage($supported) ??
             $fallback;
 
         if (! in_array($locale, $supported, true)) {

@@ -6,8 +6,16 @@
 @source '../**/*.blade.php';
 @source '../**/*.js';
 
+@font-face {
+    font-family: 'Expo Arabic';
+    src: url('../fonts/ExpoArabic-Book.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    --font-sans: 'Expo Arabic', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
@@ -20,4 +28,20 @@
 }
 .transition-inline-start {
     transition-property: inset-inline-start;
+}
+
+/* Dark mode: override brand colors with secondary color */
+.dark {
+    --color-brand-25: #f5f9f4;
+    --color-brand-50: #eef5ec;
+    --color-brand-100: #d9e8d5;
+    --color-brand-200: #c4dbbe;
+    --color-brand-300: #b3d0ac;
+    --color-brand-400: #A3C89B;
+    --color-brand-500: #A3C89B;
+    --color-brand-600: #8ab882;
+    --color-brand-700: #71a768;
+    --color-brand-800: #5a8e52;
+    --color-brand-900: #44733e;
+    --color-brand-950: #2e5429;
 }

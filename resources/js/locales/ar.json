@@ -124,7 +124,7 @@
     "advancedSettings": "إعدادات متقدمة",
     "additionalData": "بيانات إضافية"
   },
-  
+
   "status": {
     "pending": "قيد الانتظار",
     "approved": "تمت الموافقة",
@@ -141,7 +141,7 @@
     "draft": "مسودة",
     "expired": "منتهٍ"
   },
-  
+
   "product": {
     "title": "المنتجات",
     "description": "وصف المنتجات",
@@ -547,6 +547,9 @@
     "edit": "تعديل",
     "editPersonalInformation": "تعديل المعلومات الشخصية",
     "updateDetails": "حدّث بياناتك للحفاظ على ملفك محدثاً.",
+    "changePassword": "تغيير كلمة المرور",
+    "changePasswordDesc": "قم بتحديث كلمة المرور للحفاظ على أمان حسابك.",
+    "passwordUpdated": "تم تحديث كلمة المرور بنجاح.",
     "updateProfileImage": "تحديث صورة الملف الشخصي",
     "chooseNewImage": "اختر صورة جديدة لملفك الشخصي",
     "socialLinks": "روابط التواصل",
@@ -561,7 +564,11 @@
       "address": "العنوان",
       "whatsapp": "رقم الواتساب",
       "emailAddress": "الايميل",
-      "phone": "رقم الجوال"
+      "phone": "رقم الجوال",
+      "companyName": "اسم الشركة",
+      "category": "التصنيف",
+      "password": "كلمة المرور الجديدة",
+      "passwordConfirmation": "تأكيد كلمة المرور"
     },
     "address": {
       "title": "العنوان",
@@ -703,7 +710,7 @@
       "submit": "تسجيل الدخول",
       "noAccount": "ليس لديك حساب؟",
       "signUp": "إنشاء حساب",
-      "tagline": "كود براينس لانكتب كودا، نحن نبني حلولاً."
+      "tagline": "Quick XR"
     }
   },
   "dashboard": {
@@ -814,7 +821,7 @@
     "setAsDefault": "تعيين كعنوان افتراضي",
     "addressSetAsDefaultSuccessfully": "تم تعيين العنوان كافتراضي بنجاح"
   },
-  
+
   "reports": {
     "title": "التقارير",
     "invoices": "تقرير الفواتير",

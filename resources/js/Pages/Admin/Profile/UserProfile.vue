@@ -9,6 +9,7 @@
       <profile-card :user="user"/>
       <personal-info-card :user="user"/>
       <address-card :user="user"/>
+      <password-card />
     </div>
   </admin-layout>
 </template>
@@ -19,13 +20,13 @@ import PageBreadcrumb from '@/components/common/PageBreadcrumb.vue'
 import ProfileCard from '@/components/profile/ProfileCard.vue'
 import PersonalInfoCard from '@/components/profile/PersonalInfoCard.vue'
 import AddressCard from '@/components/profile/AddressCard.vue'
+import PasswordCard from '@/components/profile/PasswordCard.vue'
 import { useI18n } from 'vue-i18n'
 import { computed } from 'vue'
 import { usePage } from '@inertiajs/vue3'
 
 const { t } = useI18n()
 const currentPageTitle = computed(() => t('menu.profile'))
-
 
 const user = computed(() => usePage().props.user)
 </script>

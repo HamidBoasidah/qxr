@@ -2,12 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LocaleController;
-use App\Http\Controllers\LandingPageController;
 
-
-// Landing Page
-Route::get('/', [LandingPageController::class, 'home'])->name('home');
-Route::get('/landing/{slug}', [LandingPageController::class, 'index'])->name('landing.show');
 
 Route::middleware(['auth'])
     ->group(function () {

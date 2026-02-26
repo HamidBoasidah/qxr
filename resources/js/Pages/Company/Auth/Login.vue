@@ -253,7 +253,7 @@
             <common-grid-shape />
             <div class="flex flex-col items-center max-w-xs">
               <Link href="/" class="block mb-4">
-                <img width="{231}" height="{48}" src="/images/logo/auth-logo.svg" alt="Logo" />
+                <img width="{231}" height="{48}" src="/images/logo/auth-logo.png" alt="Logo" />
               </Link>
                 <p class="text-center text-gray-400 dark:text-white/60">
                 {{ t('auth.login.tagline') }}

@@ -313,6 +313,12 @@ const menuGroups = computed(() =>
           permission: 'categories.view',
         },
         {
+          icon: GridIcon,
+          name: t('menu.landingPages'),
+          path: route('admin.landing.index'),
+          permission: 'landing.view',
+        },
+        {
           icon: TagIcon,
           name: t('menu.tags'),
           path: route('admin.tags.index'),

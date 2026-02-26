@@ -58,7 +58,7 @@
               <p class="font-medium text-gray-700 text-theme-xs dark:text-gray-400">{{ t('offers.title') }}</p>
             </th>
             <th class="px-4 py-3 text-start border border-gray-100 dark:border-gray-800">
-              <p class="font-medium text-gray-700 text-theme-xs dark:text-gray-400">{{ t('offers.scope') }}</p>
+              <p class="font-medium text-gray-700 text-theme-xs dark:text-gray-400">{{ t('dashboard.scope') }}</p>
             </th>
             <th class="px-4 py-3 text-start border border-gray-100 dark:border-gray-800">
               <p class="font-medium text-gray-700 text-theme-xs dark:text-gray-400">{{ t('offers.status') }}</p>
@@ -91,7 +91,7 @@
                   'bg-yellow-50 text-yellow-600 dark:bg-yellow-500/15 dark:text-yellow-500': offer.scope === 'private',
                 }"
               >
-                {{ t(`offers.scope_${offer.scope}`) }}
+                {{ t(`offers.scope.${offer.scope}`) }}
               </span>
             </td>
             <td class="px-4 py-3 border border-gray-100 dark:border-gray-800">

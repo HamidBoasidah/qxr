@@ -38,7 +38,7 @@
 
           <div>
             <label class="mb-1.5 block text-sm font-medium text-gray-500 dark:text-gray-400">
-              {{ t('offers.scope') }}
+              {{ t('dashboard.scope') }}
             </label>
             <p>
               <span
@@ -48,7 +48,7 @@
                   'bg-yellow-50 text-yellow-600 dark:bg-yellow-500/15 dark:text-yellow-500': offer.scope === 'private',
                 }"
               >
-                {{ t(`offers.scope_${offer.scope}`) }}
+                {{ t(`offers.scope.${offer.scope}`) }}
               </span>
             </p>
           </div>

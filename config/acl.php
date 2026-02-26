@@ -45,6 +45,7 @@ return [
     'invoices'     => ['view'],
     'reports'      => ['view'],
     'offers'       => ['view', 'create', 'update', 'delete', 'activate', 'deactivate'],
+    'landing'      => ['view', 'create', 'update', 'delete'],
     // backend management resources
     'users'        => ['view', 'create', 'update', 'delete'],
     'admins'       => ['view', 'create', 'update', 'delete'],
@@ -71,6 +72,7 @@ return [
     'offers'       => ['en' => 'Offers',        'ar' => 'العروض'],
     'reports'      => ['en' => 'Reports',       'ar' => 'التقارير'],
     'invoices'     => ['en' => 'Invoices',      'ar' => 'الفواتير'],
+    'landing'      => ['en' => 'Landing Pages',  'ar' => 'الصفحة الرئيسية'],
     'addresses'    => ['en' => 'Addresses',  'ar' => 'العناوين'],
     'users'        => ['en' => 'Users',         'ar' => 'المستخدمون'],
     'admins'       => ['en' => 'Admins',        'ar' => 'المشرفون'],

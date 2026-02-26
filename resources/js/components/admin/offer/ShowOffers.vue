@@ -83,7 +83,7 @@
                   'bg-yellow-50 text-yellow-600 dark:bg-yellow-500/15 dark:text-yellow-500': offer.scope === 'private',
                 }"
               >
-                {{ t(`offers.scope_${offer.scope}`) }}
+                {{ t(`offers.scope.${offer.scope}`) }}
               </span>
             </td>
             <td class="px-4 py-3 border border-gray-100 dark:border-gray-800">

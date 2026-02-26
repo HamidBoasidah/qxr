@@ -41,14 +41,14 @@
           <!-- Scope -->
           <div>
             <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
-              {{ t('offers.scope') }} <span class="text-error-500">*</span>
+              {{ t('dashboard.scope') }} <span class="text-error-500">*</span>
             </label>
             <select
               v-model="form.scope"
               class="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
             >
-              <option value="public">{{ t('offers.scope_public') }}</option>
-              <option value="private">{{ t('offers.scope_private') }}</option>
+              <option value="public">{{ t('offers.scope.public') }}</option>
+              <option value="private">{{ t('offers.scope.private') }}</option>
             </select>
             <p v-if="form.errors.scope" class="mt-1 text-sm text-error-500">{{ form.errors.scope }}</p>
           </div>

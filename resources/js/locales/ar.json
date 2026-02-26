@@ -22,7 +22,8 @@
     "activityLogs": "سجل التغييرات",
     "addresses": "العناوين",
     "tags": "الوسوم",
-    "reports": "التقارير"
+    "reports": "التقارير",
+    "landingPages": "الصفحة الرئيسية"
   },
   "pages": {
     "welcomeLoggedIn": "لقد قمت بتسجيل الدخول!",
@@ -83,6 +84,7 @@
     "active": "نشط",
     "inactive": "غير نشط",
     "action": "الإجراء",
+    "actions": "الإجراءات",
     "address": "العنوان",
     "type": "النوع",
     "attachment": "المرفق",
@@ -92,9 +94,12 @@
     "create": "إنشاء",
     "update" : "تحديث",
     "edit": "تعديل",
-  "delete": "حذف",
-  "backToList": "العودة إلى القائمة",
+    "delete": "حذف",
+    "save": "حفظ",
+    "saving": "جاري الحفظ...",
+    "backToList": "العودة إلى القائمة",
     "selectAll": "تحديد الكل",
+    "select": "اختر",
     "all": "الكل",
     "read": "قراءة",
     "write": "كتابة",
@@ -105,7 +110,20 @@
     "to": "إلى",
     "showing": "عرض",
     "of": "من",
-    "createdAt": "تاريخ الإنشاء"
+    "createdAt": "تاريخ الإنشاء",
+    "title": "العنوان",
+    "subtitle": "العنوان الفرعي",
+    "description": "الوصف",
+    "image": "الصورة",
+    "noImage": "لا توجد صورة",
+    "currentImage": "الصورة الحالية",
+    "changeImage": "تغيير الصورة",
+    "newImage": "الصورة الجديدة",
+    "icon": "الأيقونة",
+    "link": "الرابط",
+    "linkText": "نص الرابط",
+    "advancedSettings": "إعدادات متقدمة",
+    "additionalData": "بيانات إضافية"
   },
   
   "status": {
@@ -869,6 +887,34 @@
 
   "category": {
     "name": "الفئة"
+  },
+
+  "landing": {
+    "pages": "الصفحات المقصودة",
+    "pagesDescription": "إدارة الصفحات المقصودة والمحتوى الديناميكي",
+    "createPage": "إنشاء صفحة جديدة",
+    "createFirstPage": "إنشاء أول صفحة",
+    "noPages": "لا توجد صفحات حتى الآن",
+    "noPagesDescription": "ابدأ بإنشاء صفحة مقصودة جديدة",
+    "sections": "الأقسام",
+    "sections_count": "عدد الأقسام",
+    "manageSections": "إدارة الأقسام",
+    "deleteConfirmation": "هل أنت متأكد من حذف {title}؟",
+    "section": "القسم",
+    "items": "العناصر",
+    "manageItems": "إدارة العناصر",
+    "addSection": "إضافة قسم",
+    "addFirstSection": "إضافة أول قسم",
+    "noSections": "لا توجد أقسام حتى الآن",
+    "noSectionsDescription": "ابدأ بإضافة قسم جديد لصفحتك",
+    "order": "الترتيب",
+    "type": "النوع",
+    "items_count": "عدد العناصر",
+    "reorderInfo": "يمكنك ترتيب الأقسام عن طريق تحديث قيمة الترتيب ثم حفظ التغييرات",
+    "addItem": "إضافة عنصر",
+    "addFirstItem": "إضافة أول عنصر",
+    "noItems": "لا توجد عناصر حتى الآن",
+    "noItemsDescription": "ابدأ بإضافة عنصر جديد لهذا القسم"
   }
 
 }

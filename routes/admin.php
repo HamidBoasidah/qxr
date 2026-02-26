@@ -214,6 +214,62 @@ Route::middleware('auth:admin')
             ->only(['index', 'show'])
             ->names('activitylogs');
 
+        // Landing Pages
+        Route::prefix('landing')->as('landing.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\LandingPageController::class, 'index'])
+                ->name('index');
+            Route::get('/create', [\App\Http\Controllers\Admin\LandingPageController::class, 'create'])
+                ->name('create');
+            Route::post('/', [\App\Http\Controllers\Admin\LandingPageController::class, 'store'])
+                ->name('store');
+            Route::get('/{landingPage}/edit', [\App\Http\Controllers\Admin\LandingPageController::class, 'edit'])
+                ->name('edit');
+            Route::put('/{landingPage}', [\App\Http\Controllers\Admin\LandingPageController::class, 'update'])
+                ->name('update');
+            Route::delete('/{landingPage}', [\App\Http\Controllers\Admin\LandingPageController::class, 'destroy'])
+                ->name('destroy');
+
+            // Sections
+            Route::prefix('{landingPage}/sections')->as('sections.')->group(function () {
+                Route::get('/', [\App\Http\Controllers\Admin\LandingSectionController::class, 'index'])
+                    ->name('index');
+                Route::get('/create', [\App\Http\Controllers\Admin\LandingSectionController::class, 'create'])
+                    ->name('create');
+                Route::post('/', [\App\Http\Controllers\Admin\LandingSectionController::class, 'store'])
+                    ->name('store');
+                Route::get('/{landingSection}/edit', [\App\Http\Controllers\Admin\LandingSectionController::class, 'edit'])
+                    ->name('edit');
+                Route::put('/{landingSection}', [\App\Http\Controllers\Admin\LandingSectionController::class, 'update'])
+                    ->name('update');
+                Route::delete('/{landingSection}', [\App\Http\Controllers\Admin\LandingSectionController::class, 'destroy'])
+                    ->name('destroy');
+                Route::post('/reorder', [\App\Http\Controllers\Admin\LandingSectionController::class, 'reorder'])
+                    ->name('reorder');
+                Route::patch('/{landingSection}/toggle', [\App\Http\Controllers\Admin\LandingSectionController::class, 'toggleVisibility'])
+                    ->name('toggle');
+
+                // Items
+                Route::prefix('{landingSection}/items')->as('items.')->group(function () {
+                    Route::get('/', [\App\Http\Controllers\Admin\LandingSectionItemController::class, 'index'])
+                        ->name('index');
+                    Route::get('/create', [\App\Http\Controllers\Admin\LandingSectionItemController::class, 'create'])
+                        ->name('create');
+                    Route::post('/', [\App\Http\Controllers\Admin\LandingSectionItemController::class, 'store'])
+                        ->name('store');
+                    Route::get('/{landingSectionItem}/edit', [\App\Http\Controllers\Admin\LandingSectionItemController::class, 'edit'])
+                        ->name('edit');
+                    Route::put('/{landingSectionItem}', [\App\Http\Controllers\Admin\LandingSectionItemController::class, 'update'])
+                        ->name('update');
+                    Route::delete('/{landingSectionItem}', [\App\Http\Controllers\Admin\LandingSectionItemController::class, 'destroy'])
+                        ->name('destroy');
+                    Route::post('/reorder', [\App\Http\Controllers\Admin\LandingSectionItemController::class, 'reorder'])
+                        ->name('reorder');
+                    Route::patch('/{landingSectionItem}/toggle', [\App\Http\Controllers\Admin\LandingSectionItemController::class, 'toggleVisibility'])
+                        ->name('toggle');
+                });
+            });
+        });
+
         // Reports
         Route::prefix('reports')->as('reports.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Admin\ReportController::class, 'index'])

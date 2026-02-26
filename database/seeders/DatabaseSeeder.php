@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             OfferSeeder::class,
             OrderSeeder::class,
             \Database\Seeders\InvoiceSeeder::class,
+            LandingPageSeeder::class,
         ]);
 
         // seed categories and tags with Arabic data (do not rely on factories)

@@ -282,6 +282,7 @@ const props = defineProps({
 });
 
 const form = useForm({
+    _method: 'PUT',
     order: props.item.order,
     title: {
         ar: props.item.title?.ar || '',

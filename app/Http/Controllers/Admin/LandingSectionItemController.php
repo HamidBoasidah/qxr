@@ -26,7 +26,7 @@ class LandingSectionItemController extends Controller
         $items = $this->landingSectionItemService->getAllForSection($landingSection);
 
         return Inertia::render('Admin/Landing/Sections/Items/Index', [
-            'landing_page' => $landingPage,
+            'landingPage' => $landingPage,
             'section' => $landingSection,
             'items' => $items,
         ]);
@@ -38,7 +38,7 @@ class LandingSectionItemController extends Controller
     public function create(LandingPage $landingPage, LandingSection $landingSection)
     {
         return Inertia::render('Admin/Landing/Sections/Items/Create', [
-            'landing_page' => $landingPage,
+            'landingPage' => $landingPage,
             'section' => $landingSection,
         ]);
     }
@@ -77,7 +77,7 @@ class LandingSectionItemController extends Controller
     public function edit(LandingPage $landingPage, LandingSection $landingSection, LandingSectionItem $landingSectionItem)
     {
         return Inertia::render('Admin/Landing/Sections/Items/Edit', [
-            'landing_page' => $landingPage,
+            'landingPage' => $landingPage,
             'section' => $landingSection,
             'item' => $landingSectionItem,
         ]);

@@ -206,7 +206,7 @@
 }
 
 @utility menu-item-icon-inactive {
-  @apply text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300;
+  @apply text-brand-500 group-hover:text-brand-600 dark:text-brand-400 dark:group-hover:text-brand-300;
 }
 
 @utility menu-item-arrow {

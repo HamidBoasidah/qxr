@@ -277,13 +277,8 @@ const menuGroups = computed(() =>
         {
           icon: GridIcon,
           name: t('menu.dashboard'),
-          subItems: [
-            {
-              name: t('menu.dashboard'),
-              path: route('admin.dashboard'),
-              permission: 'dashboard.view',
-            },
-          ],
+          path: route('admin.dashboard'),
+          permission: 'dashboard.view',
         },
         {
           icon: BuildingIcon,

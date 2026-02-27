@@ -248,38 +248,25 @@ const fetchUsers = async () => {
   }
 }
 
-const selectUser = async (user) => {
+const selectUser = (user) => {
   creatingConversation.value = true
-  try {
-    const response = await fetch(route('company.chat.conversations.store'), {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest',
-        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
-      },
-      credentials: 'same-origin',
-      body: JSON.stringify({
-        user_id: user.id,
-      })
-    })
-    
-    const data = await response.json()
-    
-    if (data.success && data.data) {
-      // Navigate to the conversation
-      router.visit(route('company.chat.conversations.show', data.data.id))
+  
+  router.post(route('company.chat.conversations.store'), {
+    user_id: user.id,
+  }, {
+    preserveScroll: false,
+    onSuccess: () => {
       closeModal()
-    } else {
-      alert(data.message || t('chat.errorCreatingConversation'))
+    },
+    onError: (errors) => {
+      console.error('Error creating conversation:', errors)
+      const errorMessage = errors?.error || t('chat.errorCreatingConversation')
+      alert(errorMessage)
+    },
+    onFinish: () => {
+      creatingConversation.value = false
     }
-  } catch (error) {
-    console.error('Error creating conversation:', error)
-    alert(t('chat.errorCreatingConversation'))
-  } finally {
-    creatingConversation.value = false
-  }
+  })
 }
 
 // Watch for modal open

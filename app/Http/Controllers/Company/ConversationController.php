@@ -87,9 +87,9 @@ class ConversationController extends Controller
      * Create a new conversation or return existing one.
      *
      * @param CreateConversationRequest $request
-     * @return JsonResponse
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(CreateConversationRequest $request): JsonResponse
+    public function store(CreateConversationRequest $request)
     {
         try {
             $userId = Auth::guard('web')->id();
@@ -97,16 +97,10 @@ class ConversationController extends Controller
 
             $conversation = $this->chatService->getOrCreateConversationByUser($userId, $otherUserId);
 
-            return response()->json([
-                'success' => true,
-                'data' => $conversation->toArray(),
-            ]);
+            return redirect()->route('company.chat.conversations.show', $conversation->id)
+                ->with('success', 'تم إنشاء المحادثة بنجاح');
         } catch (\App\Exceptions\ForbiddenException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-                'status_code' => 403,
-            ], 403);
+            return back()->withErrors(['error' => $e->getMessage()]);
         } catch (\Exception $e) {
             Log::error('Chat error', [
                 'user_id' => Auth::id(),
@@ -114,11 +108,7 @@ class ConversationController extends Controller
                 'trace' => $e->getTraceAsString(),
             ]);
             
-            return response()->json([
-                'success' => false,
-                'message' => 'حدث خطأ غير متوقع',
-                'status_code' => 500,
-            ], 500);
+            return back()->withErrors(['error' => 'حدث خطأ غير متوقع']);
         }
     }
 }

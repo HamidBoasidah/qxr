@@ -554,7 +554,10 @@
     "chooseNewImage": "اختر صورة جديدة لملفك الشخصي",
     "socialLinks": "روابط التواصل",
     "personalInformation": "المعلومات الشخصية",
+    "companyInformation": "معلومات الشركة",
     "labels": {
+      "companyName": "اسم الشركة",
+      "category": "التصنيف",
       "facebook": "فيسبوك",
       "x": "X.com",
       "linkedin": "لينكدإن",

@@ -4,7 +4,7 @@
     
     <div class="space-y-6">
       <!-- Filters Section -->
-      <div class="rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/[0.03]">
+      <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800/50">
         <h3 class="mb-4 text-lg font-semibold text-gray-800 dark:text-white">{{ t('common.filters') }}</h3>
         <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
           <!-- Date Preset -->
@@ -15,7 +15,7 @@
             <select 
               v-model="localFilters.date_preset" 
               @change="onFilterChange"
-              class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+              class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
             >
               <option v-for="preset in presets" :key="preset.value" :value="preset.value">
                 {{ preset.label }}
@@ -33,7 +33,7 @@
                 type="date" 
                 v-model="localFilters.date_from" 
                 @change="onFilterChange"
-                class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
               />
             </div>
             <div>
@@ -44,7 +44,7 @@
                 type="date" 
                 v-model="localFilters.date_to" 
                 @change="onFilterChange"
-                class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+                class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
               />
             </div>
           </div>
@@ -62,18 +62,18 @@
           color="blue"
         >
           <template #details>
-            <div class="mt-2 space-y-1 text-xs">
+            <div class="mt-2 space-y-1 text-xs text-gray-600 dark:text-gray-300">
               <div class="flex justify-between">
                 <span>{{ t('order.status.pending') }}:</span>
-                <span class="font-semibold">{{ stats.kpis.orders.by_status.pending }}</span>
+                <span class="font-semibold text-gray-900 dark:text-white">{{ stats.kpis.orders.by_status.pending }}</span>
               </div>
               <div class="flex justify-between">
                 <span>{{ t('order.status.approved') }}:</span>
-                <span class="font-semibold">{{ stats.kpis.orders.by_status.approved }}</span>
+                <span class="font-semibold text-gray-900 dark:text-white">{{ stats.kpis.orders.by_status.approved }}</span>
               </div>
               <div class="flex justify-between">
                 <span>{{ t('order.status.delivered') }}:</span>
-                <span class="font-semibold">{{ stats.kpis.orders.by_status.delivered }}</span>
+                <span class="font-semibold text-gray-900 dark:text-white">{{ stats.kpis.orders.by_status.delivered }}</span>
               </div>
             </div>
           </template>
@@ -88,10 +88,10 @@
           color="green"
         >
           <template #details>
-            <div class="mt-2 text-xs">
+            <div class="mt-2 text-xs text-gray-600 dark:text-gray-300">
               <div class="flex justify-between">
                 <span>{{ t('dashboard.total_discount') }}:</span>
-                <span class="font-semibold">{{ formatCurrency(stats.kpis.revenue.total_discount) }}</span>
+                <span class="font-semibold text-gray-900 dark:text-white">{{ formatCurrency(stats.kpis.revenue.total_discount) }}</span>
               </div>
             </div>
           </template>
@@ -106,14 +106,14 @@
           color="purple"
         >
           <template #details>
-            <div class="mt-2 space-y-1 text-xs">
+            <div class="mt-2 space-y-1 text-xs text-gray-600 dark:text-gray-300">
               <div class="flex justify-between">
                 <span>{{ t('invoice.status.paid') }}:</span>
-                <span class="font-semibold">{{ stats.kpis.invoices.paid }}</span>
+                <span class="font-semibold text-gray-900 dark:text-white">{{ stats.kpis.invoices.paid }}</span>
               </div>
               <div class="flex justify-between">
                 <span>{{ t('invoice.status.unpaid') }}:</span>
-                <span class="font-semibold">{{ stats.kpis.invoices.unpaid }}</span>
+                <span class="font-semibold text-gray-900 dark:text-white">{{ stats.kpis.invoices.unpaid }}</span>
               </div>
             </div>
           </template>
@@ -140,14 +140,14 @@
           color="pink"
         >
           <template #details>
-            <div class="mt-2 space-y-1 text-xs">
+            <div class="mt-2 space-y-1 text-xs text-gray-600 dark:text-gray-300">
               <div class="flex justify-between">
                 <span>{{ t('offer.status.active') }}:</span>
-                <span class="font-semibold">{{ stats.kpis.offers.active }}</span>
+                <span class="font-semibold text-gray-900 dark:text-white">{{ stats.kpis.offers.active }}</span>
               </div>
               <div class="flex justify-between">
                 <span>{{ t('offer.status.expired') }}:</span>
-                <span class="font-semibold">{{ stats.kpis.offers.expired }}</span>
+                <span class="font-semibold text-gray-900 dark:text-white">{{ stats.kpis.offers.expired }}</span>
               </div>
             </div>
           </template>
@@ -161,10 +161,10 @@
           color="indigo"
         >
           <template #details>
-            <div class="mt-2 text-xs">
+            <div class="mt-2 text-xs text-gray-600 dark:text-gray-300">
               <div class="flex justify-between">
                 <span>{{ t('dashboard.total_messages') }}:</span>
-                <span class="font-semibold">{{ stats.kpis.chat.total_messages }}</span>
+                <span class="font-semibold text-gray-900 dark:text-white">{{ stats.kpis.chat.total_messages }}</span>
               </div>
             </div>
           </template>

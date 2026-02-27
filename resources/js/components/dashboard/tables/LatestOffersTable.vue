@@ -19,12 +19,12 @@
         <tr
           v-for="offer in offers"
           :key="offer.id"
-          class="border-b border-gray-100 dark:border-gray-800 transition-colors hover:bg-gray-50 dark:hover:bg-white/[0.03]"
+          class="border-b border-gray-100 dark:border-gray-700/50 transition-colors hover:bg-gray-50 dark:hover:bg-gray-700/30"
         >
           <td class="px-4 py-3 text-sm font-medium text-gray-900 dark:text-white">
             {{ offer.title }}
           </td>
-          <td class="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
+          <td class="px-4 py-3 text-sm text-gray-700 dark:text-gray-200">
             {{ offer.company }}
           </td>
           <td class="px-4 py-3 text-sm">
@@ -37,7 +37,7 @@
               {{ statusLabel(offer.status) }}
             </span>
           </td>
-          <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
+          <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
             {{ offer.start_at }} - {{ offer.end_at }}
           </td>
         </tr>

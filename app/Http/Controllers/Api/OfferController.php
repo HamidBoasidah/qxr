@@ -71,7 +71,7 @@ class OfferController extends Controller
                                       $tq->where('target_type', 'customer')
                                          ->where('target_id', $user->id);
                                   });
-                                  
+
                                   // أو مستهدف عبر الفئة (customer_category)
                                   $user->load('customerProfile');
                                   if ($user->customerProfile && $user->customerProfile->category_id) {
@@ -88,17 +88,29 @@ class OfferController extends Controller
         // حساب أقصى قيمة خصم لكل عرض
         $query->select('offers.*')
             ->selectRaw('MAX(
-                CASE 
-                    WHEN offer_items.discount_percent > 0 THEN 
+                CASE
+                    WHEN offer_items.discount_percent > 0 THEN
                         (main_products.base_price * offer_items.discount_percent / 100)
-                    WHEN offer_items.discount_fixed > 0 THEN 
+                    WHEN offer_items.discount_fixed > 0 THEN
                         offer_items.discount_fixed
-                    WHEN offer_items.bonus_qty > 0 AND bonus_products.id IS NOT NULL THEN 
+                    WHEN offer_items.bonus_qty > 0 AND bonus_products.id IS NOT NULL THEN
                         (bonus_products.base_price * offer_items.bonus_qty)
                     ELSE 0
                 END
             ) as max_discount_value')
-            ->groupBy('offers.id')
+            ->groupBy(
+                'offers.id',
+                'offers.company_user_id',
+                'offers.scope',
+                'offers.status',
+                'offers.title',
+                'offers.description',
+                'offers.start_at',
+                'offers.end_at',
+                'offers.created_at',
+                'offers.updated_at',
+                'offers.deleted_at'
+            )
             ->orderByDesc('max_discount_value');
 
         $paginated = $query->paginate($perPage);
@@ -204,7 +216,7 @@ class OfferController extends Controller
         foreach ($paginated->items() as $offer) {
             $offerDTO = OfferDTO::fromModel($offer);
             $flatArray = $offerDTO->toFlattenedArray(null, true);
-            
+
             // تحويل كل منتج إلى صف منفصل
             if (!empty($flatArray['products'])) {
                 foreach ($flatArray['products'] as $product) {
@@ -222,7 +234,7 @@ class OfferController extends Controller
                         'company_name' => $flatArray['company_name'],
                         'company_business_name' => $flatArray['company_business_name'],
                     ];
-                    
+
                     // دمج بيانات المنتج
                     $flattenedData[] = array_merge($row, $product);
                 }
@@ -275,7 +287,7 @@ class OfferController extends Controller
         foreach ($paginated->items() as $offer) {
             $offerDTO = OfferDTO::fromModel($offer);
             $flatArray = $offerDTO->toFlattenedArray(10, true);
-            
+
             // تحويل كل منتج إلى صف منفصل
             if (!empty($flatArray['products'])) {
                 foreach ($flatArray['products'] as $product) {
@@ -293,7 +305,7 @@ class OfferController extends Controller
                         'company_name' => $flatArray['company_name'],
                         'company_business_name' => $flatArray['company_business_name'],
                     ];
-                    
+
                     // دمج بيانات المنتج
                     $flattenedData[] = array_merge($row, $product);
                 }
@@ -323,7 +335,7 @@ class OfferController extends Controller
         try {
             $perPage = (int) $request->get('per_page', 10);
             $user = $request->user();
-            
+
             $query = $offers->query([
                 'company:id,first_name,last_name',
                 'company.companyProfile:id,user_id,company_name',
@@ -346,10 +358,10 @@ class OfferController extends Controller
 
             // تحويل البيانات
             $offerData = OfferDTO::fromModel($offer)->toArray();
-            
+
             // استبدال items بالبيانات المقسمة
             $offerData['items'] = $items->items();
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'تم جلب بيانات العرض بنجاح',
@@ -460,7 +472,7 @@ class OfferController extends Controller
     {
         try {
             $perPage = (int) $request->get('per_page', 10);
-            
+
             $offer = $offers->query([
                 'company:id,first_name,last_name',
                 'company.companyProfile:id,user_id,company_name',
@@ -479,10 +491,10 @@ class OfferController extends Controller
 
             // تحويل البيانات
             $offerData = OfferDTO::fromModel($offer)->toArray();
-            
+
             // استبدال items بالبيانات المقسمة
             $offerData['items'] = $items->items();
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'تم جلب بيانات العرض بنجاح',
@@ -507,7 +519,7 @@ class OfferController extends Controller
     {
         try {
             $offer = $offers->findOrFail($id);
-            
+
             // authorize via policy (ownership + company type)
             $this->authorize('update', $offer);
 
@@ -540,7 +552,7 @@ class OfferController extends Controller
     {
         try {
             $offer = $offers->findOrFail($id);
-            
+
             // authorize via policy
             $this->authorize('delete', $offer);
 
@@ -600,7 +612,7 @@ class OfferController extends Controller
 
     /**
      * تطبيق فلتر النطاق: العروض العامة أو الخاصة المستهدفة للمستخدم
-     * 
+     *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param \App\Models\User $user
      * @return void
@@ -619,7 +631,7 @@ class OfferController extends Controller
                               $tq->where('target_type', 'customer')
                                  ->where('target_id', $user->id);
                           });
-                          
+
                           // أو مستهدف عبر الفئة (customer_category)
                           if ($user->relationLoaded('customerProfile') && $user->customerProfile && $user->customerProfile->category_id) {
                               $targetQ->orWhere(function($tq) use ($user) {
@@ -636,7 +648,7 @@ class OfferController extends Controller
                                   });
                               }
                           }
-                          
+
                           // TODO: دعم customer_tag عندما يتم تطبيق نظام الوسوم للمستخدمين
                       });
               });

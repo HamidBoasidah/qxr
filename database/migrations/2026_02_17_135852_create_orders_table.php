@@ -27,6 +27,7 @@ return new class extends Migration
                 ->restrictOnDelete();
 
             $table->enum('status', [
+                'draft',
                 'pending',
                 'approved',
                 'preparing',

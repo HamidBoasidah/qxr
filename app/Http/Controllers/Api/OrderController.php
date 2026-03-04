@@ -56,6 +56,8 @@ class OrderController extends Controller
             $query->where('customer_user_id', $user->id);
         } elseif ($user->user_type === 'company') {
             $query->where('company_user_id', $user->id);
+            // Companies should not see draft orders
+            $query->where('status', '!=', 'draft');
         }
 
         // تطبيق الفلاتر

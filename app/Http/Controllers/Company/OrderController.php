@@ -30,6 +30,8 @@ class OrderController extends Controller
         $orders = $this->orders
             ->query() // includes defaultWith
             ->where('company_user_id', $companyId)
+            // Company UI should not show draft orders
+            ->where('status', '!=', 'draft')
             ->latest()
             ->paginate($perPage);
 

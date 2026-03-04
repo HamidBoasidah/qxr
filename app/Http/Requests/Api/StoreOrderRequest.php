@@ -13,7 +13,8 @@ class StoreOrderRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return auth()->check() && auth()->user()->user_type === 'customer';
+        // Use the FormRequest user() helper to satisfy static analysis and runtime
+        return $this->user() && $this->user()->user_type === 'customer';
     }
 
     /**
@@ -25,6 +26,7 @@ class StoreOrderRequest extends FormRequest
     {
         return [
             'company_id' => ['required', 'integer', 'exists:users,id'],
+            'status' => ['nullable', 'string', 'in:draft,pending'],
             'notes_customer' => ['nullable', 'string', 'max:1000'],
             
             'order_items' => ['required', 'array', 'min:1'],
@@ -51,34 +53,38 @@ class StoreOrderRequest extends FormRequest
     {
         $validator->after(function ($validator) {
             // Check for duplicate product_ids
-            $productIds = collect($this->order_items)->pluck('product_id');
+            $orderItems = $this->input('order_items', []);
+            $productIds = collect($orderItems)->pluck('product_id');
             if ($productIds->count() !== $productIds->unique()->count()) {
                 $validator->errors()->add('order_items', 'Duplicate products are not allowed');
             }
-            
+
             // Validate order_item_index references
-            if ($this->order_item_bonuses) {
-                $maxIndex = count($this->order_items) - 1;
+            $orderItemBonuses = $this->input('order_item_bonuses', []);
+            if (!empty($orderItemBonuses)) {
+                $maxIndex = count($orderItems) - 1;
                 $bonusIndexes = [];
-                
-                foreach ($this->order_item_bonuses as $index => $bonus) {
+
+                foreach ($orderItemBonuses as $index => $bonus) {
                     // Check if index is within bounds
-                    if ($bonus['order_item_index'] > $maxIndex) {
+                    if (($bonus['order_item_index'] ?? -1) > $maxIndex) {
                         $validator->errors()->add(
                             'order_item_bonuses',
                             "Invalid order_item_index: {$bonus['order_item_index']}"
                         );
                     }
-                    
+
                     // Check for duplicate bonuses for same item
-                    $itemIndex = $bonus['order_item_index'];
-                    if (isset($bonusIndexes[$itemIndex])) {
+                    $itemIndex = $bonus['order_item_index'] ?? null;
+                    if ($itemIndex !== null && isset($bonusIndexes[$itemIndex])) {
                         $validator->errors()->add(
                             "order_item_bonuses.{$index}",
                             "Multiple bonuses for the same order item are not allowed"
                         );
                     }
-                    $bonusIndexes[$itemIndex] = true;
+                    if ($itemIndex !== null) {
+                        $bonusIndexes[$itemIndex] = true;
+                    }
                 }
             }
         });

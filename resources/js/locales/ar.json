@@ -284,6 +284,7 @@
     "status": {
       "pending": "قيد الانتظار",
       "approved": "تمت الموافقة",
+      "draft": "مسودة",
       "preparing": "قيد التحضير",
       "shipped": "تم الشحن",
       "delivered": "تم التسليم",
@@ -292,6 +293,7 @@
     },
     "statuses": {
       "pending": "قيد الانتظار",
+      "draft": "مسودة",
       "approved": "تمت الموافقة",
       "preparing": "قيد التحضير",
       "shipped": "تم الشحن",

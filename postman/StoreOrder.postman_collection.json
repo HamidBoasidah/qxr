@@ -1,0 +1,41 @@
+{
+  "info": {
+    "name": "Orders API - Store (Create Order)",
+    "_postman_id": "order-store-collection",
+    "description": "Postman collection to test the API endpoint that creates orders (supports creating drafts).\nUse {{baseUrl}} and set {{token}} (Bearer) in the environment).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create Order (store)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"company_id\": 123,\n  \"status\": \"draft\",\n  \"notes_customer\": \"مسودة اختبار من بوستمان\",\n  \"order_items\": [\n    {\n      \"product_id\": 456,\n      \"qty\": 2,\n      \"unit_price_snapshot\": 10.5,\n      \"discount_amount_snapshot\": 0.0,\n      \"final_line_total_snapshot\": 21.0,\n      \"selected_offer_id\": null\n    }\n  ],\n  \"order_item_bonuses\": [\n    {\n      \"order_item_index\": 0,\n      \"bonus_product_id\": 789,\n      \"bonus_qty\": 1\n    }\n  ]\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/orders",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "orders"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

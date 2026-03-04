@@ -150,14 +150,16 @@ class OrderRepository extends BaseRepository
     {
         return DB::transaction(function () use ($customerId, $data) {
             // Create order header
+            $initialStatus = $data['status'] ?? 'pending';
+
             $order = Order::create([
                 'company_user_id'     => $data['company_id'],
                 'customer_user_id'    => $customerId,
                 'order_no'            => $this->generateOrderNumber(),
-                'status'              => 'pending',
+                'status'              => $initialStatus,
                 'notes_customer'      => $data['notes_customer'] ?? null,
                 'delivery_address_id' => $data['delivery_address_id'] ?? null,
-                'submitted_at'        => now(),
+                'submitted_at'        => $initialStatus === 'draft' ? null : now(),
                 'approved_at'         => null,
                 'delivered_at'        => null
             ]);
@@ -195,7 +197,7 @@ class OrderRepository extends BaseRepository
             OrderStatusLog::create([
                 'order_id' => $order->id,
                 'from_status' => null,
-                'to_status' => 'pending',
+                'to_status' => $initialStatus,
                 'changed_by_user_id' => $customerId,
                 'note' => null,
                 'changed_at' => now()

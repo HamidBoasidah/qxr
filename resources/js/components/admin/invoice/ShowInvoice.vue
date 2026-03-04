@@ -168,6 +168,7 @@ function statusLabel(status) {
 
 function orderStatusColor(status) {
   const map = {
+    draft: 'light',
     pending: 'warning',
     approved: 'info',
     preparing: 'info',
@@ -181,6 +182,7 @@ function orderStatusColor(status) {
 
 function orderStatusLabel(status) {
   const labels = {
+    draft: t('order.statuses.draft') || 'مسودة',
     pending: t('order.statuses.pending') || 'قيد الانتظار',
     approved: t('order.statuses.approved') || 'تمت الموافقة',
     preparing: t('order.statuses.preparing') || 'قيد التحضير',

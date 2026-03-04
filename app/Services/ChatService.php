@@ -10,6 +10,9 @@ use App\Models\Conversation;
 use App\Repositories\ConversationRepository;
 use App\Repositories\MessageRepository;
 use Illuminate\Support\Facades\DB;
+use App\Models\Order;
+use Illuminate\Database\QueryException;
+
 
 class ChatService
 {
@@ -54,6 +57,43 @@ class ChatService
         $conversation = $this->conversations->createWithParticipantsOnly($userId, $otherUserId);
 
         return ConversationDTO::fromModel($conversation);
+    }
+
+
+    public function getOrCreateOrderConversation(int $orderId, int $authUserId): ConversationDTO
+    {
+        return DB::transaction(function () use ($orderId, $authUserId) {
+
+            $order = Order::query()
+                ->lockForUpdate()
+                ->findOrFail($orderId);
+
+            if ($authUserId !== (int) $order->customer_user_id) {
+                throw new ForbiddenException('غير مسموح بإنشاء محادثة لهذا الطلب');
+            }
+
+            $existing = $this->conversations->findByOrderId($orderId);
+            if ($existing) {
+                return ConversationDTO::fromModel($existing);
+            }
+
+            try {
+                $created = $this->conversations->createOrderConversation(
+                    orderId: (int) $order->id,
+                    customerId: (int) $order->customer_user_id,
+                    companyId: (int) $order->company_user_id
+                );
+
+                return ConversationDTO::fromModel($created);
+
+            } catch (QueryException $e) {
+                $existing = $this->conversations->findByOrderId($orderId);
+                if ($existing) {
+                    return ConversationDTO::fromModel($existing);
+                }
+                throw $e;
+            }
+        });
     }
 
     /**

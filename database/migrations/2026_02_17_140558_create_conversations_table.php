@@ -13,8 +13,15 @@ return new class extends Migration
     {
         Schema::create('conversations', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('order_id')
+                ->nullable()
+                ->constrained('orders')
+                ->nullOnDelete();
+
             $table->softDeletes();
             $table->timestamps();
+
+            $table->unique('order_id'); // محادثة واحدة لكل طلب
         });
     }
 

@@ -10,6 +10,7 @@ class ConversationListDTO extends BaseDTO
     public array $other_participant;
     public ?array $last_message;
     public int $unread_count;
+    public ?string $order_no;
     public string $created_at;
     public string $updated_at;
 
@@ -19,12 +20,14 @@ class ConversationListDTO extends BaseDTO
         ?array $last_message,
         int $unread_count,
         string $created_at,
-        string $updated_at
+        string $updated_at,
+        ?string $order_no = null
     ) {
         $this->id = $id;
         $this->other_participant = $other_participant;
         $this->last_message = $last_message;
         $this->unread_count = $unread_count;
+        $this->order_no = $order_no;
         $this->created_at = $created_at;
         $this->updated_at = $updated_at;
     }
@@ -66,6 +69,7 @@ class ConversationListDTO extends BaseDTO
             ],
             last_message: $lastMessage,
             unread_count: $unreadCount,
+            order_no: $conversation->order?->order_no ?? null,
             created_at: $conversation->created_at?->toIso8601String() ?? '',
             updated_at: $conversation->updated_at?->toIso8601String() ?? ''
         );
@@ -79,6 +83,7 @@ class ConversationListDTO extends BaseDTO
         return [
             'id' => $this->id,
             'other_participant' => $this->other_participant,
+            'order_no' => $this->order_no,
             'last_message' => $this->last_message,
             'unread_count' => $this->unread_count,
             'created_at' => $this->created_at,

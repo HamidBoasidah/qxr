@@ -130,6 +130,7 @@
                     <h5 class="text-sm font-medium text-gray-800 truncate dark:text-white/90">
                       {{ getConversationName(conv) }}
                     </h5>
+                    <div v-if="conv.order_no" class="text-theme-xs text-gray-500 truncate">{{ conv.order_no }}</div>
                     <p
                       class="mt-0.5 text-theme-xs text-gray-500 dark:text-gray-400 truncate"
                       :class="{ 'font-semibold': conv.unread_count > 0 }"
@@ -182,9 +183,12 @@
                 ></span>
               </div>
 
-              <h5 class="text-sm font-medium text-gray-500 dark:text-gray-400">
-                {{ getParticipantName() }}
-              </h5>
+              <div>
+                <h5 class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                  {{ getParticipantName() }}
+                </h5>
+                <div v-if="props.conversation.order_no" class="text-theme-xs text-gray-500">{{ props.conversation.order_no }}</div>
+              </div>
             </div>
           </div>
 
@@ -563,6 +567,10 @@ const getParticipantAvatar = () => {
 const getConversationName = (conv) => {
   if (conv.other_participant) {
     return conv.other_participant.full_name || t('chat.unknownUser')
+  }
+  // Fallback to participants if other_participant not provided
+  if (conv.participants && conv.participants.length > 0) {
+    return conv.participants[0]?.name || t('chat.unknownUser')
   }
   return t('chat.unknownUser')
 }

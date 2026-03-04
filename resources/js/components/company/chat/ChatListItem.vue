@@ -23,6 +23,7 @@
           <h5 class="text-sm font-medium text-gray-800 dark:text-white/90">
             {{ chat.name }}
           </h5>
+          <div v-if="chat.order_no" class="text-theme-xs text-gray-500 mt-0.5">{{ chat.order_no }}</div>
           <p class="mt-0.5 text-theme-xs text-gray-500 dark:text-gray-400">
             {{ chat.role }}
           </p>
@@ -38,6 +39,7 @@ interface Chat {
   id: number
   name: string
   role: string
+  order_no?: string
   avatar: string
   status: 'online' | 'offline' | 'away'
   lastMessage: string

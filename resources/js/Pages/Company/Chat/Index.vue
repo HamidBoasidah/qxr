@@ -160,6 +160,7 @@
                         <h5 class="text-sm font-medium text-gray-800 truncate dark:text-white/90">
                           {{ getParticipantName(conversation) }}
                         </h5>
+                        <div v-if="conversation.order_no" class="text-theme-xs text-gray-500 truncate">{{ conversation.order_no }}</div>
                         <p
                           class="mt-0.5 text-theme-xs text-gray-500 dark:text-gray-400 truncate"
                           :class="{ 'font-semibold': conversation.unread_count > 0 }"
@@ -285,20 +286,21 @@ const toggleSidebar = () => {
 
 const getParticipantName = (conversation) => {
   // Check if other_participant exists (from ConversationListDTO)
-  if (conversation.other_participant) {
-    return conversation.other_participant.full_name || t('chat.unknownUser')
+    if (conversation.other_participant) {
+      return conversation.other_participant.full_name || t('chat.unknownUser')
   }
   
-  // Fallback to participants array (from ConversationDTO)
-  if (!conversation.participants || conversation.participants.length === 0) {
-    return t('chat.unknownUser')
-  }
+    // Fallback to participants array (from ConversationDTO)
+    if (!conversation.participants || conversation.participants.length === 0) {
+      return t('chat.unknownUser')
+    }
   
-  const otherParticipant = conversation.participants.find(
-    (p) => p.id !== props.auth.user.id
-  )
+    const otherParticipant = conversation.participants.find(
+      (p) => p.id !== props.auth.user.id
+    )
   
-  return otherParticipant?.name || conversation.participants[0]?.name || t('chat.unknownUser')
+    const fallbackName = otherParticipant?.name || conversation.participants[0]?.name || t('chat.unknownUser')
+    return fallbackName
 }
 
 const getParticipantAvatar = (conversation) => {

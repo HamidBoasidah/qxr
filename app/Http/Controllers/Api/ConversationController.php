@@ -12,6 +12,9 @@ use App\Models\Conversation;
 use App\Services\ChatService;
 use App\Services\ReadStateService;
 use Illuminate\Http\JsonResponse;
+use App\Models\Order;
+use App\Http\Requests\Api\CreateOrderConversationRequest;
+
 
 class ConversationController extends Controller
 {
@@ -44,6 +47,27 @@ class ConversationController extends Controller
         return $this->createdResponse(
             $conversationDTO->toArray(),
             'تم إنشاء المحادثة بنجاح'
+        );
+    }
+
+    /**
+     * Create or get existing conversation for a specific order
+     * POST /api/orders/{order}/conversation
+     *
+     * @param CreateOrderConversationRequest $request
+     * @param Order $order
+     * @return JsonResponse
+     */
+    public function storeForOrder(CreateOrderConversationRequest $request, Order $order): JsonResponse
+    {
+        $conversationDTO = $this->chatService->getOrCreateOrderConversation(
+            (int) $order->id,
+            (int) $request->user()->id
+        );
+
+        return $this->createdResponse(
+            $conversationDTO->toArray(),
+            'تم إنشاء محادثة الطلب بنجاح'
         );
     }
 
@@ -115,4 +139,5 @@ class ConversationController extends Controller
             ]
         ]);
     }
+
 }

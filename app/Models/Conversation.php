@@ -17,7 +17,9 @@ class Conversation extends Model
      *
      * @var array<int, string>
      */
-    protected $fillable = [];
+    protected $fillable = [
+        'order_id',
+    ];
 
     /**
      * Get the participants of the conversation.
@@ -42,5 +44,10 @@ class Conversation extends Model
     public function isParticipant(int $userId): bool
     {
         return $this->participants()->where('user_id', $userId)->exists();
+    }
+
+    public function order()
+    {
+        return $this->belongsTo(Order::class);
     }
 }

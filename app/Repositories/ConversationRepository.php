@@ -37,6 +37,7 @@ class ConversationRepository extends BaseRepository
             ->pluck('conversation_id');
 
         return $this->model
+            ->whereNull('order_id') // Only consider conversations not linked to orders
             ->whereIn('id', $conversationIdsWithTwoParticipants)
             ->whereHas('participants', function ($query) use ($userId1) {
                 $query->where('user_id', $userId1);
@@ -44,6 +45,14 @@ class ConversationRepository extends BaseRepository
             ->whereHas('participants', function ($query) use ($userId2) {
                 $query->where('user_id', $userId2);
             })
+            ->first();
+    }
+
+    public function findByOrderId(int $orderId): ?Conversation
+    {
+        return $this->model
+            ->where('order_id', $orderId)
+            ->with(['participants'])
             ->first();
     }
 
@@ -66,6 +75,15 @@ class ConversationRepository extends BaseRepository
             $conversation->participants()->attach([$userId1, $userId2]);
 
             // Reload with relationships
+            return $conversation->load(['participants']);
+        });
+    }
+
+    public function createOrderConversation(int $orderId, int $customerId, int $companyId): Conversation
+    {
+        return DB::transaction(function () use ($orderId, $customerId, $companyId) {
+            $conversation = $this->create(['order_id' => $orderId]);
+            $conversation->participants()->attach([$customerId, $companyId]);
             return $conversation->load(['participants']);
         });
     }
@@ -100,6 +118,7 @@ class ConversationRepository extends BaseRepository
             ->join('conversation_participants', 'conversations.id', '=', 'conversation_participants.conversation_id')
             ->where('conversation_participants.user_id', $userId)
             ->with([
+                'order:id,order_no',
                 'participants',
                 'messages' => function ($query) {
                     $query->with('sender')->latest()->limit(1);

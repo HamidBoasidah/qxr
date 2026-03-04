@@ -53,6 +53,7 @@ interface Chat {
   id: number
   name: string
   role: string
+  order_no?: string
   avatar: string
   status: 'online' | 'offline' | 'away'
   lastMessage: string
@@ -63,6 +64,7 @@ const chatList = ref<Chat[]>([
   {
     id: 1,
     name: 'Kaiya George',
+    order_no: 'ORD-20260217-1001',
     role: 'Project Manager',
     avatar: '/images/user/user-18.jpg',
     status: 'online',

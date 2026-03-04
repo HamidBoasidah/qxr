@@ -108,10 +108,15 @@ class InvoiceService
             }
 
             // التحولات المسموحة للفواتير
+            // 'deferred' and 'cod' were added as new invoice statuses and are
+            // allowed transitions from the initial 'unpaid' state.
             $allowedTransitions = [
-                'unpaid' => ['paid', 'void'],
+                'unpaid' => ['paid', 'void', 'deferred', 'cod'],
                 'paid'   => [],  // نهائية - لا يمكن تغييرها
                 'void'   => [],  // نهائية - لا يمكن تغييرها
+                // allow deferred invoices to move back to unpaid, or be marked paid/void
+                'deferred' => ['paid', 'void', 'unpaid'],
+                'cod' => [],      // terminal for now
             ];
 
             $allowed = $allowedTransitions[$invoice->status] ?? [];

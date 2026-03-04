@@ -204,9 +204,11 @@ const invoice = computed(() => props.invoice || {})
 
 // ─── Status transitions allowed for company ───────────────────────────────────
 const transitionMap = {
-  unpaid: ['paid', 'void'],
+  unpaid: ['paid', 'void', 'deferred', 'cod'],
   paid:   [],  // نهائية - لا يمكن تغييرها
   void:   [],  // نهائية - لا يمكن تغييرها
+  deferred: ['paid', 'void', 'unpaid'],
+  cod: [], // terminal
 }
 
 const availableTransitions = computed(() => transitionMap[invoice.value.status] ?? [])
@@ -252,6 +254,8 @@ function priceLabel(value) {
 function statusColor(status) {
   const colors = {
     unpaid: 'warning',
+    deferred: 'info',
+    cod: 'warning',
     paid: 'success',
     void: 'dark',
   };
@@ -261,6 +265,8 @@ function statusColor(status) {
 function statusLabel(status) {
   const labels = {
     unpaid: t('invoice.status.unpaid') || 'غير مدفوعة',
+    deferred: t('invoice.status.deferred') || 'مؤجلة',
+    cod: t('invoice.status.cod') || 'دفع عند الاستلام',
     paid: t('invoice.status.paid') || 'مدفوعة',
     void: t('invoice.status.void') || 'ملغاة',
   };

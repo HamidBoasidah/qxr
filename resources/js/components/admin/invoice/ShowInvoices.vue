@@ -287,6 +287,8 @@ function priceLabel(value) {
 function statusColor(status) {
   const colors = {
     unpaid: 'warning',
+    deferred: 'info',
+    cod: 'warning',
     paid: 'success',
     void: 'dark',
   };
@@ -296,6 +298,8 @@ function statusColor(status) {
 function statusLabel(status) {
   const labels = {
     unpaid: t('invoice.status.unpaid') || 'غير مدفوعة',
+    deferred: t('invoice.status.deferred') || 'مؤجلة',
+    cod: t('invoice.status.cod') || 'دفع عند الاستلام',
     paid: t('invoice.status.paid') || 'مدفوعة',
     void: t('invoice.status.void') || 'ملغاة',
   };

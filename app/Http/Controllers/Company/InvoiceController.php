@@ -66,7 +66,8 @@ class InvoiceController extends Controller
     public function updateStatus(Request $request, $id)
     {
         $request->validate([
-            'status' => ['required', 'string', 'in:paid,void'],
+            // allow new statuses deferred, cod and allow reverting to unpaid
+            'status' => ['required', 'string', 'in:paid,void,deferred,cod,unpaid'],
             'note'   => ['nullable', 'string', 'max:1000'],
         ]);
 

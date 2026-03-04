@@ -29,7 +29,7 @@ return new class extends Migration
 
             $table->timestamp('issued_at')->nullable();
 
-            $table->enum('status', ['unpaid', 'paid', 'void'])->default('unpaid');
+            $table->enum('status', ['unpaid', 'paid', 'void', 'deferred', 'cod'])->default('unpaid');
 
             // Optional note left by company or admin
             $table->text('note')->nullable();

@@ -30,6 +30,11 @@ class StoreProductRequest extends FormRequest
             'is_active'    => ['sometimes', 'boolean'],
             'main_image'   => ['nullable', 'image', 'max:2048'],
 
+            'production_date'     => ['nullable', 'date'],
+            'expiry_date'         => ['nullable', 'date', 'after_or_equal:today'],
+            'usage_instructions'  => ['nullable', 'string'],
+            'medical_warnings'    => ['nullable', 'string'],
+
             // tags (pivot product_tag)
             'tag_ids'      => ['nullable', 'array'],
             'tag_ids.*'    => ['integer', 'distinct', 'exists:tags,id'],
@@ -53,6 +58,7 @@ class StoreProductRequest extends FormRequest
             'tag_ids.*.exists'     => 'أحد الوسوم غير موجود.',
 
             'images.array'         => 'الصور يجب أن تكون مصفوفة.',
+            'expiry_date.after_or_equal' => 'تاريخ انتهاء الصلاحية يجب أن يكون اليوم أو في المستقبل.',
         ];
     }
 
@@ -77,6 +83,10 @@ class StoreProductRequest extends FormRequest
             'base_price',
             'is_active',
             'main_image',
+            'production_date',
+            'expiry_date',
+            'usage_instructions',
+            'medical_warnings',
         ]);
     }
 

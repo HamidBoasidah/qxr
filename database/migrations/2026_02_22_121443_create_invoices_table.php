@@ -27,9 +27,12 @@ return new class extends Migration
             $table->decimal('discount_total_snapshot', 12, 2)->default(0);
             $table->decimal('total_snapshot', 12, 2)->default(0);
 
+            // ربط سياسة الاسترجاع بالفاتورة (مطلوب)
+            $table->unsignedBigInteger('return_policy_id')->nullable();
+
             $table->timestamp('issued_at')->nullable();
 
-            $table->enum('status', ['unpaid', 'paid', 'void', 'deferred', 'cod'])->default('unpaid');
+            $table->enum('status', ['draft', 'paid', 'cancelled'])->default('draft');
 
             // Optional note left by company or admin
             $table->text('note')->nullable();

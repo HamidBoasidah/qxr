@@ -31,6 +31,10 @@ class ProductFactory extends Factory
             'base_price' => $this->faker->randomFloat(2, 1, 1000),
             'is_active' => $this->faker->boolean(85),
             'main_image' => null,
+            'production_date' => $this->faker->dateTimeBetween('-2 years', 'now')->format('Y-m-d'),
+            'expiry_date' => $this->faker->dateTimeBetween('+1 month', '+3 years')->format('Y-m-d'),
+            'usage_instructions' => $this->faker->paragraph(),
+            'medical_warnings' => $this->faker->sentence(),
         ];
     }
 

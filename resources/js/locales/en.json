@@ -317,7 +317,14 @@
     "updatedSuccessfully": "Product updated successfully",
     "updateFailed": "Failed to update product",
     "deletedSuccessfully": "Product deleted successfully",
-    "deleteFailed": "Failed to delete product"
+    "deleteFailed": "Failed to delete product",
+    "medicalInfo": "Medical Information",
+    "production_date": "Production Date",
+    "expiry_date": "Expiry Date",
+    "usage_instructions": "Usage Instructions",
+    "usage_instructions_placeholder": "Enter usage instructions (optional)",
+    "medical_warnings": "Medical Warnings",
+    "medical_warnings_placeholder": "Enter medical warnings (optional)"
   },
   "categories": {
     "categoryType": "Category type",

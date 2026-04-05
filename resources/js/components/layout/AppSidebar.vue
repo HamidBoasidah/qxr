@@ -388,6 +388,22 @@ const menuGroups = computed(() =>
                     permission: "invoices.view",
                 },
                 {
+                    icon: InvoiceIcon,
+                    name: t("menu.returnPolicies") || "سياسات الاسترجاع",
+                    subItems: [
+                        {
+                            name: t("menu.returnPolicies") || "سياسات الاسترجاع",
+                            path: route("admin.return-policies.index"),
+                            permission: "invoices.view",
+                        },
+                        {
+                            name: t("menu.returnInvoices") || "فواتير الاسترجاع",
+                            path: route("admin.return-invoices.index"),
+                            permission: "invoices.view",
+                        },
+                    ],
+                },
+                {
                     icon: OrderIcon,
                     name: t("menu.orders"),
                     path: route("admin.orders.index"),
@@ -449,7 +465,15 @@ const menuGroups = computed(() =>
     ]),
 );
 
-const isActive = (path) => page.url === path;
+const isActive = (path) => {
+    if (path === route("admin.return-policies.index")) {
+        return page.url.startsWith("/admin/return-policies");
+    }
+    if (path === route("admin.return-invoices.index")) {
+        return page.url.startsWith("/admin/return-invoices");
+    }
+    return page.url === path;
+};
 
 const toggleSubmenu = (groupIndex, itemIndex) => {
     const key = `${groupIndex}-${itemIndex}`;

@@ -76,6 +76,39 @@
       </div>
     </div>
 
+    <!-- Medical Information Section -->
+    <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+      <div class="border-b border-gray-200 px-6 py-4 dark:border-gray-800">
+        <h2 class="text-lg font-medium text-gray-800 dark:text-white">
+          {{ t('product.medicalInfo') || 'المعلومات الطبية' }}
+        </h2>
+      </div>
+      <div class="p-4 sm:p-6">
+        <div class="grid grid-cols-1 gap-x-5 gap-y-6 md:grid-cols-2">
+          <!-- Production Date -->
+          <div>
+            <label class="mb-1.5 block text-sm font-medium text-gray-500 dark:text-gray-400">{{ t('product.production_date') || 'تاريخ الإنتاج' }}</label>
+            <p class="text-base text-gray-800 dark:text-white/90">{{ product.production_date || '—' }}</p>
+          </div>
+          <!-- Expiry Date -->
+          <div>
+            <label class="mb-1.5 block text-sm font-medium text-gray-500 dark:text-gray-400">{{ t('product.expiry_date') || 'تاريخ انتهاء الصلاحية' }}</label>
+            <p class="text-base text-gray-800 dark:text-white/90">{{ product.expiry_date || '—' }}</p>
+          </div>
+          <!-- Usage Instructions -->
+          <div class="md:col-span-2">
+            <label class="mb-1.5 block text-sm font-medium text-gray-500 dark:text-gray-400">{{ t('product.usage_instructions') || 'طريقة الاستخدام' }}</label>
+            <p class="text-base text-gray-800 dark:text-white/90 whitespace-pre-line">{{ product.usage_instructions || '—' }}</p>
+          </div>
+          <!-- Medical Warnings -->
+          <div class="md:col-span-2">
+            <label class="mb-1.5 block text-sm font-medium text-gray-500 dark:text-gray-400">{{ t('product.medical_warnings') || 'التحذيرات الطبية' }}</label>
+            <p class="text-base text-gray-800 dark:text-white/90 whitespace-pre-line">{{ product.medical_warnings || '—' }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Images Section -->
     <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
       <div class="border-b border-gray-200 px-6 py-4 dark:border-gray-800">

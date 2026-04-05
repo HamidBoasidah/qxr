@@ -84,6 +84,14 @@ Route::middleware('auth:sanctum')->group(function () {
     // Invoices (عرض الفواتير فقط - للعملاء والشركات)
     Route::get('invoices', [App\Http\Controllers\Api\InvoiceController::class, 'index']);
     Route::get('invoices/{id}', [App\Http\Controllers\Api\InvoiceController::class, 'show']);
+
+    // Return Policies
+    Route::apiResource('return-policies', App\Http\Controllers\Api\ReturnPolicyController::class);
+
+    // Return Invoices
+    Route::apiResource('return-invoices', App\Http\Controllers\Api\ReturnInvoiceController::class)->only(['index', 'store', 'show']);
+    Route::post('return-invoices/{returnInvoice}/approve', [App\Http\Controllers\Api\ReturnInvoiceController::class, 'approve']);
+    Route::post('return-invoices/{returnInvoice}/reject', [App\Http\Controllers\Api\ReturnInvoiceController::class, 'reject']);
 });
     
 

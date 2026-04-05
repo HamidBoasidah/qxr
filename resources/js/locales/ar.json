@@ -22,7 +22,9 @@
     "activityLogs": "سجل التغييرات",
     "addresses": "العناوين",
     "tags": "الوسوم",
-    "reports": "التقارير"
+    "reports": "التقارير",
+    "returnPolicies": "سياسات الاسترجاع",
+    "returnInvoices": "فواتير الاسترجاع"
   },
   "pages": {
     "welcomeLoggedIn": "لقد قمت بتسجيل الدخول!",
@@ -122,7 +124,9 @@
     "link": "الرابط",
     "linkText": "نص الرابط",
     "advancedSettings": "إعدادات متقدمة",
-    "additionalData": "بيانات إضافية"
+    "additionalData": "بيانات إضافية",
+    "yes": "نعم",
+    "no": "لا"
   },
 
   "status": {
@@ -176,7 +180,14 @@
     "deletedSuccessfully": "تم حذف المنتج بنجاح",
     "deleteFailed": "فشل حذف المنتج",
     "active": "نشط",
-    "inactive": "غير نشط"
+    "inactive": "غير نشط",
+    "medicalInfo": "المعلومات الطبية",
+    "production_date": "تاريخ الإنتاج",
+    "expiry_date": "تاريخ انتهاء الصلاحية",
+    "usage_instructions": "طريقة الاستخدام",
+    "usage_instructions_placeholder": "أدخل طريقة الاستخدام (اختياري)",
+    "medical_warnings": "التحذيرات الطبية",
+    "medical_warnings_placeholder": "أدخل التحذيرات الطبية (اختياري)"
   },
   "offers": {
     "createOffer": "إنشاء عرض",
@@ -781,6 +792,54 @@
     "loading": "جاري التحميل...",
     "by_status": "حسب الحالة",
     "vs_previous_period": "مقارنة بالفترة السابقة"
+  },
+  "returnPolicy": {
+    "title": "سياسات الاسترجاع",
+    "createPolicy": "إنشاء سياسة",
+    "editPolicy": "تعديل السياسة",
+    "showPolicy": "عرض السياسة",
+    "policyDetails": "تفاصيل السياسة",
+    "policyInformation": "معلومات السياسة",
+    "noPolicies": "لا توجد سياسات استرجاع",
+    "name": "اسم السياسة",
+    "namePlaceholder": "أدخل اسم السياسة",
+    "return_window_days": "نافذة الاسترجاع (أيام)",
+    "max_return_ratio": "نسبة الاسترجاع القصوى",
+    "discount_deduction_enabled": "خصم مبلغ الاسترجاع",
+    "min_days_before_expiry": "الحد الأدنى للأيام قبل الانتهاء",
+    "bonus_return_enabled": "تفعيل استرجاع البونص",
+    "bonus_return_ratio": "نسبة استرجاع البونص",
+    "is_default": "سياسة افتراضية",
+    "is_active": "نشطة",
+    "days": "يوم",
+    "disabled": "معطّل",
+    "deleteConfirmTitle": "حذف السياسة",
+    "deleteConfirmMessage": "هل أنت متأكد من حذف هذه السياسة؟ لا يمكن التراجع عن هذا الإجراء."
+  },
+  "returnInvoice": {
+    "title": "فواتير الاسترجاع",
+    "showReturnInvoice": "عرض فاتورة الاسترجاع",
+    "returnInvoiceDetails": "تفاصيل فاتورة الاسترجاع",
+    "noReturnInvoices": "لا توجد فواتير استرجاع",
+    "original_invoice": "الفاتورة الأصلية",
+    "total_refund_amount": "مبلغ الاسترجاع",
+    "return_policy": "سياسة الاسترجاع",
+    "items": "بنود الاسترجاع",
+    "item_id": "البند",
+    "returned_quantity": "الكمية المُرجَعة",
+    "unit_price_snapshot": "سعر الوحدة",
+    "discount": "الخصم",
+    "refund_amount": "مبلغ الاسترجاع",
+    "is_bonus": "بونص",
+    "actions": "الإجراءات",
+    "approve": "قبول الاسترجاع",
+    "reject": "رفض الاسترجاع",
+    "actionError": "حدث خطأ أثناء تنفيذ الإجراء",
+    "status": {
+      "pending": "قيد الانتظار",
+      "approved": "مقبولة",
+      "rejected": "مرفوضة"
+    }
   },
   "chat": {
     "searchConversations": "ابحث في المحادثات...",

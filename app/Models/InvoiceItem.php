@@ -16,6 +16,10 @@ class InvoiceItem extends Model
         'qty',
         'unit_price_snapshot',
         'line_total_snapshot',
+        'expiry_date',
+        'discount_type',
+        'discount_value',
+        'is_bonus',
     ];
 
     public function invoice()

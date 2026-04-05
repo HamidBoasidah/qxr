@@ -168,6 +168,16 @@ Route::middleware('auth:admin')
             ->only(['index', 'show'])
             ->names('invoices');
 
+        // Return Policies (read-only)
+        Route::resource('return-policies', \App\Http\Controllers\Admin\ReturnPolicyController::class)
+            ->only(['index', 'show'])
+            ->names('return-policies');
+
+        // Return Invoices (read-only)
+        Route::resource('return-invoices', \App\Http\Controllers\Admin\ReturnInvoiceController::class)
+            ->only(['index', 'show'])
+            ->names('return-invoices');
+
         // Offers
         Route::resource('offers', OfferController::class)
             ->only(['index', 'show'])  

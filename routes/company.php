@@ -89,6 +89,21 @@ Route::middleware(['auth:web', 'company'])
         Route::patch('invoices/{id}/status', [\App\Http\Controllers\Company\InvoiceController::class, 'updateStatus'])
             ->name('invoices.updateStatus');
 
+        // Return Policies
+        Route::resource('return-policies', \App\Http\Controllers\Company\ReturnPolicyController::class)
+            ->names('return-policies');
+
+        // Return Invoices
+        Route::resource('return-invoices', \App\Http\Controllers\Company\ReturnInvoiceController::class)
+            ->only(['index', 'show'])
+            ->names('return-invoices');
+
+        Route::patch('return-invoices/{id}/approve', [\App\Http\Controllers\Company\ReturnInvoiceController::class, 'approve'])
+            ->name('return-invoices.approve');
+
+        Route::patch('return-invoices/{id}/reject', [\App\Http\Controllers\Company\ReturnInvoiceController::class, 'reject'])
+            ->name('return-invoices.reject');
+
         // Users (for company to manage their own users if needed)
         Route::resource('users', UserController::class)
             ->names('users');

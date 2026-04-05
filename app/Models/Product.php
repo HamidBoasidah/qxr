@@ -20,6 +20,16 @@ class Product extends Model
         'base_price',
         'main_image',
         'is_active',
+        'production_date',
+        'expiry_date',
+        'usage_instructions',
+        'medical_warnings',
+    ];
+
+    protected $casts = [
+        'production_date' => 'date',
+        'expiry_date'     => 'date',
+        'is_active'       => 'boolean',
     ];
 
     /**

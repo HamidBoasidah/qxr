@@ -45,6 +45,18 @@ return new class extends Migration
             // الصورة الرئيسية للمنتج (مسار أو اسم الملف داخل التخزين)
             $table->string('main_image')->nullable();
 
+            // تاريخ الإنتاج (اختياري)
+            $table->date('production_date')->nullable();
+
+            // تاريخ انتهاء الصلاحية (اختياري)
+            $table->date('expiry_date')->nullable();
+
+            // طريقة الاستخدام (اختياري)
+            $table->text('usage_instructions')->nullable();
+
+            // التحذيرات الطبية (اختياري)
+            $table->text('medical_warnings')->nullable();
+
             $table->softDeletes();
             $table->timestamps();
 

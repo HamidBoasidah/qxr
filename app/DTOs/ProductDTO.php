@@ -17,6 +17,10 @@ class ProductDTO extends BaseDTO
     public $base_price;
     public $is_active;
     public $main_image;
+    public $production_date;
+    public $expiry_date;
+    public $usage_instructions;
+    public $medical_warnings;
 
     // ✅ علاقات للعرض
     public $category;   // {id, name}
@@ -39,6 +43,10 @@ class ProductDTO extends BaseDTO
         $base_price,
         $is_active,
         $main_image,
+        $production_date = null,
+        $expiry_date = null,
+        $usage_instructions = null,
+        $medical_warnings = null,
         $category = null,
         $tags = [],
         $images = [],
@@ -58,6 +66,10 @@ class ProductDTO extends BaseDTO
         $this->base_price = $base_price;
         $this->is_active = (bool) $is_active;
         $this->main_image = $main_image;
+        $this->production_date = $production_date;
+        $this->expiry_date = $expiry_date;
+        $this->usage_instructions = $usage_instructions;
+        $this->medical_warnings = $medical_warnings;
 
         $this->category = $category;
         $this->tags = $tags;
@@ -87,6 +99,11 @@ class ProductDTO extends BaseDTO
             $product->base_price ?? 0,
             $product->is_active ?? false,
             $product->main_image ?? null,
+
+            $product->production_date?->toDateString() ?? null,
+            $product->expiry_date?->toDateString() ?? null,
+            $product->usage_instructions ?? null,
+            $product->medical_warnings ?? null,
 
             // ✅ category
             $category ? [
@@ -214,6 +231,10 @@ class ProductDTO extends BaseDTO
             'base_price' => $this->base_price,
             'is_active' => $this->is_active,
             'main_image' => $this->main_image,
+            'production_date' => $this->production_date,
+            'expiry_date' => $this->expiry_date,
+            'usage_instructions' => $this->usage_instructions,
+            'medical_warnings' => $this->medical_warnings,
 
             'category' => $this->category,
             'tags' => $this->tags,
@@ -257,6 +278,10 @@ class ProductDTO extends BaseDTO
             'base_price' => $this->base_price,
             'is_active' => $this->is_active,
             'main_image' => $this->main_image,
+            'production_date' => $this->production_date,
+            'expiry_date' => $this->expiry_date,
+            'usage_instructions' => $this->usage_instructions,
+            'medical_warnings' => $this->medical_warnings,
 
             'category' => $this->category,
             'tags' => $this->tags,

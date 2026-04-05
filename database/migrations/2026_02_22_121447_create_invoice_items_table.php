@@ -31,6 +31,12 @@ return new class extends Migration
             $table->decimal('unit_price_snapshot', 12, 2);
             $table->decimal('line_total_snapshot', 12, 2);
 
+            // حقول Snapshot للاسترجاع
+            $table->date('expiry_date')->nullable();
+            $table->enum('discount_type', ['percent', 'fixed'])->nullable();
+            $table->decimal('discount_value', 15, 4)->nullable();
+            $table->boolean('is_bonus')->default(false);
+
             $table->timestamps();
 
             $table->index('invoice_id');

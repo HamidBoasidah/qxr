@@ -32,7 +32,7 @@ class InvoiceService
                 'invoice_no' => $this->generateInvoiceNumber(),
                 'order_id' => $order->id,
                 'issued_at' => $order->approved_at ?? now(),
-                'status' => 'unpaid',
+                'status' => 'draft',
                 'subtotal_snapshot' => 0,
                 'discount_total_snapshot' => 0,
                 'total_snapshot' => 0,
@@ -111,12 +111,9 @@ class InvoiceService
             // 'deferred' and 'cod' were added as new invoice statuses and are
             // allowed transitions from the initial 'unpaid' state.
             $allowedTransitions = [
-                'unpaid' => ['paid', 'void', 'deferred', 'cod'],
-                'paid'   => [],  // نهائية - لا يمكن تغييرها
-                'void'   => [],  // نهائية - لا يمكن تغييرها
-                // allow deferred invoices to move back to unpaid, or be marked paid/void
-                'deferred' => ['paid', 'void', 'unpaid'],
-                'cod' => [],      // terminal for now
+                'draft'     => ['paid', 'cancelled'],
+                'paid'      => [],
+                'cancelled' => [],
             ];
 
             $allowed = $allowedTransitions[$invoice->status] ?? [];

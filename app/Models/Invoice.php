@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Invoice extends BaseModel
 {
@@ -17,6 +19,7 @@ class Invoice extends BaseModel
         'issued_at',
         'status',
         'note',
+        'return_policy_id',
     ];
 
     protected $casts = [
@@ -36,5 +39,15 @@ class Invoice extends BaseModel
     public function bonusItems()
     {
         return $this->hasMany(InvoiceBonusItem::class);
+    }
+
+    public function returnPolicy(): BelongsTo
+    {
+        return $this->belongsTo(ReturnPolicy::class);
+    }
+
+    public function returnInvoice(): HasOne
+    {
+        return $this->hasOne(ReturnInvoice::class, 'original_invoice_id');
     }
 }

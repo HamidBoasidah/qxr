@@ -329,6 +329,20 @@ const menuGroups = computed(() => [
                 path: route("company.invoices.index"),
             },
             {
+                icon: InvoiceIcon,
+                name: t("menu.returnPolicies") || "سياسات الاسترجاع",
+                subItems: [
+                    {
+                        name: t("menu.returnPolicies") || "سياسات الاسترجاع",
+                        path: route("company.return-policies.index"),
+                    },
+                    {
+                        name: t("menu.returnInvoices") || "فواتير الاسترجاع",
+                        path: route("company.return-invoices.index"),
+                    },
+                ],
+            },
+            {
                 icon: ReportIcon,
                 name: t("menu.reports"),
                 path: route("company.reports.index"),
@@ -346,6 +360,13 @@ const isActive = (path) => {
     // For chat routes, check if current URL starts with /company/chat
     if (path === route("company.chat.conversations.index")) {
         return page.url.startsWith("/company/chat");
+    }
+    // For return routes, check prefix
+    if (path === route("company.return-policies.index")) {
+        return page.url.startsWith("/company/return-policies");
+    }
+    if (path === route("company.return-invoices.index")) {
+        return page.url.startsWith("/company/return-invoices");
     }
     return page.url === path;
 };

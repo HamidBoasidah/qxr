@@ -213,6 +213,69 @@
       </div>
     </div>
 
+    <!-- Medical Information Section -->
+    <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+      <div class="border-b border-gray-200 px-6 py-4 dark:border-gray-800">
+        <h2 class="text-lg font-medium text-gray-800 dark:text-white">
+          {{ t('product.medicalInfo') || 'المعلومات الطبية' }}
+        </h2>
+      </div>
+      <div class="p-4 sm:p-6">
+        <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+          <!-- Production Date -->
+          <div>
+            <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+              {{ t('product.production_date') || 'تاريخ الإنتاج' }}
+            </label>
+            <input
+              v-model="form.production_date"
+              type="date"
+              class="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
+            />
+            <p v-if="form.errors.production_date" class="mt-1 text-sm text-error-500">{{ form.errors.production_date }}</p>
+          </div>
+          <!-- Expiry Date -->
+          <div>
+            <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+              {{ t('product.expiry_date') || 'تاريخ انتهاء الصلاحية' }}
+            </label>
+            <input
+              v-model="form.expiry_date"
+              type="date"
+              class="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
+            />
+            <p v-if="form.errors.expiry_date" class="mt-1 text-sm text-error-500">{{ form.errors.expiry_date }}</p>
+          </div>
+          <!-- Usage Instructions -->
+          <div class="md:col-span-2">
+            <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+              {{ t('product.usage_instructions') || 'طريقة الاستخدام' }}
+            </label>
+            <textarea
+              v-model="form.usage_instructions"
+              rows="3"
+              :placeholder="t('product.usage_instructions_placeholder') || 'أدخل طريقة الاستخدام (اختياري)'"
+              class="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-3 text-sm text-gray-800 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
+            ></textarea>
+            <p v-if="form.errors.usage_instructions" class="mt-1 text-sm text-error-500">{{ form.errors.usage_instructions }}</p>
+          </div>
+          <!-- Medical Warnings -->
+          <div class="md:col-span-2">
+            <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+              {{ t('product.medical_warnings') || 'التحذيرات الطبية' }}
+            </label>
+            <textarea
+              v-model="form.medical_warnings"
+              rows="3"
+              :placeholder="t('product.medical_warnings_placeholder') || 'أدخل التحذيرات الطبية (اختياري)'"
+              class="dark:bg-dark-900 shadow-theme-xs focus:border-brand-300 focus:ring-brand-500/10 dark:focus:border-brand-800 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-3 text-sm text-gray-800 focus:ring-3 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
+            ></textarea>
+            <p v-if="form.errors.medical_warnings" class="mt-1 text-sm text-error-500">{{ form.errors.medical_warnings }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Actions -->
     <div class="flex flex-col gap-3 sm:flex-row sm:justify-end">
       <Link
@@ -264,6 +327,10 @@ const form = useForm({
   main_image: null,
   images: [],
   tags: [],
+  production_date: '',
+  expiry_date: '',
+  usage_instructions: '',
+  medical_warnings: '',
 })
 
 const tagsOptions = computed(() => (props.tags || []).map(tag => ({ value: tag.id, label: tag.name })))

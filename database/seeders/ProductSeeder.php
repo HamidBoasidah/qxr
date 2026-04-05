@@ -66,6 +66,10 @@ class ProductSeeder extends Seeder
                 'base_price' => rand(100, 10000) / 10,
                 'is_active' => true,
                 'main_image' => null,
+                'production_date' => now()->subDays(rand(30, 730))->format('Y-m-d'),
+                'expiry_date' => now()->addDays(rand(30, 1095))->format('Y-m-d'),
+                'usage_instructions' => 'تناول ' . rand(1, 3) . ' حبة يومياً بعد الأكل.',
+                'medical_warnings' => 'يُحفظ بعيداً عن متناول الأطفال. استشر الطبيب قبل الاستخدام.',
             ]);
         }
     }

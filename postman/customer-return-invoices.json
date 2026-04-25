@@ -1,0 +1,195 @@
+{
+  "info": {
+    "name": "Customer - Return Invoices",
+    "description": "يتيح للعميل استعراض فواتير الاسترجاع التي طلبها وعرض تفاصيل فاتورة محددة",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000/api",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string",
+      "description": "يُملأ تلقائياً بعد تسجيل الدخول"
+    },
+    {
+      "key": "return_invoice_id",
+      "value": "1",
+      "type": "string",
+      "description": "معرّف فاتورة الاسترجاع المراد عرضها"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Login (Customer)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const res = pm.response.json();",
+              "if (res.token) {",
+              "  pm.collectionVariables.set('token', res.token);",
+              "  console.log('✅ Token saved:', res.token);",
+              "} else {",
+              "  console.log('❌ Login failed:', JSON.stringify(res));",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Accept", "value": "application/json" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"customer@example.com\",\n  \"password\": \"password\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/login",
+          "host": ["{{base_url}}"],
+          "path": ["login"]
+        },
+        "description": "سجّل الدخول كعميل — سيُحفظ الـ token تلقائياً في المتغير"
+      }
+    },
+    {
+      "name": "2. List My Return Invoices",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const res = pm.response.json();",
+              "pm.test('Status 200', () => pm.response.to.have.status(200));",
+              "if (res.data && res.data.data && res.data.data.length > 0) {",
+              "  const firstId = res.data.data[0].id;",
+              "  pm.collectionVariables.set('return_invoice_id', firstId);",
+              "  console.log('✅ First return invoice ID saved:', firstId);",
+              "} else {",
+              "  console.log('ℹ️ No return invoices found for this customer');",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Accept", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/return-invoices?per_page=10",
+          "host": ["{{base_url}}"],
+          "path": ["return-invoices"],
+          "query": [
+            {
+              "key": "per_page",
+              "value": "10",
+              "description": "عدد النتائج في الصفحة (اختياري)"
+            }
+          ]
+        },
+        "description": "يعرض جميع فواتير الاسترجاع التي أنشأها هذا العميل — مرتبة من الأحدث للأقدم"
+      }
+    },
+    {
+      "name": "3. Show Return Invoice Details",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status 200', () => pm.response.to.have.status(200));",
+              "const res = pm.response.json();",
+              "if (res.data) {",
+              "  console.log('✅ Return Invoice:', res.data.id, '| Status:', res.data.status);",
+              "  console.log('   Total Refund:', res.data.total_refund_amount);",
+              "  console.log('   Items count:', res.data.items ? res.data.items.length : 0);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Accept", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/return-invoices/{{return_invoice_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["return-invoices", "{{return_invoice_id}}"]
+        },
+        "description": "يعرض تفاصيل فاتورة استرجاع محددة بما فيها جميع البنود — يُرجع 404 إذا لم تكن الفاتورة تخص هذا العميل"
+      }
+    },
+    {
+      "name": "[404] Show Return Invoice (Not Mine)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status 404', () => pm.response.to.have.status(404));",
+              "console.log('✅ Correctly rejected — invoice does not belong to this customer');"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Accept", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/return-invoices/9999",
+          "host": ["{{base_url}}"],
+          "path": ["return-invoices", "9999"]
+        },
+        "description": "يجب أن يُرجع 404 عند محاولة عرض فاتورة لا تخص هذا العميل"
+      }
+    },
+    {
+      "name": "[401] List Without Token",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status 401', () => pm.response.to.have.status(401));",
+              "console.log('✅ Correctly rejected — unauthenticated request');"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Accept", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/return-invoices",
+          "host": ["{{base_url}}"],
+          "path": ["return-invoices"]
+        },
+        "description": "يجب أن يُرجع 401 عند الطلب بدون token"
+      }
+    }
+  ]
+}

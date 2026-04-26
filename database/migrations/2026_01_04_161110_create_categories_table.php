@@ -15,7 +15,7 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->enum('category_type', ['company','customer','product']);
             $table->boolean('is_active')->default(true);
-            $table->string('icon_path')->nullable();
+            $table->text('icon_path')->nullable();
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();

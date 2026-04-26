@@ -19,36 +19,24 @@ class OrderSeeder extends Seeder
 {
     public function run(): void
     {
-        $fakerAr = \Faker\Factory::create('ar_SA');
-
         $arabicNotes = [
             'تم تحديث الحالة بعد مراجعة الطلب.',
-            'تم التواصل مع العميل وتأكيد التفاصيل.',
+            'تم التواصل مع الصيدلية وتأكيد التفاصيل.',
             'تم تجهيز الشحنة وجاهزة للتسليم.',
-            'تم إلغاء الطلب بناءً على طلب العميل.',
-            'تمت الموافقة على الطلب من قبل الإدارة.',
+            'تم إلغاء الطلب بناءً على طلب الصيدلية.',
+            'تمت الموافقة على الطلب من قبل الشركة.',
             'تم تسجيل ملاحظة بخصوص المخزون.',
-            'تم تسليم الطلب للعميل بنجاح.',
-            'تم رفض الطلب لعدم استيفاء الشروط.',
-            'تم إضافة ملاحظة خدمة العملاء.',
-            'تم تحديث معلومات الشحن.',
+            'تم تسليم الطلب للصيدلية بنجاح.',
+            'تم رفض الطلب لعدم توفر الكمية المطلوبة.',
+            'يرجى مراجعة الكميات المطلوبة.',
+            'تم تحديث معلومات التوصيل.',
         ];
 
         $companyIds = User::where('user_type', 'company')->pluck('id')->toArray();
-        if (count($companyIds) < 3) {
-            $extra = 3 - count($companyIds);
-            User::factory($extra)->create(['user_type' => 'company']);
-            $companyIds = User::where('user_type', 'company')->pluck('id')->toArray();
-        }
-
         $customerIds = User::where('user_type', 'customer')->pluck('id')->toArray();
-        if (count($customerIds) < 5) {
-            $extra = 5 - count($customerIds);
-            User::factory($extra)->create(['user_type' => 'customer']);
-            $customerIds = User::where('user_type', 'customer')->pluck('id')->toArray();
-        }
 
-        // cache offers by company for quick lookup
+        if (empty($companyIds) || empty($customerIds)) return;
+
         $offersByCompany = Offer::all()->groupBy('company_user_id');
 
         $statusFlows = [
@@ -56,11 +44,10 @@ class OrderSeeder extends Seeder
             ['pending', 'approved', 'preparing', 'cancelled'],
             ['pending', 'approved', 'rejected'],
             ['pending', 'cancelled'],
+            ['pending'],
         ];
 
-        $ordersToCreate = 40;
-
-        for ($i = 0; $i < $ordersToCreate; $i++) {
+        for ($i = 0; $i < 30; $i++) {
             $companyId = Arr::random($companyIds);
             $customerId = Arr::random($customerIds);
 
@@ -72,17 +59,13 @@ class OrderSeeder extends Seeder
             $approvedAt = null;
             $deliveredAt = null;
 
-            // ensure company has products
-            $products = Product::where('company_user_id', $companyId)->inRandomOrder()->get();
-            if ($products->count() < 3) {
-                $toCreate = 3 - $products->count();
-                Product::factory($toCreate)->create(['company_user_id' => $companyId]);
-                $products = Product::where('company_user_id', $companyId)->inRandomOrder()->get();
-            }
+            $products = Product::where('company_user_id', $companyId)->get();
+            if ($products->isEmpty()) continue;
 
-            // pick or create a delivery address for this customer
-            $deliveryAddressId = Address::where('user_id', $customerId)->inRandomOrder()->value('id')
-                ?? Address::factory()->create(['user_id' => $customerId])->id;
+            $deliveryAddressId = Address::where('user_id', $customerId)->inRandomOrder()->value('id');
+            if (!$deliveryAddressId) {
+                $deliveryAddressId = Address::factory()->create(['user_id' => $customerId])->id;
+            }
 
             $order = Order::create([
                 'order_no' => 'ORD-' . Carbon::now()->format('ymd') . '-' . strtoupper(Str::random(6)),
@@ -98,17 +81,16 @@ class OrderSeeder extends Seeder
                 'notes_company' => Arr::random($arabicNotes),
             ]);
 
-            // create items
-            $itemsCount = rand(1, 4);
-            for ($j = 0; $j < $itemsCount; $j++) {
-                $product = $products->random();
-                $qty = rand(1, 8);
-                $unitPrice = $product->base_price ?? rand(50, 900) / 10;
-                $discount = rand(0, 100) < 35 ? round($unitPrice * (rand(5, 25) / 100), 2) : 0;
+            $itemsCount = rand(1, min(4, $products->count()));
+            $selectedProducts = $products->random($itemsCount);
+
+            foreach ($selectedProducts as $product) {
+                $qty = rand(2, 20);
+                $unitPrice = $product->base_price;
+                $discount = rand(0, 100) < 30 ? round($unitPrice * (rand(5, 15) / 100), 2) : 0;
                 $netPrice = max($unitPrice - $discount, 0);
                 $companyOffers = $offersByCompany[$companyId] ?? collect();
-                $offerId = $companyOffers->isNotEmpty() ? $companyOffers->random()->id : null;
-                $selectedOfferId = ($offerId && rand(0, 100) < 55) ? $offerId : null;
+                $selectedOfferId = ($companyOffers->isNotEmpty() && rand(0, 100) < 40) ? $companyOffers->random()->id : null;
 
                 $orderItem = OrderItem::create([
                     'order_id' => $order->id,
@@ -120,38 +102,28 @@ class OrderSeeder extends Seeder
                     'selected_offer_id' => $selectedOfferId,
                 ]);
 
-                // optional bonuses
-                if (rand(0, 100) < 35) {
-                    $bonusesCount = rand(1, 2);
-                    for ($b = 0; $b < $bonusesCount; $b++) {
-                        $bonusProduct = $products->random();
-                        OrderItemBonus::create([
-                            'order_item_id' => $orderItem->id,
-                            'offer_id' => $selectedOfferId,
-                            'bonus_product_id' => $bonusProduct->id,
-                            'bonus_qty' => rand(1, 3),
-                        ]);
-                    }
+                if (rand(0, 100) < 25) {
+                    OrderItemBonus::create([
+                        'order_item_id' => $orderItem->id,
+                        'offer_id' => $selectedOfferId,
+                        'bonus_product_id' => $product->id,
+                        'bonus_qty' => rand(1, 2),
+                    ]);
                 }
             }
 
-            // status logs timeline
             $previous = null;
             foreach ($flow as $status) {
                 $timeCursor->addMinutes(rand(30, 240));
 
-                if ($status === 'approved') {
-                    $approvedAt = (clone $timeCursor);
-                }
-                if ($status === 'delivered') {
-                    $deliveredAt = (clone $timeCursor);
-                }
+                if ($status === 'approved') $approvedAt = (clone $timeCursor);
+                if ($status === 'delivered') $deliveredAt = (clone $timeCursor);
 
                 OrderStatusLog::create([
                     'order_id' => $order->id,
                     'from_status' => $previous,
                     'to_status' => $status,
-                    'changed_by_user_id' => Arr::random([$companyId, $customerId, Arr::random($customerIds)]),
+                    'changed_by_user_id' => Arr::random([$companyId, $customerId]),
                     'note' => Arr::random($arabicNotes),
                     'changed_at' => (clone $timeCursor),
                 ]);
@@ -159,7 +131,6 @@ class OrderSeeder extends Seeder
                 $previous = $status;
             }
 
-            // update time-based fields
             $order->update([
                 'approved_at' => $approvedAt,
                 'approved_by_user_id' => $approvedAt ? $companyId : null,

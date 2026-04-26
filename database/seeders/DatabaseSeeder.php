@@ -2,34 +2,28 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
         $this->call([
             RolesPermissionsSeeder::class,
             AdminSeeder::class,
-            UserSeeder::class,
+            CategorySeeder::class,
+            TagSeeder::class,
             GovernorateSeeder::class,
             DistrictSeeder::class,
             AreaSeeder::class,
+            UserSeeder::class,
             FillUserAddressesSeeder::class,
             ProductSeeder::class,
             OfferSeeder::class,
             OrderSeeder::class,
-            \Database\Seeders\InvoiceSeeder::class,
-            \Database\Seeders\ReturnPolicySeeder::class,
-            \Database\Seeders\ReturnInvoiceSeeder::class,
+            InvoiceSeeder::class,
+            ReturnPolicySeeder::class,
+            ReturnInvoiceSeeder::class,
         ]);
-
-        // seed categories and tags with Arabic data (do not rely on factories)
-        $this->call([CategorySeeder::class, TagSeeder::class]);
     }
 }

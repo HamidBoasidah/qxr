@@ -25,7 +25,19 @@ class Category extends BaseModel
      */
     public function getIconUrlAttribute(): ?string
     {
-        return $this->icon_path ? Storage::url($this->icon_path) : null;
+        if (!$this->icon_path) return null;
+
+        // إذا كانت data URI (SVG مضمّن)
+        if (str_starts_with($this->icon_path, 'data:')) {
+            return $this->icon_path;
+        }
+
+        // إذا المسار يبدأ بـ / يعني مسار مباشر في public
+        if (str_starts_with($this->icon_path, '/')) {
+            return $this->icon_path;
+        }
+
+        return Storage::url($this->icon_path);
     }
 
     /**

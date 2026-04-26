@@ -5,195 +5,75 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Offer;
 use App\Models\OfferItem;
-use App\Models\OfferTarget;
 use App\Models\Product;
 use App\Models\User;
-use App\Models\Category;
 use Illuminate\Support\Carbon;
 
 class OfferSeeder extends Seeder
 {
     public function run(): void
     {
-        // Ensure there are some company users; create a few if none exist
         $companyIds = User::where('user_type', 'company')->pluck('id')->toArray();
-        if (empty($companyIds)) {
-            for ($c = 1; $c <= 3; $c++) {
-                $company = User::create([
-                    'first_name' => 'شركة' . $c,
-                    'last_name' => 'تجريبية',
-                    'email' => "company-offers{$c}@example.test",
-                    'phone_number' => '50000000' . $c,
-                    'whatsapp_number' => '70000000' . $c,
-                    'password' => bcrypt('password'),
-                    'user_type' => 'company',
-                    'gender' => 'male',
-                    'is_active' => true,
-                    'locale' => 'ar',
-                ]);
-                $companyIds[] = $company->id;
-            }
-        }
+        if (empty($companyIds)) return;
 
         $titles = [
-            'عرض خاص محدود',
-            'تخفيضات نهاية الأسبوع',
-            'خصم على مجموعة مختارة',
-            'عرض اليوم فقط',
-            'وفر الآن',
-            'عرض العيد',
-            'تخفيضات حصرية',
-            'عرض 2+1',
-            'خصم كبير',
-            'عرض ترويجي جديد',
+            'عرض شراء 3 علب باراسيتامول واحصل على 1 مجاناً',
+            'خصم 15% على المضادات الحيوية',
+            'عرض الفيتامينات - اشتري 2 واحصل على خصم 20%',
+            'تخفيضات على أدوية الضغط والسكري',
+            'عرض خاص على مستلزمات طبية',
+            'خصم نهاية الشهر على أدوية الأطفال',
+            'عرض أدوية الجهاز الهضمي - خصم 10%',
+            'عرض ترويجي على قطرات العيون',
+            'خصم للصيدليات الجديدة - 25% على أول طلب',
+            'عرض الكميات - اشتري كرتون واحصل على خصم خاص',
         ];
 
-        for ($i = 1; $i <= 20; $i++) {
-            $title = $titles[array_rand($titles)] . ' #' . $i;
-            $description = 'وصف تجريبي للعرض ' . $i . ' - يقدم خصومات ومزايا للعملاء.';
+        foreach ($companyIds as $companyId) {
+            $products = Product::where('company_user_id', $companyId)->get();
+            if ($products->isEmpty()) continue;
 
-            // random dates (date-only)
-            $start = Carbon::today()->addDays(rand(-10, 5));
-            $end = (clone $start)->addDays(rand(1, 30));
+            $offersCount = rand(2, 4);
+            for ($i = 0; $i < $offersCount; $i++) {
+                $start = Carbon::today()->addDays(rand(-10, 5));
+                $end = (clone $start)->addDays(rand(7, 30));
 
-            // pick a random company for this offer
-            $companyId = $companyIds[array_rand($companyIds)];
-
-            // ensure this company has products; if not create a fallback product for it
-            $productIds = Product::where('company_user_id', $companyId)->pluck('id')->toArray();
-            if (empty($productIds)) {
-                $p = Product::create([
+                $offer = Offer::create([
                     'company_user_id' => $companyId,
-                    'category_id' => Product::inRandomOrder()->value('category_id') ?: 1,
-                    'name' => 'منتج افتراضي للشركة ' . $companyId,
-                    'sku' => 'SKU-C' . $companyId . '-1',
-                    'description' => 'منتج افتراضي أنشئ تلقائياً',
-                    'unit_name' => 'حبة',
-                    'base_price' => 10.0,
-                    'is_active' => true,
-                    'main_image' => null,
+                    'scope' => 'public',
+                    'status' => ['active', 'active', 'draft'][array_rand([0, 1, 2])],
+                    'title' => $titles[array_rand($titles)],
+                    'description' => 'عرض خاص من الشركة على مجموعة مختارة من المنتجات الدوائية.',
+                    'start_at' => $start->format('Y-m-d'),
+                    'end_at' => $end->format('Y-m-d'),
                 ]);
-                $productIds = [$p->id];
-            }
 
-            $statuses = ['draft', 'active', 'inactive'];
-            $scope = (rand(0, 1) ? 'public' : 'private');
+                $itemsCount = rand(1, min(3, $products->count()));
+                $selectedProducts = $products->random($itemsCount);
 
-            $offer = Offer::create([
-                'company_user_id' => $companyId,
-                'scope' => $scope,
-                'status' => $statuses[array_rand($statuses)],
-                'title' => $title,
-                'description' => $description,
-                'start_at' => $start->format('Y-m-d'),
-                'end_at' => $end->format('Y-m-d'),
-            ]);
+                foreach ($selectedProducts as $product) {
+                    $rewardTypes = ['discount_percent', 'discount_fixed', 'bonus_qty'];
+                    $rtype = $rewardTypes[array_rand($rewardTypes)];
 
-            // إذا كان العرض خاص، يجب إضافة targets
-            if ($scope === 'private') {
-                $this->createTargetsForOffer($offer);
-            }
+                    $itemData = [
+                        'offer_id' => $offer->id,
+                        'product_id' => $product->id,
+                        'min_qty' => rand(2, 5),
+                        'reward_type' => $rtype,
+                    ];
 
-            // create 1-3 items for the offer
-            $itemsCount = rand(1, 3);
-            $availableProducts = $productIds;
-            for ($j = 0; $j < $itemsCount; $j++) {
-                if (empty($availableProducts)) break;
-                $pid = $availableProducts[array_rand($availableProducts)];
+                    if ($rtype === 'discount_percent') {
+                        $itemData['discount_percent'] = rand(5, 25);
+                    } elseif ($rtype === 'discount_fixed') {
+                        $itemData['discount_fixed'] = rand(50, 500);
+                    } else {
+                        $itemData['bonus_product_id'] = $product->id;
+                        $itemData['bonus_qty'] = rand(1, 2);
+                    }
 
-                $rewardTypes = ['discount_percent', 'discount_fixed', 'bonus_qty'];
-                $rtype = $rewardTypes[array_rand($rewardTypes)];
-
-                $itemData = [
-                    'offer_id' => $offer->id,
-                    'product_id' => $pid,
-                    'min_qty' => rand(1, 5),
-                    'reward_type' => $rtype,
-                ];
-
-                if ($rtype === 'discount_percent') {
-                    $itemData['discount_percent'] = rand(5, 50);
-                    $itemData['discount_fixed'] = null;
-                } elseif ($rtype === 'discount_fixed') {
-                    $itemData['discount_fixed'] = rand(1, 200) / 10;
-                    $itemData['discount_percent'] = null;
-                } else {
-                    // bonus_qty: choose a different product as bonus if possible
-                    $bonusCandidates = array_values(array_diff($availableProducts, [$pid]));
-                    $itemData['bonus_product_id'] = $bonusCandidates ? $bonusCandidates[array_rand($bonusCandidates)] : $pid;
-                    $itemData['bonus_qty'] = rand(1, 3);
-                    $itemData['discount_percent'] = null;
-                    $itemData['discount_fixed'] = null;
+                    OfferItem::create($itemData);
                 }
-
-                OfferItem::create($itemData);
             }
-        }
-    }
-
-    /**
-     * إنشاء targets للعروض الخاصة
-     */
-    private function createTargetsForOffer(Offer $offer): void
-    {
-        // عدد الـ targets (1-3)
-        $targetsCount = rand(1, 3);
-
-        // أنواع الـ targets المتاحة
-        $targetTypes = ['customer', 'customer_category', 'customer_tag'];
-
-        // استخدم مجموعة لتجنب التكرار (offer_id, target_type, target_id)
-        $used = [];
-
-        // نحاول عددًا محدودًا من المرات حتى نجد أهدافًا فريدة
-        $attempts = 0;
-        $maxAttempts = $targetsCount * 4; // هامش آمن
-
-        while (count($used) < $targetsCount && $attempts < $maxAttempts) {
-            $attempts++;
-
-            $targetType = $targetTypes[array_rand($targetTypes)];
-            $targetId = null;
-
-            switch ($targetType) {
-                case 'customer':
-                    $customerIds = User::where('user_type', 'customer')->pluck('id')->toArray();
-                    if (!empty($customerIds)) {
-                        $targetId = $customerIds[array_rand($customerIds)];
-                    }
-                    break;
-
-                case 'customer_category':
-                    $categoryIds = Category::where('category_type', 'customer')->pluck('id')->toArray();
-                    if (!empty($categoryIds)) {
-                        $targetId = $categoryIds[array_rand($categoryIds)];
-                    }
-                    break;
-
-                case 'customer_tag':
-                    $tagIds = \App\Models\Tag::where('tag_type', 'customer')->pluck('id')->toArray();
-                    if (!empty($tagIds)) {
-                        $targetId = $tagIds[array_rand($tagIds)];
-                    }
-                    break;
-            }
-
-            if (!$targetId) {
-                continue;
-            }
-
-            $key = $targetType . '-' . $targetId;
-            if (isset($used[$key])) {
-                continue; // تكرار، تجاوز
-            }
-
-            $used[$key] = true;
-
-            OfferTarget::firstOrCreate([
-                'offer_id' => $offer->id,
-                'target_type' => $targetType,
-                'target_id' => $targetId,
-            ]);
         }
     }
 }

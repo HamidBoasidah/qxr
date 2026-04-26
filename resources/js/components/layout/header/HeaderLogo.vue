@@ -1,12 +1,12 @@
 <template>
     <Link href="/" class="lg:hidden">
         <img
-            class="dark:hidden w-[40px]"
+            class="dark:hidden w-[100px]"
             src="/images/logo/logo.png"
             alt="Logo"
         />
         <img
-            class="hidden dark:block w-[40px]"
+            class="hidden dark:block w-[100px]"
             src="/images/logo/logo-dark.png"
             alt="Logo"
         />

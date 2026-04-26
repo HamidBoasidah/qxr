@@ -16,13 +16,13 @@
             <Link href="/">
                 <img
                     v-if="isExpanded || isHovered || isMobileOpen"
-                    class="dark:hidden w-[50px] lg:w-[100px]"
+                    class="dark:hidden w-[120px] lg:w-[160px]"
                     src="/images/logo/logo.png"
                     alt="Logo"
                 />
                 <img
                     v-if="isExpanded || isHovered || isMobileOpen"
-                    class="hidden dark:block w-[50px] lg:w-[100px]"
+                    class="hidden dark:block w-[120px] lg:w-[160px]"
                     src="/images/logo/logo-dark.png"
                     alt="Logo"
                 />

@@ -32,16 +32,16 @@
 
 /* Dark mode: override brand colors with secondary color */
 .dark {
-    --color-brand-25: #f5f9f4;
-    --color-brand-50: #eef5ec;
-    --color-brand-100: #d9e8d5;
-    --color-brand-200: #c4dbbe;
-    --color-brand-300: #b3d0ac;
-    --color-brand-400: #A3C89B;
-    --color-brand-500: #A3C89B;
-    --color-brand-600: #8ab882;
-    --color-brand-700: #71a768;
-    --color-brand-800: #5a8e52;
-    --color-brand-900: #44733e;
-    --color-brand-950: #2e5429;
+    --color-brand-25: #edf3f9;
+    --color-brand-50: #dbe7f3;
+    --color-brand-100: #b0c8e3;
+    --color-brand-200: #84a9d3;
+    --color-brand-300: #5889c2;
+    --color-brand-400: #2d6ab2;
+    --color-brand-500: #084784;
+    --color-brand-600: #073f77;
+    --color-brand-700: #063564;
+    --color-brand-800: #052b51;
+    --color-brand-900: #04213e;
+    --color-brand-950: #02152a;
 }

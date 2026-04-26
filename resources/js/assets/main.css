@@ -38,18 +38,18 @@
   --color-white: #ffffff;
   --color-black: #101828;
 
-  --color-brand-25: #f4f5fb;
-  --color-brand-50: #eaebf7;
-  --color-brand-100: #d5d8ef;
-  --color-brand-200: #abb1df;
-  --color-brand-300: #818acf;
-  --color-brand-400: #5763bf;
-  --color-brand-500: #2B388F;
-  --color-brand-600: #263283;
-  --color-brand-700: #202a70;
-  --color-brand-800: #1a225c;
-  --color-brand-900: #151b4a;
-  --color-brand-950: #0d1130;
+  --color-brand-25: #f0fbfd;
+  --color-brand-50: #e1f6fa;
+  --color-brand-100: #b3e8f2;
+  --color-brand-200: #80d8e8;
+  --color-brand-300: #4dc8de;
+  --color-brand-400: #26bbd5;
+  --color-brand-500: #19a5be;
+  --color-brand-600: #1594ab;
+  --color-brand-700: #117d90;
+  --color-brand-800: #0d6575;
+  --color-brand-900: #084e5b;
+  --color-brand-950: #043640;
 
   --color-blue-light-25: #f5fbff;
   --color-blue-light-50: #f0f9ff;
@@ -507,13 +507,13 @@ span.flatpickr-weekday,
 .flatpickr-day.selected.nextMonthDay,
 .flatpickr-day.startRange.nextMonthDay,
 .flatpickr-day.endRange.nextMonthDay {
-  background: #2B388F;
+  background: #19a5be;
   @apply !border-brand-500 !bg-brand-500 hover:!border-brand-500 hover:!bg-brand-500;
 }
 .flatpickr-day.selected.startRange + .endRange:not(:nth-child(7n + 1)),
 .flatpickr-day.startRange.startRange + .endRange:not(:nth-child(7n + 1)),
 .flatpickr-day.endRange.startRange + .endRange:not(:nth-child(7n + 1)) {
-  box-shadow: -10px 0 0 #2B388F;
+  box-shadow: -10px 0 0 #19a5be;
 }
 
 .flatpickr-months .flatpickr-prev-month svg,

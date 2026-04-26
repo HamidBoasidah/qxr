@@ -11,6 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasTable('conversations')) {
+            // الجدول موجود مسبقاً، نضيف العمود الجديد فقط إذا ما كان موجود
+            if (!Schema::hasColumn('conversations', 'order_id')) {
+                Schema::table('conversations', function (Blueprint $table) {
+                    $table->foreignId('order_id')
+                        ->nullable()
+                        ->after('id')
+                        ->constrained('orders')
+                        ->nullOnDelete();
+                    $table->unique('order_id');
+                });
+            }
+            return;
+        }
+
         Schema::create('conversations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('order_id')

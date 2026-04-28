@@ -40,7 +40,8 @@
     "signin": "Signin",
     "signup": "Signup",
     "activityLog": "Activity Log",
-    "reports": "Reports"
+    "reports": "Reports",
+    "advertisements": "Advertisements"
   },
   "pages": {
     "welcomeLoggedIn": "You're logged in!",
@@ -604,5 +605,29 @@
     "total": "Total",
     "issuedAt": "Issued At",
     "noData": "No data available"
+  },
+  "advertisements": {
+    "title": "Advertisements",
+    "create": "Create Advertisement",
+    "edit": "Edit Advertisement",
+    "show": "Advertisement Details",
+    "titleField": "Title",
+    "description": "Description",
+    "image": "Image",
+    "currentImage": "Current Image",
+    "changeImage": "Change Image",
+    "position": "Position",
+    "company": "Company",
+    "linkUrl": "Link URL",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "dates": "Period",
+    "sortOrder": "Sort Order",
+    "positions": {
+      "home_slider": "Home Slider",
+      "home_banner": "Home Banner",
+      "category_banner": "Category Banner",
+      "popup": "Popup"
+    }
   }
 }

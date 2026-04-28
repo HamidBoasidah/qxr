@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             InvoiceSeeder::class,
             ReturnPolicySeeder::class,
             ReturnInvoiceSeeder::class,
+            AdvertisementSeeder::class,
         ]);
     }
 }

@@ -10,6 +10,7 @@ use App\Repositories\DistrictRepository;
 use App\Repositories\GovernorateRepository;
 use App\Repositories\ReturnPolicyRepository;
 use App\Repositories\ReturnInvoiceRepository;
+use App\Repositories\AdvertisementRepository;
 // Models
 use App\Models\User;
 use App\Models\Area;
@@ -17,6 +18,7 @@ use App\Models\District;
 use App\Models\Governorate;
 use App\Models\ReturnPolicy;
 use App\Models\ReturnInvoice;
+use App\Models\Advertisement;
 
 // Services
 use App\Services\UserService;
@@ -27,6 +29,7 @@ use App\Services\ReturnPolicyService;
 use App\Services\ReturnInvoiceService;
 use App\Services\ReturnRequestValidator;
 use App\Services\ReturnRefundCalculator;
+use App\Services\AdvertisementService;
 
 
 class RepositoryServiceProvider extends ServiceProvider
@@ -39,6 +42,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(GovernorateRepository::class, fn($app) => new GovernorateRepository($app->make(Governorate::class)));
         $this->app->bind(ReturnPolicyRepository::class, fn($app) => new ReturnPolicyRepository($app->make(ReturnPolicy::class)));
         $this->app->bind(ReturnInvoiceRepository::class, fn($app) => new ReturnInvoiceRepository($app->make(ReturnInvoice::class)));
+        $this->app->bind(AdvertisementRepository::class, fn($app) => new AdvertisementRepository($app->make(Advertisement::class)));
 
         // Bind Services to their Repositories
         $this->app->bind(UserService::class, fn($app) => new UserService($app->make(UserRepository::class)));
@@ -52,6 +56,9 @@ class RepositoryServiceProvider extends ServiceProvider
             $app->make(ReturnRequestValidator::class),
             $app->make(ReturnRefundCalculator::class),
             $app->make(ReturnInvoiceRepository::class),
+        ));
+        $this->app->bind(AdvertisementService::class, fn($app) => new AdvertisementService(
+            $app->make(AdvertisementRepository::class),
         ));
     }
 }

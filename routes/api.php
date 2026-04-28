@@ -10,6 +10,10 @@ Route::get('/user', function (Request $request) {
 
 Route::middleware('auth:sanctum')->group(function () {
 
+    // Advertisements (public within authenticated users)
+    Route::get('advertisements', [App\Http\Controllers\Api\AdvertisementController::class, 'index']);
+    Route::get('advertisements/position/{position}', [App\Http\Controllers\Api\AdvertisementController::class, 'byPosition']);
+
     Route::put('/update-password', [App\Http\Controllers\Api\AuthController::class, 'updatePassword']);
 
     // Location endpoints: المحافظات - المديريات - المناطق
@@ -43,21 +47,21 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('products/{product}/activate', [App\Http\Controllers\Api\ProductController::class, 'activate']);
     Route::post('products/{product}/deactivate', [App\Http\Controllers\Api\ProductController::class, 'deactivate']);
-    
+
     // Offers - Public endpoints (must come BEFORE apiResource to avoid route conflicts)
     Route::get('offers/public/best', [App\Http\Controllers\Api\OfferController::class, 'bestOffers']);
     Route::get('offers/public/flat', [App\Http\Controllers\Api\OfferController::class, 'publicIndexFlat']);
     Route::get('offers/public/details', [App\Http\Controllers\Api\OfferController::class, 'publicIndexDetails']);
     Route::get('offers/public', [App\Http\Controllers\Api\OfferController::class, 'publicIndex']);
     Route::get('offers/public/{id}', [App\Http\Controllers\Api\OfferController::class, 'publicShow']);
-    
+
     // Offers - Company endpoints with details
     Route::get('offers/flat', [App\Http\Controllers\Api\OfferController::class, 'indexFlat']);
     Route::get('offers/details', [App\Http\Controllers\Api\OfferController::class, 'indexDetails']);
-    
+
     // Offers - Company endpoints (CRUD)
     Route::apiResource('offers', App\Http\Controllers\Api\OfferController::class);
-    
+
     // Conversations
     Route::get('conversations', [App\Http\Controllers\Api\ConversationController::class, 'index']);
     Route::post('conversations', [App\Http\Controllers\Api\ConversationController::class, 'store']);
@@ -75,7 +79,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('orders/preview', [App\Http\Controllers\Api\OrderController::class, 'preview']);
     Route::post('orders/confirm', [App\Http\Controllers\Api\OrderController::class, 'confirm']);
     Route::post('orders/{id}/cancel', [App\Http\Controllers\Api\OrderController::class, 'cancel']);
-    
+
     // Orders
     Route::apiResource('orders', App\Http\Controllers\Api\OrderController::class);
 
@@ -93,7 +97,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('return-invoices/{returnInvoice}/approve', [App\Http\Controllers\Api\ReturnInvoiceController::class, 'approve']);
     Route::post('return-invoices/{returnInvoice}/reject', [App\Http\Controllers\Api\ReturnInvoiceController::class, 'reject']);
 });
-    
+
 
 Route::post('/login', [App\Http\Controllers\Api\AuthController::class, 'login']);
 Route::post('/logout', [App\Http\Controllers\Api\AuthController::class, 'logout'])->middleware('auth:sanctum');

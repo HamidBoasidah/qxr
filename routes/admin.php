@@ -124,7 +124,7 @@ Route::middleware('auth:admin')
         Route::resource('addresses', AddressController::class)
             ->only(['index', 'show'])
             ->names('addresses');
-            
+
 
         // Categories
         Route::resource('categories', CategoryController::class)
@@ -155,7 +155,7 @@ Route::middleware('auth:admin')
 
         // Products
         Route::resource('products', ProductController::class)
-            ->only(['index', 'show'])    
+            ->only(['index', 'show'])
             ->names('products');
 
         // Orders
@@ -180,7 +180,7 @@ Route::middleware('auth:admin')
 
         // Offers
         Route::resource('offers', OfferController::class)
-            ->only(['index', 'show'])  
+            ->only(['index', 'show'])
             ->names('offers');
 
         // Users
@@ -224,29 +224,39 @@ Route::middleware('auth:admin')
             ->only(['index', 'show'])
             ->names('activitylogs');
 
+        // Advertisements
+        Route::resource('advertisements', \App\Http\Controllers\Admin\AdvertisementController::class)
+            ->names('advertisements');
+
+        Route::patch('advertisements/{id}/activate', [\App\Http\Controllers\Admin\AdvertisementController::class, 'activate'])
+            ->name('advertisements.activate');
+
+        Route::patch('advertisements/{id}/deactivate', [\App\Http\Controllers\Admin\AdvertisementController::class, 'deactivate'])
+            ->name('advertisements.deactivate');
+
         // Reports
         Route::prefix('reports')->as('reports.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Admin\ReportController::class, 'index'])
                 ->name('index');
-            
+
             // Invoices Report
             Route::get('/invoices', [\App\Http\Controllers\Admin\ReportController::class, 'invoices'])
                 ->name('invoices');
             Route::get('/invoices/export', [\App\Http\Controllers\Admin\ReportController::class, 'exportInvoices'])
                 ->name('invoices.export');
-            
+
             // Orders Report
             Route::get('/orders', [\App\Http\Controllers\Admin\ReportController::class, 'orders'])
                 ->name('orders');
             Route::get('/orders/export', [\App\Http\Controllers\Admin\ReportController::class, 'exportOrders'])
                 ->name('orders.export');
-            
+
             // Offers Report
             Route::get('/offers', [\App\Http\Controllers\Admin\ReportController::class, 'offers'])
                 ->name('offers');
             Route::get('/offers/export', [\App\Http\Controllers\Admin\ReportController::class, 'exportOffers'])
                 ->name('offers.export');
-            
+
             // Products Report
             Route::get('/products', [\App\Http\Controllers\Admin\ReportController::class, 'products'])
                 ->name('products');

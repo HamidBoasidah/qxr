@@ -20,6 +20,7 @@
     "governorates": "المحافظات",
     "districts": "المديريات",
     "activityLogs": "سجل التغييرات",
+    "advertisements": "الإعلانات",
     "addresses": "العناوين",
     "tags": "الوسوم",
     "reports": "التقارير",
@@ -987,6 +988,30 @@
     "addFirstItem": "إضافة أول عنصر",
     "noItems": "لا توجد عناصر حتى الآن",
     "noItemsDescription": "ابدأ بإضافة عنصر جديد لهذا القسم"
+  },
+  "advertisements": {
+    "title": "الإعلانات",
+    "create": "إضافة إعلان",
+    "edit": "تعديل إعلان",
+    "show": "تفاصيل الإعلان",
+    "titleField": "عنوان الإعلان",
+    "description": "الوصف",
+    "image": "الصورة",
+    "currentImage": "الصورة الحالية",
+    "changeImage": "تغيير الصورة",
+    "position": "موقع العرض",
+    "company": "الشركة",
+    "linkUrl": "رابط الإعلان",
+    "startDate": "تاريخ البداية",
+    "endDate": "تاريخ النهاية",
+    "dates": "الفترة",
+    "sortOrder": "الترتيب",
+    "positions": {
+      "home_slider": "سلايدر الرئيسية",
+      "home_banner": "بانر الرئيسية",
+      "category_banner": "بانر الأقسام",
+      "popup": "نافذة منبثقة"
+    }
   }
 
 }

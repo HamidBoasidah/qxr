@@ -460,6 +460,12 @@ const menuGroups = computed(() =>
                     path: route("admin.activitylogs.index"),
                     permission: "activitylogs.view",
                 },
+                {
+                    icon: OfferIcon,
+                    name: t("menu.advertisements"),
+                    path: route("admin.advertisements.index"),
+                    permission: "advertisements.view",
+                },
             ],
         },
     ]),

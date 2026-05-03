@@ -26,6 +26,8 @@ class UpdateUserRequest extends FormRequest
             // ✅ كلمة المرور اختيارية في التحديث
             'password'   => ['nullable', 'string', 'min:8'],
 
+            'license_number' => ['required', 'string', 'max:100', 'unique:users,license_number,' . $userId],
+
             'avatar'     => ['nullable', 'image', 'max:2048'],
 
             'phone_number'    => ['nullable', 'string', 'max:50'],

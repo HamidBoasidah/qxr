@@ -54,6 +54,14 @@
             <p class="text-base text-gray-800 dark:text-white/90">{{ user.email || 'N/A' }}</p>
           </div>
 
+          <!-- License Number -->
+          <div>
+            <label class="mb-1.5 block text-sm font-medium text-gray-500 dark:text-gray-400">
+              {{ t('users.licenseNumber') }}
+            </label>
+            <p class="text-base text-gray-800 dark:text-white/90">{{ user.license_number || 'N/A' }}</p>
+          </div>
+
           <!-- Phone Number -->
           <div>
             <label class="mb-1.5 block text-sm font-medium text-gray-500 dark:text-gray-400">

@@ -20,6 +20,7 @@ class UserDTO extends BaseDTO
     public $is_active;
     public $locale;
     public $avatar;
+    public $license_number;
 
     // ✅ جديد
     public $user_type;
@@ -49,6 +50,7 @@ class UserDTO extends BaseDTO
         $is_active,
         $locale,
         $avatar,
+        $license_number = null,
 
         $user_type = 'customer',
         $gender = null,
@@ -74,6 +76,7 @@ class UserDTO extends BaseDTO
         $this->is_active = $is_active;
         $this->locale = $locale;
         $this->avatar = $avatar;
+        $this->license_number = $license_number;
 
         $this->user_type = $user_type;
         $this->gender = $gender;
@@ -111,6 +114,7 @@ class UserDTO extends BaseDTO
             (bool) ($user->is_active ?? false),
             $user->locale ?? null,
             $user->avatar ?? null,
+            $user->license_number ?? null,
 
             // ✅ جديد
             $user->user_type ?? 'customer',
@@ -172,6 +176,7 @@ class UserDTO extends BaseDTO
             'is_active' => $this->is_active,
             'locale' => $this->locale,
             'avatar' => $this->avatar,
+            'license_number' => $this->license_number,
 
             // ✅ جديد
             'user_type' => $this->user_type,
@@ -198,6 +203,7 @@ class UserDTO extends BaseDTO
             'phone_number' => $this->phone_number,
             'is_active' => $this->is_active,
             'avatar' => $this->avatar,
+            'license_number' => $this->license_number,
 
             // ✅ مفيد مستقبلاً لعرض النوع في جدول الإدارة
             'user_type' => $this->user_type,

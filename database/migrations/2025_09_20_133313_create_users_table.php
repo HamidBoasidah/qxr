@@ -14,6 +14,7 @@ return new class extends Migration
             $table->string('first_name');
             $table->string('last_name');
             $table->string('email')->unique();
+            $table->string('license_number', 100)->unique();
             $table->string('avatar')->nullable();
             $table->string('phone_number')->nullable();
             $table->string('whatsapp_number')->nullable();

@@ -210,6 +210,9 @@
               </div>
             </th>
             <th class="px-4 py-3 text-start border border-gray-100 dark:border-gray-800">
+              <p class="font-medium text-gray-700 text-theme-xs dark:text-gray-400">{{ t('users.licenseNumber') }}</p>
+            </th>
+            <th class="px-4 py-3 text-start border border-gray-100 dark:border-gray-800">
               <div
                 class="flex items-center justify-between w-full cursor-pointer"
                 @click="sortBy('salary')"
@@ -363,6 +366,9 @@
             </td>
             <td class="px-4 py-3 border border-gray-100 dark:border-gray-800">
               <p class="text-gray-700 text-theme-sm dark:text-gray-400">{{ user.email }}</p>
+            </td>
+            <td class="px-4 py-3 border border-gray-100 dark:border-gray-800">
+              <p class="text-gray-700 text-theme-sm dark:text-gray-400">{{ user.license_number }}</p>
             </td>
             <td class="px-4 py-3 border border-gray-100 dark:border-gray-800">
               <p class="text-gray-700 text-theme-sm dark:text-gray-400">{{ user.phone_number }}</p>

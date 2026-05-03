@@ -406,7 +406,8 @@
   ,"userTypeLocked": "لا يمكن تغيير نوع المستخدم بعد إنشاء الحساب",
   "editPasswordHint": "اتركه فارغًا إذا لا تريد تغييره",
   "editPasswordConfirmHint": "اتركه فارغًا إذا لا تريد تغييره",
-  "currentCompanyLogo": "الشعار الحالي"
+  "currentCompanyLogo": "الشعار الحالي",
+  "licenseNumber": "رقم الترخيص"
   },
   "admins": {
     "userNamePlaceholder": "ادخل اسم المشرف",

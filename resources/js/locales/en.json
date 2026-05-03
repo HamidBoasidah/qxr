@@ -136,7 +136,8 @@
   "userUpdateFailed": "Failed to update user",
     "name": "Name",
     "email": "Email",
-    "type": "Type"
+    "type": "Type",
+    "licenseNumber": "License Number"
   },
   "admins": {
     "userNamePlaceholder": "Enter admin name",
